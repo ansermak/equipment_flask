@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <table>
+      {% for item in dep %}
+        <tr><td>{{item.name}}</td>
+          
+        </tr>  
+      {% endfor %}
+      
+    </table><br/>
+{% endblock %}
