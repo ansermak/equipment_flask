@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% include 'menu_header_page.html' %}
 <form action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.hidden_tag()}}
     <table>
