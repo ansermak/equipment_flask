@@ -11,6 +11,7 @@ class User(db.Model):
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
+    name_en = db.Column(db.String(20), index = True, unique=True)   
     users = db.relationship('User', backref='department', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', lazy='dynamic')
 
