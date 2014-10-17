@@ -1,11 +1,10 @@
-<html>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
   <head>
-    <meta charset="UTF-8">
-    {% if title %}
-    <title>{{title}}</title>
-    {% else %}
-    <title>Equimpent</title>
-    {% endif %}
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>{{title|default('equipment')}}</title>
+    <link rel = "stylesheet" type = "text/css" href = "/static/css/index.css"/>
   </head>
   <body>
     {% block content %}{% endblock %}
