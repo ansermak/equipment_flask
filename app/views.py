@@ -1,15 +1,29 @@
+#-*-coding: utf-8-*-
+
 from flask import render_template, flash, redirect, session, url_for, request, g
 from app import app, db
 from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm
 from models import User, Department, Hardware, Software
-from translit import transliterate
+import re
+
+def replace_other_chars(string):
+    """replace all not latin and not numeric chars with hyphen
+    >>> replace_other_chars(u'мама мыла ramy мылом23!')
+    u'ramy-23'
+    """
+    string = re.sub(r"((?![a-zA-Z0-9\-']).)", '-', string )
+    string = re.sub(r"[\-]+",'-', string)
+    string = re.sub('^[-]+', '', string)
+    string = re.sub('[-]+$', '', string)
+    return string
+
 
 def department_uniq_name(name):
     """Creates uniq name_en for department:
     transliterates name and if such name_en exists in database
     adds underline and first free number
     """
-    name_en = transliterate(name)
+    name_en = replace_other_chars(name)
     cnt = Department.query.filter(Department.name_en==name_en).count()
     if cnt > 0:
         i = 0
