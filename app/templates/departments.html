@@ -3,13 +3,14 @@
 {% include 'menu_header_page.html' %}
 <div id="div_page_name">
    Departments
-   <a href="/departments/new/"><div id="div_add_item">+</div></a>
+   <a href="/departments/new/"><div id="div_add_item" class="div_a">+</div></a>
 </div>
       {% for item in dep %}
         <a class="a_main_list_item" href="{{item.name_en}}">
-          <div class="div_main_list_item">
-          {{item.name}}
+          <div class="div_a div_main_list_item">
+              {{item.name}}
           </div>
         </a>
       {% endfor %}
+
 {% endblock %}

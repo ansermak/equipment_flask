@@ -46,7 +46,10 @@ def department(department):
         dep_obj.name = dep_form.name.data
         if db.session.is_modified(dep_obj):
             db.session.commit()    
-        return redirect('/departments/{}'.format(dep_obj.name_en))
+        if request.values.get('submited') == 'Save & continue editing':
+            return redirect('/departments/{}'.format(dep_obj.name_en))
+        else:
+            return redirect('/departments/')
 
     _dept = Department.query.filter(Department.name_en==department).first()
     if _dept is None:
@@ -64,7 +67,10 @@ def department_new():
                 name_en=department_uniq_name(dep_form.name.data))
         db.session.add(dep_obj)
         db.session.commit()
-        return redirect('/departments/{}'.format(dep_obj.name_en))
+        if request.values.get('submited') == 'Save & continue editing':
+            return redirect('/departments/{}'.format(dep_obj.name_en))
+        else:
+            return redirect('/departments/')
     else:
         dep_form = DepartmentForm()
         return render_template('department_edit.html', data=dep_form)
