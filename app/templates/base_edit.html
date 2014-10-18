@@ -4,7 +4,7 @@
 <form action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.hidden_tag()}}
     <table>
-      <tr><td>Department</td><td>{{data.name}}</td>
+      <tr><td>{{page_name|default('base_edit')}}</td><td>{{data.name}}</td>
         <td>{% for error in data.errors.name %}
                 <span style="color: red;">[{{error}}]</span>
             {% endfor %}<br>
@@ -14,7 +14,7 @@
     <div style="width:300px">
     <input class="div_a" type="submit" name="submited" value="Save"/>
     <input class="div_a" type="submit" name="submited" value="Save & continue editing"/>
-    <a href="/departments/new/"><div id="div_add_item" class="div_a">+</div></a>
+    <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
     <div>
   </form>
 {% endblock %}
