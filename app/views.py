@@ -5,6 +5,7 @@ from app import app, db
 from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm
 from models import User, Department, Hardware, Software
 import re
+import types
 
 def replace_other_chars(string):
     """replace all not latin and not numeric chars with hyphen
@@ -43,9 +44,9 @@ class BaseEntity():
 
     def __init__(self, entity_name, url_param=None, template_list=None, template_edit=None, entity_form=None):
         self.name = entity_name.lower()
-        self.model = globals()[entity_name.capitalize()]
-        self.form = entity_form if entity_form is not None else self.name.capitalize() + 'Form' 
-        print entity_form, self.form, self.name, entity_name
+        self.name_display = entity_name.capitalize()
+        self.model = globals()[self.name_display]
+        self.form = entity_form if entity_form is not None else self.name_display + 'Form' 
         self.form = globals()[self.form]
         self.entity_url = url_for(self.name + 's')
         self.entity_url_new = url_for(self.name + '_new')
@@ -66,7 +67,7 @@ class BaseEntity():
         base_data = self.model.query.all()
         return render_template(self.template_list,
                 base_data=base_data,
-                page_name=self.name,
+                page_name=self.name_display,
                 add_item_url=self.entity_url_new)
 
 
@@ -78,6 +79,7 @@ class BaseEntity():
             if base_data is None:
                 pass #!!!
             for a,b in form.data.items():
+                #if type(b) == types.IntType: a = a + '_id'
                 setattr(base_data, a, b)
             if db.session.is_modified(base_data):
                 db.session.commit()    
@@ -93,7 +95,7 @@ class BaseEntity():
             pass #!!!
         form = self.form(obj=base_data)
         return render_template(self.template_edit,
-                page_name=self.name,
+                page_name=self.name_display,
                 add_item_url=self.entity_url_new,
                 data=form)
 
@@ -103,6 +105,7 @@ class BaseEntity():
         if form.validate_on_submit():
             base_data = self.model()
             for a,b in form.data.items():
+                #if type(b) == types.IntType: a = a + '_id'
                 setattr(base_data, a, b)
             base_data.name_en = entity_uniq_name(base_data.name, self.model)
             db.session.add(base_data)
@@ -111,11 +114,9 @@ class BaseEntity():
                 return redirect(url_for(self.entity_url_edit, url_parameter=base_data.name_en))
             else:
                 return redirect(self.entity_url)
-
         else:
-            form = self.form()
             return render_template(self.template_edit,
-                page_name=self.name,
+                page_name=self.name_display,
                 add_item_url=self.entity_url_new,
                 data=form)
 
@@ -144,3 +145,53 @@ def department_new():
     depart = BaseEntity('department')
     return depart.base_new()
     
+
+@app.route('/users/')
+def users():
+    users = BaseEntity('user')
+    return users.base_list()
+
+@app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
+def user_edit(url_parameter):
+    users = BaseEntity('user', url_param=url_parameter)
+    return users.base_edit()
+
+
+@app.route('/users/new/', methods=['GET', 'POST'])
+def user_new():
+    users = BaseEntity('user')
+    return users.base_new()
+ 
+@app.route('/hardware/')
+def hardwares():
+    hard = BaseEntity('hardware')
+    return hard.base_list()
+
+@app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
+def hardware_edit(url_parameter):
+    hard = BaseEntity('hardware', url_param=url_parameter)
+    return hard.base_edit()
+
+
+@app.route('/hardware/new/', methods=['GET', 'POST'])
+def hardware_new():
+    hard = BaseEntity('hardware')
+    return hard.base_new()
+ 
+
+@app.route('/software/')
+def softwares():
+    soft = BaseEntity('software')
+    return soft.base_list()
+
+@app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
+def software_edit(url_parameter):
+    soft = BaseEntity('software', url_param=url_parameter)
+    return soft.base_edit()
+
+
+@app.route('/software/new/', methods=['GET', 'POST'])
+def software_new():
+    soft = BaseEntity('software')
+    return soft.base_new()
+ 

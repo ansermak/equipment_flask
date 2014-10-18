@@ -3,13 +3,19 @@
 {% include 'menu_header_page.html' %}
 <form action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.hidden_tag()}}
+    <div id="div_page_name">
+       {{page_name|default('base_list')}}
+       <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
+    </div>
+     
     <table>
-      <tr><td>{{page_name|default('base_edit')}}</td><td>{{data.name}}</td>
-        <td>{% for error in data.errors.name %}
-                <span style="color: red;">[{{error}}]</span>
-            {% endfor %}<br>
-        </td>
+      {% for item in data.data %}
+      <tr><td>{{data[item].label}}</td><td>{{data[item]}}</td><td>
+          {% for i in data.errors[item] %}
+             <span style="color: red;">[{{i}}]</span>
+          {% endfor %}</td>
       </tr>
+      {% endfor %}
     </table><br/>
     <div style="width:300px">
     <input class="div_a" type="submit" name="submited" value="Save"/>
