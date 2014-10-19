@@ -10,7 +10,7 @@ class User(db.Model):
     hardware_items = db.relationship('Hardware', backref='user', lazy='dynamic')
 
     def __repr__(self):
-        return '{} {}'.format(self.name, self.surname)
+        return '{} {}'.format(self.surname, self.name)
 
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key = True)

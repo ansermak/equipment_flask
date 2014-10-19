@@ -43,8 +43,8 @@ class HardwareForm(Form):
   
     def __init__(self, *args, **kwargs):
         super(HardwareForm, self).__init__(*args, **kwargs)
-        self.department_id.choices = [(i.id, i.name) for i in Department.query.all()]
-        self.user_id.choices = [(i.id, i.name) for i in User.query.all()]
+        self.department_id.choices = [(i.id, i.name) for i in Department.query.order_by('name').all()]
+        self.user_id.choices = [(i.id, i) for i in User.query.order_by('surname').all()]
 
 class SoftwareForm(Form):
     name = StringField('name', validators=[DataRequired(), 
@@ -57,4 +57,4 @@ class SoftwareForm(Form):
             ])
     def __init__(self, *args, **kwargs):
         super(SoftwareForm, self).__init__(*args, **kwargs)
-        self.comp_id.choices = [(i.id, i.name) for i in Hardware.query.all()]
+        self.comp_id.choices = [(i.id, i.name) for i in Hardware.query.order_by('name').all()]
