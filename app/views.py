@@ -58,18 +58,18 @@ class BaseEntity():
             self.entity_url_edit = url_for(self.entity_url_edit, url_parameter = self.url_param)
 
      
-    def base_list(self, sort_field):
+    def base_list(self, sort_field ='name'):
         """generates list of entites. If the list is empty - returns new form
         to input new data"""
         cnt = self.model.query.count()
+        
         if cnt == 0:
             return redirect(self.entity_url_new)
-        base_data = self.model.query.all()
+        base_data = self.model.query.order_by(sort_field).all()
         return render_template(self.template_list,
                 base_data=base_data,
                 page_name=self.name_display,
-                add_item_url=self.entity_url_new,
-                sort_field=sort_field)
+                add_item_url=self.entity_url_new)
 
 
     def base_edit(self):
@@ -132,7 +132,7 @@ def index():
 @app.route('/departments/')
 def departments():
     depart = BaseEntity('department')
-    return depart.base_list('name')
+    return depart.base_list()
 
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
