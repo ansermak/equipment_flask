@@ -42,7 +42,7 @@ class HardwareForm(Form):
             ])
   
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
+        super(HardwareForm, self).__init__(*args, **kwargs)
         self.department_id.choices = [(i.id, i.name) for i in Department.query.all()]
         self.user_id.choices = [(i.id, i.name) for i in User.query.all()]
 
@@ -56,5 +56,5 @@ class SoftwareForm(Form):
                         (2, 'Free'),
             ])
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
-        self.user_id.choices = [(i.id, i.name) for i in Hardware.query.all()]
+        super(SoftwareForm, self).__init__(*args, **kwargs)
+        self.comp_id.choices = [(i.id, i.name) for i in Hardware.query.all()]
