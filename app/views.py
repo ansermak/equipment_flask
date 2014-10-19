@@ -58,7 +58,7 @@ class BaseEntity():
             self.entity_url_edit = url_for(self.entity_url_edit, url_parameter = self.url_param)
 
      
-    def base_list(self):
+    def base_list(self, sort_field):
         """generates list of entites. If the list is empty - returns new form
         to input new data"""
         cnt = self.model.query.count()
@@ -68,7 +68,8 @@ class BaseEntity():
         return render_template(self.template_list,
                 base_data=base_data,
                 page_name=self.name_display,
-                add_item_url=self.entity_url_new)
+                add_item_url=self.entity_url_new,
+                sort_field=sort_field)
 
 
     def base_edit(self):
@@ -131,7 +132,7 @@ def index():
 @app.route('/departments/')
 def departments():
     depart = BaseEntity('department')
-    return depart.base_list()
+    return depart.base_list('name')
 
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
@@ -149,7 +150,7 @@ def department_new():
 @app.route('/users/')
 def users():
     users = BaseEntity('user')
-    return users.base_list()
+    return users.base_list('surname')
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
 def user_edit(url_parameter):

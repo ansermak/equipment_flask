@@ -5,10 +5,11 @@
    {{page_name|default('base_list')}}
    <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
 </div>
-      {% for item in base_data%}
+	{% set sort_on = request.args.sort_on|default(sort_field) %}
+	{% for item in base_data|sort(attribute=sort_on) %}
         <a class="a_main_list_item" href="{{item.name_en}}">
           <div class="div_a div_main_list_item">
-              {{item.name}}
+              {{item}}
           </div>
         </a>
       {% endfor %}

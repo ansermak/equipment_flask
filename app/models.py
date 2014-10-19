@@ -9,12 +9,18 @@ class User(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     hardware_items = db.relationship('Hardware', backref='user', lazy='dynamic')
 
+    def __repr__(self):
+        return '{} {}'.format(self.name, self.surname)
+
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
     name_en = db.Column(db.String(20), index = True, unique=True)   
     users = db.relationship('User', backref='department', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', lazy='dynamic')
+
+    def __repr__(self):
+        return self.name
 
 class Hardware(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -27,6 +33,9 @@ class Hardware(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer)
 
+    def __repr__(self):
+        return self.name
+
 class Software(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
@@ -34,4 +43,6 @@ class Software(db.Model):
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
 
+    def __repr__(self):
+        return self.name
 
