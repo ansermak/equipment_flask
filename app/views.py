@@ -166,7 +166,7 @@ def user_new():
 @app.route('/hardware/')
 def hardwares():
     hard = BaseEntity('hardware')
-    return hard.base_list()
+    return hard.base_list('name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
@@ -183,7 +183,7 @@ def hardware_new():
 @app.route('/software/')
 def softwares():
     soft = BaseEntity('software')
-    return soft.base_list()
+    return soft.base_list('name')
 
 @app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
 def software_edit(url_parameter):
