@@ -78,7 +78,7 @@ class BaseEntity():
             base_data = self.model.query.filter(
                     self.model.name_en==self.url_param).first()
             if base_data is None:
-                pass #!!!
+                return render_template('404.html')
             for a,b in form.data.items():
                 #if type(b) == types.IntType: a = a + '_id'
                 setattr(base_data, a, b)
@@ -93,7 +93,7 @@ class BaseEntity():
         base_data = self.model.query.filter(
             self.model.name_en==self.url_param).first()
         if base_data is None:
-            pass #!!!
+            return render_template('404.html')
         form = self.form(obj=base_data)
         return render_template(self.template_edit,
                 page_name=self.name_display,
@@ -135,16 +135,18 @@ def departments():
     return depart.base_list()
 
 
+@app.route('/departments/new/', methods=['GET', 'POST'])
+def department_new():
+    depart = BaseEntity('department')
+    return depart.base_new()
+
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
 def department_edit(url_parameter):
     depart = BaseEntity('department', url_param=url_parameter)
     return depart.base_edit()
 
 
-@app.route('/departments/new/', methods=['GET', 'POST'])
-def department_new():
-    depart = BaseEntity('department')
-    return depart.base_new()
+
     
 
 @app.route('/users/')
@@ -196,3 +198,11 @@ def software_new():
     soft = BaseEntity('software')
     return soft.base_new()
  
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500

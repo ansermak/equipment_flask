@@ -7,6 +7,9 @@
     <link rel = "stylesheet" type = "text/css" href = "/static/css/index.css"/>
   </head>
   <body>
+    {% block menu %}
+    {% include 'menu_header_page.html' %}
+    {% endblock %}
     {% block content %}{% endblock %}
   </body>
 </html>

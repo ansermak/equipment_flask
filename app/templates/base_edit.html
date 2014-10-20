@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-{% include 'menu_header_page.html' %}
 <form action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.hidden_tag()}}
     <div id="div_page_name">
@@ -20,7 +19,6 @@
     <div style="width:300px">
     <input class="div_a" type="submit" name="submited" value="Save"/>
     <input class="div_a" type="submit" name="submited" value="Save & continue editing"/>
-    <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
     <div>
   </form>
 {% endblock %}
