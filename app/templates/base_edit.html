@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+{% include 'menu_header_page.html' %}
+<form action = "" method="post" name="data" enctype="multipart/form-data">
+    {{data.hidden_tag()}}
+    <div id="div_page_name">
+       {{page_name|default('base_list')}}
+       <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
+    </div>
+     
+    <table>
+      {% for item in data.data %}
+      <tr><td>{{data[item].label}}</td><td>{{data[item]}}</td><td>
+          {% for i in data.errors[item] %}
+             <span style="color: red;">[{{i}}]</span>
+          {% endfor %}</td>
+      </tr>
+      {% endfor %}
+    </table><br/>
+    <div style="width:300px">
+    <input class="div_a" type="submit" name="submited" value="Save"/>
+    <input class="div_a" type="submit" name="submited" value="Save & continue editing"/>
+    <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
+    <div>
+  </form>
+{% endblock %}
