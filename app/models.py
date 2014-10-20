@@ -24,7 +24,7 @@ class Department(db.Model):
 
 class Hardware(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    serial = db.Column(db.Integer, index = True, unique = True)
+    serial = db.Column(db.String, index = True, unique = True)
     inventory = db.Column(db.Integer, index = True, unique = True)
     name = db.Column(db.String(100))
     name_en = db.Column(db.String(100), index = True, unique=True)   
@@ -40,6 +40,7 @@ class Software(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
     name_en = db.Column(db.String(100), index = True, unique=True)   
+    serial = db.Column(db.String, index = True, unique = True)
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
 
