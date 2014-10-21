@@ -15,7 +15,7 @@ class UserForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
-        self.department_id.choices=[(0,'Choose')] + [(i.id, i.name) for i in Department.query.order_by('name').all()]
+        self.department_id.choices=[(0,'--choose--')] + [(i.id, i.name) for i in Department.query.order_by('name').all()]
         
 
 

@@ -84,9 +84,8 @@ class BaseEntity():
                 setattr(base_data, a, b)
             if db.session.is_modified(base_data):
                 db.session.commit()    
-
-            if request.values.get('submited') == 'Save & continue editing':
-                return redirect(self.entity_url_edit)
+            if request.values.get('submited') == 'Save & new':
+                return redirect(self.entity_url_new)
             else:
                 return redirect(self.entity_url)
 
@@ -111,8 +110,8 @@ class BaseEntity():
             base_data.name_en = entity_uniq_name(base_data.name, self.model)
             db.session.add(base_data)
             db.session.commit()
-            if request.values.get('submited') == 'Save & continue editing':
-                return redirect(url_for(self.entity_url_edit, url_parameter=base_data.name_en))
+            if request.values.get('submited') == 'Save & new':
+                return redirect(self.entity_url_new)
             else:
                 return redirect(self.entity_url)
         else:
