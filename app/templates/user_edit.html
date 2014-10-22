@@ -1,0 +1,29 @@
+{% extends "base_edit.html" %}
+{% block edit_sub_content %}
+<div class="edit_helper">
+    <div class="sub_edit_helper">
+        вільні компи з цього відділу
+        {% for item in data.hard_free_in_depart %}
+        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
+        {% endfor %}
+    
+    </div>
+    <div class="sub_edit_helper">
+        вільні компи
+        {% for item in data.hard_free %}
+        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
+        {% endfor %}
+    </div>
+    <div class="sub_edit_helper">
+        вільне ПО
+        {% for item in data.soft_free %}
+        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
+        {% endfor %}
+    </div>
+    <!--
+    <div class="sub_edit_helper">
+        ПО з вільних компів
+    </div>
+    -->
+</div>
+{% endblock %}

@@ -1,24 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<form action = "" method="post" name="data" enctype="multipart/form-data">
-    {{data.hidden_tag()}}
     <div id="div_page_name">
        {{page_name|default('base_list')}}
-       <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
+       <a class="div_a div_add_item" href="{{add_item_url}}">+</a>
     </div>
-     
-    <table>
-      {% for item in data.data %}
-      <tr><td>{{data[item].label}}</td><td>{{data[item]}}</td><td>
-          {% for i in data.errors[item] %}
-             <span style="color: red;">[{{i}}]</span>
-          {% endfor %}</td>
-      </tr>
-      {% endfor %}
-    </table><br/>
-    <div style="width:500px">
-    <input class="div_a" type="submit" name="submited" value="Save"/>
-    <input class="div_a" type="submit" name="submited" value="Save & new"/>
-    <div>
-  </form>
+{% include '_entity_edit.html' %} 
+{% block edit_sub_content %}
+{% endblock %}
 {% endblock %}

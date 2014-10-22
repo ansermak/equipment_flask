@@ -2,13 +2,7 @@
 {% block content %}
 <div id="div_page_name">
    {{page_name|default('base_list')}}
-   <a href="{{add_item_url}}"><div id="div_add_item" class="div_a">+</div></a>
+   <a href="{{add_item_url}}" class="div_add_item div_a">+</a>
 </div>
-	{% for item in base_data %}
-        <a class="a_main_list_item" href="{{item.name_en}}">
-          <div class="div_a div_main_list_item">
-              {{item}}
-          </div>
-        </a>
-      {% endfor %}
+{% include '_entity_list.html' %}
 {% endblock %}

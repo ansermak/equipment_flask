@@ -1,0 +1,16 @@
+<form class="base_form_edit" action = "" method="post" name="data" enctype="multipart/form-data">
+    {{data.form.hidden_tag()}}
+    <table>
+      {% for item in data.form.data %}
+      <tr><td>{{data.form[item].label}}</td><td>{{data.form[item]}}</td><td>
+          {% for i in data.form.errors[item] %}
+             <span style="color: red;">[{{i}}]</span>
+          {% endfor %}</td>
+      </tr>
+      {% endfor %}
+    </table><br/>
+    <div style="width:500px">
+    <input class="div_a" type="submit" name="submited" value="Save & list"/>
+    <input class="div_a" type="submit" name="submited" value="Save & new"/>
+    </div>
+  </form>
