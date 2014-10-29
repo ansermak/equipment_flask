@@ -2,7 +2,11 @@
 	   {% for item in base_data %}
             <tr>
                 {% for field in item.repr_list() %}
-                <td><a class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<a></td>
+                {% if field|length > 1 %}
+                    <td><a class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<a></td>
+                {% else %}
+                    <td><div class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<div></td>
+                {% endif %}
                 {% endfor%}
             </tr>
         {% endfor %}

@@ -13,7 +13,7 @@ class User(db.Model):
         return '{} {}'.format(self.surname, self.name)
 
     def repr_list(self):
-        return (('{} {}'.format(self.surname, self.name), self.name_en), (self.login, self.name_en), (self.department,'/departments/'+str(self.department)))
+        return (('{} {}'.format(self.surname, self.name), self.name_en), (self.login, ), (self.department,'/departments/'+str(self.department)))
 
 
 class Department(db.Model):
@@ -46,7 +46,7 @@ class Hardware(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name), (self.model), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
+        return ((self.name, self.name), (self.model, ), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
 
 class Software(db.Model):
     id = db.Column(db.Integer, primary_key = True)
