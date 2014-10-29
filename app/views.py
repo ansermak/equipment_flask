@@ -47,7 +47,7 @@ class NoEntityFoundException(Exception):
         return repr(self.value)
 
 
-# class should be a child of object 'object' to weork with 'super' func
+# class should be a child of object 'object' to work with 'super' func
 
 class BaseEntity(object):
     """ Entity model should have fields name and name_en. 
@@ -75,10 +75,12 @@ class BaseEntity(object):
         for a,b in form.data.items():
             setattr(base_data, a,b)
         if base_data.name_en is None:
-            base_data.name_en = entity_uniq_name(base_data.name, self.model)
+            base_data.name_en = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
 
+    def create_name(self, base_data, model):
+        return entity_uniq_name(base_data.name, model)
 
     def _get_base_data(self):
         if self.url_param is not None:
@@ -94,6 +96,7 @@ class BaseEntity(object):
 
 
     def _save_validated_form(self, form):
+        print "I'm super class method"
         base_data = self._get_base_data()
         self._save_data(base_data, form)
         if request.values.get('submited') == 'Save & new':
@@ -187,6 +190,9 @@ class UserEntity(BaseEntity):
         else:
             return self.entity_url
 
+        
+    def create_name(self, base_data, model):
+        return entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), model)
 
 
 @app.route('/')
@@ -232,7 +238,7 @@ def user_edit(url_parameter):
 
 @app.route('/users/new/', methods=['GET', 'POST'])
 def user_new():
-    users = BaseEntity('user', template_edit='user_edit.html')
+    users = UserEntity('user', template_edit='user_edit.html')
     return users.base_new()
  
 @app.route('/hardware/')

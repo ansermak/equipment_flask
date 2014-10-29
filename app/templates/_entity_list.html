@@ -1,5 +1,15 @@
-	{% for item in base_data %}
-        <a class="div_a main_list_item" href="{{item.name_en}}">
-              {{item}}
-        </a>
-      {% endfor %}
+    <table border>
+	   {% for item in base_data %}
+            <tr>
+                {% for field in item.repr_list() %}
+                {% if field|length > 1 %}
+                    <td><a class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<a></td>
+                {% else %}
+                    <td><div class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<div></td>
+                {% endif %}
+                {% endfor%}
+            </tr>
+        {% endfor %}
+    </table>      
+            
+

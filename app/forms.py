@@ -9,6 +9,8 @@ STATUS_REPAIR = 2
 STATUS_FREE = 3
 
 class UserForm(Form):
+    fields_order = ['name', 'surname', 'login', 'department_id']
+
     login = StringField('login', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
     name = StringField('name', validators=[DataRequired(), 
@@ -25,10 +27,12 @@ class UserForm(Form):
 
 
 class DepartmentForm(Form):
-	name = StringField('name', validators=[DataRequired(), 
+    fields_order = ['name']
+    name = StringField('name', validators=[DataRequired(), 
             NoneOf([''], 'cannot be empty', None)])
 
 class HardwareForm(Form):
+    fields_order = ['serial', 'inventory', 'model', 'name', 'department_id', 'user_id', 'state']
     serial = StringField('serial', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
     inventory = StringField('inventory', validators=[DataRequired(), 
@@ -54,6 +58,8 @@ class HardwareForm(Form):
 
 
 class SoftwareForm(Form):
+    fields_order = ['name', 'serial', 'comp_id', 'state']
+
     name = StringField('name', validators=[DataRequired(), 
     NoneOf([''], 'cannot be empty', None)])
     serial = StringField('serial', validators=[DataRequired(), 
