@@ -28,7 +28,7 @@ class Department(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name),)
+        return ((self.name, self.name_en),)
 
 class Hardware(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -46,7 +46,7 @@ class Hardware(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name), (self.model, ), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
+        return ((self.name, self.name_en), (self.model, ), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
 
 class Software(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -60,5 +60,5 @@ class Software(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name), (self.comp, '/hardware/' + str(self.comp)), (self.comp.department, '/departments/' + str(self.comp.department)))
+        return ((self.name, self.name_en), (self.comp, '/hardware/' + str(self.comp)), (self.comp.department, '/departments/' + str(self.comp.department)))
 
