@@ -19,7 +19,16 @@
         color: white;
         border-color: #f9f9f9;
       }
+
+
+    .block-header {
+        color:#aaaaaa; 
+        font-style:italic;
+    }
 /* main image + menu in the top of page */
+    #non-left-menu-block {
+        float: left;
+    }
 
       #img_main_index_page{
         width: 100%;
@@ -105,20 +114,59 @@
         font-size:20pt;
         } 
         .base_form_edit{
-            width: 500px;
-            float: left;
+            display: block;
         }
 /* helpers of edit form */
 
-.edit_helper{
-    float: left;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 0 0 5px rgba(0,0,0,0.1);v
-}
-.sub_edit_helper{
-    margin : 20px 0;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 0 0 5px rgba(0,0,0,0.1);v
-}
+    .edit_helper{
+        float: left;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 20px 0 0 50px;
+
+    }
+    .sub_edit_helper{
+        margin : 20px 0;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 0 0 5px rgba(0,0,0,0.1);
+    }
+    .used_stuff{
+        float: left;
+        padding: 10px;
+        border-radius: 5px;
+        width:450px;
+        margin: 20px 0 0 0; 
+        box-shadow: 0 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .sub_used_stuff {
+    }
+
+
+  /* left menu helper */
+
+    #left-menu-helper {
+        padding: 20px;
+        float: left;
+        width: 300px; 
+    }
+    #left-menu-helper h4{
+        margin: 10px 0;
+    }
+    .menu-name {
+        font-weight:bold;                  
+        cursor:pointer;   
+    }
+    .menu-body {
+        padding: 0 0 10px 10px;
+    }
+    .menu-element {
+        margin: 5px 20px; 
+    }
+    .menu-element img {
+        vertical-align:middle;
+        width:20px;
+        height:20px;
+        padding:0 5px;
+    }

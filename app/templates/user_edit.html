@@ -1,29 +1,80 @@
-{% extends "base_edit.html" %}
-{% block edit_sub_content %}
-<div class="edit_helper">
-    <div class="sub_edit_helper">
-        вільні компи з цього відділу
-        {% for item in data.hard_free_in_depart %}
-        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
-        {% endfor %}
-    
+{% extends "base.html" %}
+{% block content %}
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+    <script src="/static/js/dragndrop_script.js"></script>
+    <div>
+        <div id="left-menu-helper">
+            <div class="menu-block" id="menu-hardware-block">
+                <div class="menu-name">
+                    <h4>HARDWARE</h4>
+                </div>
+                <div class="menu-body">
+                     <div class="block-header"> -- free in department -- </div>
+                     <div class="menu-body" id="free-in_dep">
+                     {% for item in data.hard_free_in_depart %}
+                     <div id="{{item.name_en}}"class="dragndrop-element hardware-base">
+                         <img src="{{img}}"/><span>{{item.name}}</span>
+                     </div>
+                     {% endfor %}
+                     </div>
+                </div>
+
+                <div class="menu-body">
+                     <div class="block-header"> -- all free -- </div>
+                     <div class="menu-body" id="free-all">
+                     {% for item in data.hard_free %}
+                         <div id="{{item.name_en}}"class="dragndrop-element hardware-base">
+                             <img src="{{img}}"/><span>{{item.name}}</span>
+                         </div>
+                     {% endfor %}
+                     </div>
+                </div>
+            </div>
+
+            <div class="menu-block" id="menu-software-block">
+                <div class="menu-name">
+                    <h4>SOFTWARE</h4>
+                </div>
+                <div class="menu-body" id="free-all">
+                     <div class="block-header"> -- free software -- </div>
+                     {% for item in data.soft_free %}
+                     <div id="{{item.name_en}}"class="dragndrop-element software-base">
+                         <img src="{{img}}"/><span>{{item.name}}</span>
+                     </div>
+                     {% endfor %}
+                </div>
+            </div>
+
+
+
+        </div>
+        
+        <div id="non-left-menu-block">
+            <div style="height:50px;"></div>    
+
+            <div id="div_page_name">
+               {{page_name|default('base_list')}}
+               <a class="div_a div_add_item" href="{{add_item_url}}">+</a>
+            </div>
+            {% include '_entity_edit.html' %} 
+            {% block edit_sub_content %}
+            <div class="used_stuff">
+                <div class="sub_used_stuff hardware">
+                    <div class="block-header hardware-used">
+                        -- uses hardware --
+                    </div>
+                </div>
+                <div class="sub_used_stuff software">
+                    <div class="block-header software-used">
+                        -- uses software --
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="sub_edit_helper">
-        вільні компи
-        {% for item in data.hard_free %}
-        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
-        {% endfor %}
-    </div>
-    <div class="sub_edit_helper">
-        вільне ПО
-        {% for item in data.soft_free %}
-        <div id="{{item.name_en}}" class = "helper_item">{{item.name}}</div>
-        {% endfor %}
-    </div>
-    <!--
-    <div class="sub_edit_helper">
-        ПО з вільних компів
-    </div>
-    -->
-</div>
+    {% endblock %}
 {% endblock %}
+
+<div>
+   </div>

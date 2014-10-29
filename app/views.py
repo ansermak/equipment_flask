@@ -152,7 +152,18 @@ class BaseEntity(object):
 
 class UserEntity(BaseEntity):
 
+
+    def _save_electronic_items(self, el_items, status):
+        n = len(el_items)
+        if n != len(status): return False
+        for i in range(len(el_items)):
+            print el_items[i]
+
+
     def _prepare_base_edit(self):
+        self._save_electronic_items(
+            request.values.getlist('electronic_item'),
+            request.values.getlist('status'))
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             rzlt[2]['hard_free_in_depart'] = Hardware.query.filter(
@@ -166,6 +177,16 @@ class UserEntity(BaseEntity):
                     #! on free comps
                     )
         return rzlt
+    
+
+    def _save_validated_form(self, form):
+        base_data = self._get_base_data()
+        self._save_data(base_data, form)
+        if request.values.get('submited') == 'Save & new':
+            return self.entity_url_new
+        else:
+            return self.entity_url
+
 
 
 @app.route('/')
