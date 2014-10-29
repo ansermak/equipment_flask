@@ -75,10 +75,12 @@ class BaseEntity(object):
         for a,b in form.data.items():
             setattr(base_data, a,b)
         if base_data.name_en is None:
-            base_data.name_en = entity_uniq_name(base_data.name, self.model)
+            base_data.name_en = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
 
+    def create_name(self, base_data, model):
+        return entity_uniq_name(base_data.name, model)
 
     def _get_base_data(self):
         if self.url_param is not None:
@@ -167,14 +169,9 @@ class UserEntity(BaseEntity):
                     #! on free comps
                     )
         return rzlt
-
-    def _save_data(self, base_data, form):
-        for a,b in form.data.items():
-            setattr(base_data, a,b)
-        if base_data.name_en is None:
-            base_data.name_en = entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), self.model)
-        db.session.add(base_data)
-        db.session.commit()
+        
+    def create_name(self, base_data, model):
+        return entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), model)
 
 
 @app.route('/')
