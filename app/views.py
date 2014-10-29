@@ -94,6 +94,7 @@ class BaseEntity(object):
 
 
     def _save_validated_form(self, form):
+        print "I'm super class method"
         base_data = self._get_base_data()
         self._save_data(base_data, form)
         if request.values.get('submited') == 'Save & new':
@@ -167,6 +168,14 @@ class UserEntity(BaseEntity):
                     )
         return rzlt
 
+    def _save_data(self, base_data, form):
+        for a,b in form.data.items():
+            setattr(base_data, a,b)
+        if base_data.name_en is None:
+            base_data.name_en = entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), self.model)
+        db.session.add(base_data)
+        db.session.commit()
+
 
 @app.route('/')
 @app.route('/index')
@@ -211,7 +220,7 @@ def user_edit(url_parameter):
 
 @app.route('/users/new/', methods=['GET', 'POST'])
 def user_new():
-    users = BaseEntity('user', template_edit='user_edit.html')
+    users = UserEntity('user', template_edit='user_edit.html')
     return users.base_new()
  
 @app.route('/hardware/')
