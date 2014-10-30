@@ -96,7 +96,6 @@ class BaseEntity(object):
 
 
     def _save_validated_form(self, form):
-        print "I'm super class method"
         base_data = self._get_base_data()
         self._save_data(base_data, form)
         if request.values.get('submited') == 'Save & new':
@@ -158,20 +157,37 @@ class UserEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            rzlt[2]['hard_free_in_depart'] = Hardware.query.filter(
-                    Hardware.department_id == rzlt[2]['_base_data'].department_id,
-                    Hardware.state == STATUS_FREE).all()
-            rzlt[2]['hard_free'] = Hardware.query.filter(
-                    Hardware.department_id != rzlt[2]['_base_data'].department_id,
-                    Hardware.state == STATUS_FREE).all()
-            rzlt[2]['soft_free'] = Software.query.filter(
-                    Software.state == STATUS_FREE
-                    #! on free comps
-                    )
+            rzlt[2]['user_hardware'] = rzlt[2]['_base_data'].hardware_items.all()
+            rzlt[2]['user_software'] = []
+            for item in rzlt[2]['_base_data'].hardware_items.all():
+                rzlt[2]['user_software'] += item.software_items.all()
+                    
         return rzlt
         
     def create_name(self, base_data, model):
         return entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), model)
+
+class DepartmentEntity(BaseEntity):
+    def _prepare_base_edit(self):
+        rzlt = super(DepartmentEntity, self)._prepare_base_edit()
+        if rzlt[0] == 'template':
+            rzlt[2]['department_users'] = rzlt[2]['_base_data'].users.all()
+            print rzlt[2]['_base_data'].users.all()
+            rzlt[2]['department_hardware'] = rzlt[2]['_base_data'].hardware_items.all()
+            rzlt[2]['department_software'] = []
+            for item in rzlt[2]['_base_data'].hardware_items.all():
+                rzlt[2]['department_software'] += item.software_items.all()
+        return rzlt
+
+class HardwareEntity(BaseEntity):
+    def _prepare_base_edit(self):
+        rzlt = super(HardwareEntity, self)._prepare_base_edit()
+        if rzlt[0] == 'template':
+            rzlt[2]['hardware_software'] = rzlt[2]['_base_data'].software_items.all()
+            
+        return rzlt
+
+
 
 
 @app.route('/')
@@ -182,7 +198,7 @@ def index():
 
 @app.route('/departments/')
 def departments():
-    depart = BaseEntity('department')
+    depart = BaseEntity('department', template_edit='department_edit.html')
     return depart.base_list()
 
 
@@ -193,7 +209,7 @@ def department_new():
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
 def department_edit(url_parameter):
-    depart = BaseEntity('department', url_param=url_parameter)
+    depart = DepartmentEntity('department', template_edit='department_edit.html',url_param=url_parameter)
     try:
         return depart.base_edit()
     except NoEntityFoundException:
@@ -203,7 +219,7 @@ def department_edit(url_parameter):
 
 @app.route('/users/')
 def users():
-    users = BaseEntity('user', template_edit='user_edit.html')
+    users = UserEntity('user', template_edit='user_edit.html')
     return users.base_list('surname')
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
@@ -217,17 +233,17 @@ def user_edit(url_parameter):
 
 @app.route('/users/new/', methods=['GET', 'POST'])
 def user_new():
-    users = UserEntity('user', template_edit='user_edit.html')
+    users = UserEntity('user')
     return users.base_new()
  
 @app.route('/hardware/')
 def hardwares():
-    hard = BaseEntity('hardware')
+    hard = HardwareEntity('hardware', template_edit='hardware_edit.html')
     return hard.base_list('name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
-    hard = BaseEntity('hardware', url_param=url_parameter)
+    hard = HardwareEntity('hardware', template_edit='hardware_edit.html', url_param=url_parameter)
     try:
         return hard.base_edit()
     except NoEntityFoundException:
@@ -236,7 +252,7 @@ def hardware_edit(url_parameter):
 
 @app.route('/hardware/new/', methods=['GET', 'POST'])
 def hardware_new():
-    hard = BaseEntity('hardware')
+    hard = HardwareEntity('hardware')
     return hard.base_new()
  
 

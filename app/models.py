@@ -9,6 +9,7 @@ class User(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     hardware_items = db.relationship('Hardware', backref='user', lazy='dynamic')
 
+
     def __repr__(self):
         return '{} {}'.format(self.surname, self.name)
 
@@ -40,7 +41,7 @@ class Hardware(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer)
-    software_items = db.relationship('Software', backref='comp', lazy='dynamic')
+    software_items = db.relationship('Software', backref='hardware', lazy='dynamic')
 
     def __repr__(self):
         return self.name
@@ -60,5 +61,5 @@ class Software(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name_en), (self.comp, '/hardware/' + str(self.comp)), (self.comp.department, '/departments/' + str(self.comp.department)))
+        return ((self.name, self.name_en), (self.hardware, '/hardware/' + str(self.hardware)), (self.hardware.department, '/departments/' + str(self.hardware.department)))
 
