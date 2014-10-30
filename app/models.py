@@ -16,6 +16,9 @@ class User(db.Model):
     def repr_list(self):
         return (('{} {}'.format(self.surname, self.name), self.name_en), (self.login, ), (self.department,'/departments/'+str(self.department)))
 
+    def get_path(self):
+        return '/users/'
+
 
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -31,6 +34,9 @@ class Department(db.Model):
     def repr_list(self):
         return ((self.name, self.name_en),)
 
+    def get_path(self):
+        return '/departments/'
+
 class Hardware(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
@@ -42,12 +48,16 @@ class Hardware(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer)
     software_items = db.relationship('Software', backref='hardware', lazy='dynamic')
+    hardware_type = db.Column(db.Integer, index = True)
 
     def __repr__(self):
         return self.name
 
     def repr_list(self):
         return ((self.name, self.name_en), (self.model, ), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
+
+    def get_path(self):
+        return '/hardware/'
 
 class Software(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -62,4 +72,7 @@ class Software(db.Model):
 
     def repr_list(self):
         return ((self.name, self.name_en), (self.hardware, '/hardware/' + str(self.hardware)), (self.hardware.department, '/departments/' + str(self.hardware.department)))
+
+    def get_path(self):
+        return '/software/'
 

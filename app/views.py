@@ -3,7 +3,8 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from app import app, db
 from models import User, Department, Hardware, Software
-from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm, STATUS_INUSE, STATUS_FREE
+from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm, STATUS_INUSE, STATUS_FREE, HARDWARE_DESKTOP,\
+    HARDWARE_NOTEBOOK, HARDWARE_UPS, HARDWARE_MONITOR, HARDWARE_PRINTER, HARDWARE_SCANNER
 import re
 import types
 
@@ -157,11 +158,28 @@ class UserEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            rzlt[2]['user_hardware'] = rzlt[2]['_base_data'].hardware_items.all()
-            rzlt[2]['user_software'] = []
+            
+            user_software = []
+            computers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_DESKTOP]
+            notebooks = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_NOTEBOOK]
+            monitors = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_MONITOR]
+            upses = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_UPS]
+            
+            
+
             for item in rzlt[2]['_base_data'].hardware_items.all():
-                rzlt[2]['user_software'] += item.software_items.all()
-                    
+                user_software += item.software_items.all()
+                
+
+            rzlt[2]['blocks'] = {'Computers': computers,
+                                'Notebooks': notebooks,
+                                'Monitors': monitors,
+                                'Upses': upses,
+                                'Software': user_software
+                                }
+
+            rzlt[2]['blocks_order'] = ['Users', 'Computers', 'Notebooks', 'Monitors', 'Upses', 'Printers', 'Scanners', 'Software']
+            
         return rzlt
         
     def create_name(self, base_data, model):
@@ -171,19 +189,51 @@ class DepartmentEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(DepartmentEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            rzlt[2]['department_users'] = rzlt[2]['_base_data'].users.all()
-            print rzlt[2]['_base_data'].users.all()
-            rzlt[2]['department_hardware'] = rzlt[2]['_base_data'].hardware_items.all()
-            rzlt[2]['department_software'] = []
+            users = rzlt[2]['_base_data'].users.all()
+            
+
+            software = []
+            computers = []
+            notebooks = []
+            monitors = []
+            upses = []
+            printers = []
+            scanners = []
+
             for item in rzlt[2]['_base_data'].hardware_items.all():
-                rzlt[2]['department_software'] += item.software_items.all()
+                software += item.software_items.all()
+                if item.hardware_type == HARDWARE_DESKTOP:
+                    computers.append(item)
+                elif item.hardware_type == HARDWARE_NOTEBOOK:
+                    notebooks.append(item)
+                elif item.hardware_type == HARDWARE_MONITOR:
+                    monitors.append(item)
+                elif item.hardware_type == HARDWARE_UPS:
+                    upses.append(item)
+                elif item.hardware_type == HARDWARE_PRINTER:
+                    printers.append(item)
+                elif item.hardware_type == HARDWARE_SCANNER:
+                    scanners.append(item)
+
+            rzlt[2]['blocks'] = {'Users': users,
+                                'Computers': computers,
+                                'Notebooks': notebooks,
+                                'Monitors': monitors,
+                                'Upses': upses,
+                                'Printers': printers,
+                                "Scanners": scanners, 
+                                "Software": software
+                                }
+            rzlt[2]['blocks_order'] = ['Users', 'Computers', 'Notebooks', 'Monitors', 'Upses', 'Printers', 'Scanners', 'Software']
+
         return rzlt
 
 class HardwareEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(HardwareEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            rzlt[2]['hardware_software'] = rzlt[2]['_base_data'].software_items.all()
+            rzlt[2]['blocks'] = {'Software': rzlt[2]['_base_data'].software_items.all()}
+            rzlt[2]['blocks_order'] = ['Software']
             
         return rzlt
 
@@ -198,7 +248,7 @@ def index():
 
 @app.route('/departments/')
 def departments():
-    depart = BaseEntity('department', template_edit='department_edit.html')
+    depart = BaseEntity('department', template_edit='base_edit.html')
     return depart.base_list()
 
 
@@ -209,7 +259,7 @@ def department_new():
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
 def department_edit(url_parameter):
-    depart = DepartmentEntity('department', template_edit='department_edit.html',url_param=url_parameter)
+    depart = DepartmentEntity('department', template_edit='base_edit.html',url_param=url_parameter)
     try:
         return depart.base_edit()
     except NoEntityFoundException:
@@ -219,12 +269,12 @@ def department_edit(url_parameter):
 
 @app.route('/users/')
 def users():
-    users = UserEntity('user', template_edit='user_edit.html')
+    users = UserEntity('user', template_edit='base_edit.html')
     return users.base_list('surname')
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
 def user_edit(url_parameter):
-    users = UserEntity('user', template_edit='user_edit.html', url_param=url_parameter)
+    users = UserEntity('user', template_edit='base_edit.html', url_param=url_parameter)
     try:
         return users.base_edit()
     except NoEntityFoundException:
@@ -238,12 +288,12 @@ def user_new():
  
 @app.route('/hardware/')
 def hardwares():
-    hard = HardwareEntity('hardware', template_edit='hardware_edit.html')
+    hard = HardwareEntity('hardware', template_edit='base_edit.html')
     return hard.base_list('name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
-    hard = HardwareEntity('hardware', template_edit='hardware_edit.html', url_param=url_parameter)
+    hard = HardwareEntity('hardware', template_edit='base_edit.html', url_param=url_parameter)
     try:
         return hard.base_edit()
     except NoEntityFoundException:

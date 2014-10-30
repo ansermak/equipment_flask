@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
     <div id="div_page_name">
-       {{page_name|default('base_list')}}
+       {{data.page_name|default('base_list')}}
     </div>
 {% include '_entity_edit.html' %} 
 {% block edit_sub_content %}
+    {% if data.blocks %}
+        <div class="edit_helper">   
+            {% for elem in data.blocks_order %}
+                {% if data.blocks[elem] %}
+                    <div class="sub_edit_helper">
+                        {{elem}}
+                        {% for item in data.blocks[elem] %}
+                        <div id="{{item.name_en}}" class = "helper_item">
+                            <a href="{{item.get_path()}}{{item.name_en}}">{{item}}</a></div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 {% endblock %}
