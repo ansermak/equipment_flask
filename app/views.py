@@ -190,30 +190,17 @@ class DepartmentEntity(BaseEntity):
         rzlt = super(DepartmentEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             users = rzlt[2]['_base_data'].users.all()
-            
-
             software = []
-            computers = []
-            notebooks = []
-            monitors = []
-            upses = []
-            printers = []
-            scanners = []
 
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 software += item.software_items.all()
-                if item.hardware_type == HARDWARE_DESKTOP:
-                    computers.append(item)
-                elif item.hardware_type == HARDWARE_NOTEBOOK:
-                    notebooks.append(item)
-                elif item.hardware_type == HARDWARE_MONITOR:
-                    monitors.append(item)
-                elif item.hardware_type == HARDWARE_UPS:
-                    upses.append(item)
-                elif item.hardware_type == HARDWARE_PRINTER:
-                    printers.append(item)
-                elif item.hardware_type == HARDWARE_SCANNER:
-                    scanners.append(item)
+
+                computers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_DESKTOP]
+                notebooks = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_NOTEBOOK]
+                monitors = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_MONITOR]
+                upses = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_UPS]
+                scanners = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_SCANNER]
+                printers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_PRINTER]
 
             rzlt[2]['blocks'] = {'Users': users,
                                 'Computers': computers,
