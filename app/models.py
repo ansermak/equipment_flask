@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy.orm import backref
 
+
 class Owner(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(7), index = True, unique = True)
@@ -42,8 +43,12 @@ class Compware(db.Model):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name), 
-            (self.model, ), 
-            (self.owner, '/users/' + str(self.owner.login)))
+        rzlt = [(self.name, self.name), 
+            (self.model, )]
+        if self.owner is not None:
+            rzlt.append((self.owner, '/users/' + str(self.owner.login)))
+        else:
+            rzlt.append(('',''))
+        return rzlt
 
 

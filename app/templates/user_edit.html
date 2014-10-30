@@ -13,7 +13,7 @@
                      <div class="block-header"> -- free in department -- </div>
                      <div class="menu-body" id="free-in_dep">
                      {% for item in data.hard_free_in_depart %}
-                     <div id="{{item.name_en}}"class="dragndrop-element hardware-base">
+                     <div id="{{item.name}}"class="dragndrop-element hardware-base">
                          <img src="{{img}}"/><span>{{item.name}}</span>
                      </div>
                      {% endfor %}
@@ -24,7 +24,7 @@
                      <div class="block-header"> -- all free -- </div>
                      <div class="menu-body" id="free-all">
                      {% for item in data.hard_free %}
-                         <div id="{{item.name_en}}"class="dragndrop-element hardware-base">
+                         <div id="{{item.name}}"class="dragndrop-element hardware-base">
                              <img src="{{img}}"/><span>{{item.name}}</span>
                          </div>
                      {% endfor %}
@@ -39,7 +39,7 @@
                 <div class="menu-body" id="free-all">
                      <div class="block-header"> -- free software -- </div>
                      {% for item in data.soft_free %}
-                     <div id="{{item.name_en}}"class="dragndrop-element software-base">
+                     <div id="{{item.name}}"class="dragndrop-element software-base">
                          <img src="{{img}}"/><span>{{item.name}}</span>
                      </div>
                      {% endfor %}
@@ -64,11 +64,21 @@
                     <div class="block-header hardware-used">
                         -- uses hardware --
                     </div>
+                        {% for item in data.uses_hardw %}
+                         <div id="{{item.name}}"class="dragndrop-element hardware-used">
+                             <img src="{{img}}"/><span>{{item.name}}</span>
+                         </div>
+                        {% endfor %}
                 </div>
                 <div class="sub_used_stuff software">
                     <div class="block-header software-used">
                         -- uses software --
                     </div>
+                        {% for item in data.uses_soft %}
+                         <div id="{{item.name}}"class="dragndrop-element software-used">
+                             <img src="{{img}}"/><span>{{item.name}}</span>
+                         </div>
+                        {% endfor %}
                 </div>
             </div>
         </div>

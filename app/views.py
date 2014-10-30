@@ -4,6 +4,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from app import app, db
 from models import Owner, Compware
 from forms import UserForm, CompwareForm, DepartmentForm, STATUS_INUSE, STATUS_FREE
+from sqlalchemy import or_
 import re
 import types
 
@@ -69,25 +70,26 @@ class BaseEntity(object):
                                 else globals()[self.display_name + 'Form']
         self.entity_url = url_for(self.name + 's')
         self.entity_url_new = url_for(self.name + '_new')
-        self.entity_url_edit = self.name + '_edit'
+        self.entity_url_edit_txt = self.name + '_edit'
         self.template_list = template_list if template_list is not None \
                                            else 'base_list.html'
         self.template_edit = template_edit if template_edit is not None \
                                            else 'base_edit.html'
         self.url_param = url_param
         self.uniq_name = uniq_name if uniq_name is not None else 'name'
+        self.base_data = None
         if self.url_param:
-            self.entity_url_edit = url_for(self.entity_url_edit, 
+            self.entity_url_edit = url_for(self.entity_url_edit_txt, 
                                            url_parameter = self.url_param)
      
 
     def _save_data(self, base_data, form):
         for a,b in form.data.items():
             setattr(base_data, a,b)
-        # if base_data.name_en is None:
-        #     base_data.name_en = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
+        self.entity_url_edit = url_for(self.entity_url_edit_txt, 
+            url_parameter = getattr(base_data, self.uniq_name))
 
 
     def create_name(self, base_data, model):
@@ -108,9 +110,12 @@ class BaseEntity(object):
 
     def _save_validated_form(self, form):
         base_data = self._get_base_data()
+        self.base_data = base_data
         self._save_data(base_data, form)
         if request.values.get('submited') == 'Save & new':
             return self.entity_url_new
+        if request.values.get('submited') == 'Save & stay':
+            return self.entity_url_edit
         else:
             return self.entity_url
 
@@ -120,6 +125,7 @@ class BaseEntity(object):
         if form.validate_on_submit():
             return ('redirect', self._save_validated_form(form))
         base_data = self._get_base_data()
+        self.base_data = base_data
         if not form.errors:
             form = self.form(obj=base_data)
         return ('template', self.template_edit, {
@@ -153,12 +159,6 @@ class BaseEntity(object):
 
     def base_new(self):
         form = self.form()
-        print '========================='
-        print request.values
-        print form
-        print dir(form)
-        print form.data
-        print form.errors
         if form.validate_on_submit():
             return redirect(self._save_validated_form(form))
         else:
@@ -181,37 +181,50 @@ class UserEntity(BaseEntity):
         n = len(el_items)
         if n != len(status): return False
         for i in range(len(el_items)):
-            print el_items[i]
+            comp = Compware.query.filter(Compware.name==el_items[i]).first()
+            if status[i] == 'free':
+                comp.owner_id=None
+                comp.state=STATUS_FREE
+            else:
+                comp.owner_id=self.base_data.id
+                comp.state=STATUS_INUSE
+        db.session.commit()
 
 
     def _prepare_base_edit(self):
+        rzlt = super(UserEntity, self)._prepare_base_edit()
         self._save_electronic_items(
             request.values.getlist('electronic_item'),
             request.values.getlist('status'))
-        rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             rzlt[2]['hard_free_in_depart'] = Compware.query.filter(
                     Compware.owner_id == rzlt[2]['_base_data'].parent_id,
-                    Compware.state == STATUS_FREE).all()
+                    Compware.state == STATUS_FREE,
+                    Compware.type_ == 0).all()
             rzlt[2]['hard_free'] = Compware.query.filter(
-                    Compware.owner_id != rzlt[2]['_base_data'].parent_id,
-                    Compware.state == STATUS_FREE).all()
+                    or_(Compware.owner_id != rzlt[2]['_base_data'].parent_id,
+                        Compware.owner_id == None),
+                    Compware.state == STATUS_FREE,
+                    Compware.type_ == 0).all()
             rzlt[2]['soft_free'] = Compware.query.filter(
-                    Compware.state == STATUS_FREE
-                    #! on free comps
+                    Compware.state == STATUS_FREE,
+                    Compware.type_ == 1
                     )
+            rzlt[2]['uses_soft'] = Compware.query.filter(
+                    Compware.owner_id == self.base_data.id,
+                    Compware.type_ == 1
+                    )
+            rzlt[2]['uses_hardw'] = Compware.query.filter(
+                    Compware.owner_id == self.base_data.id,
+                    Compware.type_ == 0
+                    )
+            # from flask.ext.sqlalchemy import get_debug_queries
+            # for i in get_debug_queries():
+            #    print i
         return rzlt
     
 
-    def _save_validated_form(self, form):
-        base_data = self._get_base_data()
-        self._save_data(base_data, form)
-        if request.values.get('submited') == 'Save & new':
-            return self.entity_url_new
-        else:
-            return self.entity_url
-
-        
+            
     def create_name(self, base_data, model):
         return entity_uniq_name('{} {}'.format(base_data.surname, base_data.name), model)
 
@@ -223,6 +236,26 @@ class DepartmentEntity(BaseEntity):
         super(DepartmentEntity, self).__init__('department',
                 model=Owner, query=query, uniq_name='login',
                 url_param=url_param)
+
+
+class CompwareEntity(BaseEntity):
+
+    def _save_data(self, base_data, form):
+        super(CompwareEntity, self)._save_data(base_data, form)
+        
+        # creating new name for software item (model + serial) 
+        # if name is not uniq.
+
+        if base_data.type_ == 1:
+            base_data.name = ' '.join([base_data.model, base_data.serial])
+            db.session.add(base_data)
+            db.session.commit()
+
+        self.entity_url_edit = url_for(self.entity_url_edit_txt, 
+            url_parameter = getattr(base_data, self.uniq_name))
+
+                
+
 
 
 @app.route('/')
@@ -274,13 +307,13 @@ def user_new():
  
 @app.route('/compwares/')
 def compwares():
-    hard = BaseEntity('compware')
+    hard = CompwareEntity('compware')
     return hard.base_list('name')
 
 @app.route('/compwares/<url_parameter>/', methods=['GET', 'POST'])
 def compware_edit(url_parameter):
 
-    hard = BaseEntity('compware', url_param=url_parameter)
+    hard = CompwareEntity('compware', url_param=url_parameter)
     try:
         return hard.base_edit()
     except NoEntityFoundException:
@@ -289,7 +322,7 @@ def compware_edit(url_parameter):
 
 @app.route('/compwares/new/', methods=['GET', 'POST'])
 def compware_new():
-    hard = BaseEntity('compware')
+    hard = CompwareEntity('compware')
     return hard.base_new()
  
  

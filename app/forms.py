@@ -32,7 +32,7 @@ class DepartmentForm(Form):
             NoneOf([''], 'cannot be empty', None)])
 
 class CompwareForm(Form):
-    fields_order = ['serial', 'inventory', 'model', 'name', 'owner_id', 'state']
+    fields_order = ['serial', 'inventory', 'model', 'name', 'owner_id', 'state', 'type_']
     serial = StringField('serial', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
     inventory = StringField('inventory', validators=[DataRequired(), 
@@ -49,6 +49,11 @@ class CompwareForm(Form):
                         (STATUS_REPAIR, 'Under repair'), 
                         (STATUS_FREE, 'Free'),
             ])
+    type_ = SelectField('type',
+            coerce=int,
+            choices=[(0, 'hardware'),
+                (1, 'software')
+                ])
   
     def __init__(self, *args, **kwargs):
         super(CompwareForm, self).__init__(*args, **kwargs)
