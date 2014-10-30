@@ -195,12 +195,12 @@ class DepartmentEntity(BaseEntity):
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 software += item.software_items.all()
 
-                computers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_DESKTOP]
-                notebooks = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_NOTEBOOK]
-                monitors = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_MONITOR]
-                upses = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_UPS]
-                scanners = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_SCANNER]
-                printers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_PRINTER]
+            computers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_DESKTOP]
+            notebooks = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_NOTEBOOK]
+            monitors = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_MONITOR]
+            upses = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_UPS]
+            scanners = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_SCANNER]
+            printers = [item for item in rzlt[2]['_base_data'].hardware_items.all() if item.hardware_type == HARDWARE_PRINTER]
 
             rzlt[2]['blocks'] = {'Users': users,
                                 'Computers': computers,
@@ -211,6 +211,7 @@ class DepartmentEntity(BaseEntity):
                                 "Scanners": scanners, 
                                 "Software": software
                                 }
+            print rzlt[2]['blocks']
             rzlt[2]['blocks_order'] = ['Users', 'Computers', 'Notebooks', 'Monitors', 'Upses', 'Printers', 'Scanners', 'Software']
 
         return rzlt
