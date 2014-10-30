@@ -65,7 +65,9 @@ $(document).ready(function(){
         text += create_input_fields(hard_used, 'used'); 
 
         var form = document.forms[0]
-        form.innerHTML += text;
+        var div = document.createElement('div')
+        div.innerHTML = text;
+        form.appendChild(div);
         return true;
     });
 

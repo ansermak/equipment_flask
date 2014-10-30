@@ -1,64 +1,49 @@
 from app import db
+from sqlalchemy.orm import backref
 
-class User(db.Model):
+class Owner(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(7), index = True, unique = True)
     name = db.Column(db.String(20), index = True)
-    name_en = db.Column(db.String(41), index = True, unique=True)   
     surname = db.Column(db.String(20), index = True)
-    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
-    hardware_items = db.relationship('Hardware', backref='user', lazy='dynamic')
+    parent_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
+    workers = db.relationship('Owner',
+                              backref=backref("department", remote_side=[id]))
+    comp_items = db.relationship('Compware', backref='owner', lazy='dynamic')
 
     def __repr__(self):
-        return '{} {}'.format(self.surname, self.name)
+        if self.parent_id is not None: # if None - this is department
+            rzlt = '{} {}'.format(self.surname, self.name)
+        else:
+            rzlt  = self.login
+        return rzlt
 
     def repr_list(self):
-        return (('{} {}'.format(self.surname, self.name), self.name_en), (self.login, ), (self.department,'/departments/'+str(self.department)))
+        if self.parent_id is not None: 
+            return (('{} {}'.format(self.surname, self.name), self.login),
+                (self.login, ),
+                (self.department,'/departments/'+str(self.department)))
+        else:
+            return ((self.login, self.login),)
 
 
-class Department(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20), index = True)   
-    name_en = db.Column(db.String(20), index = True, unique=True)   
-    users = db.relationship('User', backref='department', lazy='dynamic')
-    hardware_items = db.relationship('Hardware', backref='department', lazy='dynamic')
-    
-
-    def __repr__(self):
-        return self.name
-
-    def repr_list(self):
-        return ((self.name, self.name_en),)
-
-class Hardware(db.Model):
+class Compware(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
     inventory = db.Column(db.Integer, index = True, unique = True)
     name = db.Column(db.String(100))
-    name_en = db.Column(db.String(100), index = True, unique=True)   
     model = db.Column(db.String(100))
-    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
     state = db.Column(db.Integer)
-    software_items = db.relationship('Software', backref='comp', lazy='dynamic')
+    type_ = db.Column(db.Integer) # '_' added according to pep8
+    computer = db.Column(db.Integer, db.ForeignKey('compware.id'))
 
     def __repr__(self):
         return self.name
 
     def repr_list(self):
-        return ((self.name, self.name_en), (self.model, ), (self.department, '/departments/'+str(self.department)), (self.user, '/users/' + str(self.user.name_en)))
+        return ((self.name, self.name), 
+            (self.model, ), 
+            (self.owner, '/users/' + str(self.owner.login)))
 
-class Software(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(100), index = True)
-    name_en = db.Column(db.String(100), index = True, unique=True)   
-    serial = db.Column(db.String, index = True, unique = True)
-    comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
-    state = db.Column(db.Integer)
-
-    def __repr__(self):
-        return self.name
-
-    def repr_list(self):
-        return ((self.name, self.name_en), (self.comp, '/hardware/' + str(self.comp)), (self.comp.department, '/departments/' + str(self.comp.department)))
 
