@@ -7,7 +7,7 @@
 {% block edit_sub_content %}
     {% if data.blocks %}
         <div class="edit_helper">   
-            {% for elem in data.blocks_order %}
+            {% for elem in data['_base_data'].order %}
                 {% if data.blocks[elem] %}
                     <div class="sub_edit_helper">
                         {{elem}}

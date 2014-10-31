@@ -193,16 +193,6 @@ class UserEntity(BaseEntity):
                                 'Upses': upses,
                                 'Software': user_software
                                 }
-
-            rzlt[2]['blocks_order'] = [
-                'Users', 
-                'Computers', 
-                'Notebooks', 
-                'Monitors', 
-                'Upses', 
-                'Printers', 
-                'Scanners', 
-                'Software']
             
         return rzlt
         
@@ -248,16 +238,6 @@ class DepartmentEntity(BaseEntity):
                                 "Scanners": scanners, 
                                 "Software": software
                                 }
-            print rzlt[2]['blocks']
-            rzlt[2]['blocks_order'] = [
-                'Users', 
-                'Computers', 
-                'Notebooks', 
-                'Monitors', 
-                'Upses', 
-                'Printers', 
-                'Scanners', 
-                'Software']
 
         return rzlt
 
@@ -267,7 +247,6 @@ class HardwareEntity(BaseEntity):
         if rzlt[0] == 'template':
             rzlt[2]['blocks'] = {'Software': rzlt[2][
                 '_base_data'].software_items.all()}
-            rzlt[2]['blocks_order'] = ['Software']
             
         return rzlt
 
