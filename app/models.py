@@ -1,6 +1,17 @@
 from app import db
 
-class User(db.Model):
+class BaseClass(object):
+    order = [
+                'Users', 
+                'Computers', 
+                'Notebooks', 
+                'Monitors', 
+                'Upses', 
+                'Printers', 
+                'Scanners', 
+                'Software']
+
+class User(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(7), index = True, unique = True)
     name = db.Column(db.String(20), index = True)
@@ -22,7 +33,7 @@ class User(db.Model):
         return '/users/{}'.format(self.name_en)
 
 
-class Department(db.Model):
+class Department(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
     name_en = db.Column(db.String(20), index = True, unique=True)   
@@ -40,7 +51,7 @@ class Department(db.Model):
     def get_path(self):
         return '/departments/{}'.format(self.name_en)
 
-class Hardware(db.Model):
+class Hardware(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
     inventory = db.Column(db.Integer, index = True, unique = True)
@@ -64,7 +75,7 @@ class Hardware(db.Model):
     def get_path(self):
         return '/hardware/{}'.format(self.name_en)
 
-class Software(db.Model):
+class Software(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
     name_en = db.Column(db.String(100), index = True, unique=True)   
