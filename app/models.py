@@ -79,7 +79,7 @@ class Software(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
     name_en = db.Column(db.String(100), index = True, unique=True)   
-    serial = db.Column(db.String, index = True, unique = True)
+    serial = db.Column(db.String, index = True)
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
 
