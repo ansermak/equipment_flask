@@ -96,7 +96,7 @@ class BaseEntity(object):
             base_data = self.model.query.filter(
                     self.model.name_en==self.url_param).first()
             if base_data is None:
-                raise NoEntityFoundExceotion(
+                raise NoEntityFoundException(
                     'no instanse of {} with name_en=="{}" found'.format(
                         self.model.__name__, self.url_param))
         else:
