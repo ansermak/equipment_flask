@@ -13,7 +13,7 @@
                         {{elem}}
                         {% for item in data.blocks[elem] %}
                         <div id="{{item.name_en}}" class = "helper_item">
-                            <a href="{{item.get_path()}}{{item.name_en}}">{{item}}</a></div>
+                            <a href="{{item.get_path()}}">{{item}}</a></div>
                         {% endfor %}
                     </div>
                 {% endif %}

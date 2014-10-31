@@ -3,9 +3,12 @@
             <tr>
                 {% for field in item.repr_list() %}
                 {% if field|length > 1 %}
-                    <td><a class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<a></td>
+                    <td><a class="div_a main_list_item" 
+                        href="{{field[0].get_path()}}">{{field[0]}}</a></td>
                 {% else %}
-                    <td><div class="div_a main_list_item" href="{{field[1]}}">{{field[0]}}<div></td>
+                    <td>
+                        <div class="div_a main_list_item" >{{field[0]}}<div>
+                    </td>
                 {% endif %}
                 {% endfor%}
             </tr>
