@@ -250,6 +250,10 @@ class HardwareEntity(BaseEntity):
             
         return rzlt
 
+class SoftwareEntity(BaseEntity):
+    def create_name(self, base_data, model):
+        softCounter = db.session.query(db.func.max(model.id)).scalar() + 1
+        return entity_uniq_name('software_item_{}'.format(softCounter), model)
 
 
 
