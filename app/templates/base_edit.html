@@ -10,7 +10,7 @@
             {% for elem in data['_base_data'].order %}
                 {% if data.blocks[elem] %}
                     <div class="sub_edit_helper">
-                        {{elem}}
+                        <p><b>{{elem.upper()}}</b></p>
                         {% for item in data.blocks[elem] %}
                         <div id="{{item.view_name}}" class = "helper_item">
                             <a href="{{item.get_path()}}">{{item}}</a></div>
