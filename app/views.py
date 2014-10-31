@@ -23,22 +23,22 @@ def replace_other_chars(string):
 
 
 def entity_uniq_name(name, model):
-    """Creates uniq name_en for entity (model of entity should have fields 
-    name and name_en):
-    transliterates name and if such name_en exists in database
+    """Creates uniq view_name for entity (model of entity should have fields 
+    name and view_name):
+    transliterates name and if such view_name exists in database
     adds underline and first free number
     """
-    name_en = replace_other_chars(name)
-    cnt = model.query.filter(model.name_en==name_en).count()
+    view_name = replace_other_chars(name)
+    cnt = model.query.filter(model.view_name==view_name).count()
     if cnt > 0:
         i = 0
         while cnt > 0:
             i += 1
-            cnt = model.query.filter(model.name_en=='{}_{}'.format(name_en,
+            cnt = model.query.filter(model.view_name=='{}_{}'.format(view_name,
                 i)).count()
-        rzlt = '{}_{}'.format(name_en, i)
+        rzlt = '{}_{}'.format(view_name, i)
     else:
-        rzlt = name_en
+        rzlt = view_name
     return rzlt
 
 
@@ -54,7 +54,7 @@ class NoEntityFoundException(Exception):
 # class should be a child of object 'object' to weork with 'super' func
 
 class BaseEntity(object):
-    """ Entity model should have fields name and name_en. 
+    """ Entity model should have fields name and view_name. 
     Second one is used for generating url"""
 
 
@@ -83,8 +83,8 @@ class BaseEntity(object):
     def _save_data(self, base_data, form):
         for a,b in form.data.items():
             setattr(base_data, a,b)
-        if base_data.name_en is None:
-            base_data.name_en = self.create_name(base_data, self.model)
+        if base_data.view_name is None:
+            base_data.view_name = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
 
@@ -94,10 +94,10 @@ class BaseEntity(object):
     def _get_base_data(self):
         if self.url_param is not None:
             base_data = self.model.query.filter(
-                    self.model.name_en==self.url_param).first()
+                    self.model.view_name==self.url_param).first()
             if base_data is None:
                 raise NoEntityFoundException(
-                    'no instanse of {} with name_en=="{}" found'.format(
+                    'no instanse of {} with view_name=="{}" found'.format(
                         self.model.__name__, self.url_param))
         else:
             base_data = self.model()
@@ -252,10 +252,10 @@ class HardwareEntity(BaseEntity):
 
 class SoftwareEntity(BaseEntity):
     def create_name(self, base_data, model):
-        softCounter = db.session.query(db.func.max(model.id)).scalar() + 1
+        softCounter = db.session.query(db.func.max(model.id)).scalar()
+        softCounter = softCounter + 1 if softCounter else 1 
+
         return entity_uniq_name('software_item_{}'.format(softCounter), model)
-
-
 
 @app.route('/')
 @app.route('/index')
@@ -331,12 +331,12 @@ def hardware_new():
 
 @app.route('/software/')
 def softwares():
-    soft = BaseEntity('software')
+    soft = SoftwareEntity('software')
     return soft.base_list('name')
 
 @app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
 def software_edit(url_parameter):
-    soft = BaseEntity('software', url_param=url_parameter)
+    soft = SoftwareEntity('software', url_param=url_parameter)
     try:
         return soft.base_edit()
     except NoEntityFoundException:
@@ -345,7 +345,7 @@ def software_edit(url_parameter):
 
 @app.route('/software/new/', methods=['GET', 'POST'])
 def software_new():
-    soft = BaseEntity('software')
+    soft = SoftwareEntity('software')
     return soft.base_new()
  
 @app.errorhandler(404)

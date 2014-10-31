@@ -97,8 +97,7 @@ class SoftwareForm(Form):
 
     name = StringField('name', validators=[DataRequired(), 
     NoneOf([''], 'cannot be empty', None)])
-    serial = StringField('serial', validators=[DataRequired(), 
-        NoneOf([''], 'cannot be empty', None)])
+    serial = StringField('serial')
     comp_id = SelectField('comp', choices=[],coerce=int, 
         validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])

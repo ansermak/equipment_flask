@@ -12,7 +12,7 @@
                     <div class="sub_edit_helper">
                         {{elem}}
                         {% for item in data.blocks[elem] %}
-                        <div id="{{item.name_en}}" class = "helper_item">
+                        <div id="{{item.view_name}}" class = "helper_item">
                             <a href="{{item.get_path()}}">{{item}}</a></div>
                         {% endfor %}
                     </div>

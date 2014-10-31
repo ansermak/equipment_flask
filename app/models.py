@@ -15,7 +15,7 @@ class User(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(7), index = True, unique = True)
     name = db.Column(db.String(20), index = True)
-    name_en = db.Column(db.String(41), index = True, unique=True)   
+    view_name = db.Column(db.String(41), index = True, unique=True)   
     surname = db.Column(db.String(20), index = True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     hardware_items = db.relationship('Hardware', backref='user', 
@@ -30,13 +30,13 @@ class User(db.Model, BaseClass):
         return ((self, 1), (self.login, ), (self.department, 1))
 
     def get_path(self):
-        return '/users/{}'.format(self.name_en)
+        return '/users/{}'.format(self.view_name)
 
 
 class Department(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
-    name_en = db.Column(db.String(20), index = True, unique=True)   
+    view_name = db.Column(db.String(20), index = True, unique=True)   
     users = db.relationship('User', backref='department', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', 
         lazy='dynamic')
@@ -49,14 +49,14 @@ class Department(db.Model, BaseClass):
         return ((self, 1),)
 
     def get_path(self):
-        return '/departments/{}'.format(self.name_en)
+        return '/departments/{}'.format(self.view_name)
 
 class Hardware(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
     inventory = db.Column(db.Integer, index = True, unique = True)
     name = db.Column(db.String(100))
-    name_en = db.Column(db.String(100), index = True, unique=True)   
+    view_name = db.Column(db.String(100), index = True, unique=True)   
     model = db.Column(db.String(100))
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -73,12 +73,12 @@ class Hardware(db.Model, BaseClass):
          (self.user, 1))
 
     def get_path(self):
-        return '/hardware/{}'.format(self.name_en)
+        return '/hardware/{}'.format(self.view_name)
 
 class Software(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
-    name_en = db.Column(db.String(100), index = True, unique=True)   
+    view_name = db.Column(db.String(100), index = True, unique=True)   
     serial = db.Column(db.String, index = True)
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
@@ -91,5 +91,5 @@ class Software(db.Model, BaseClass):
             (self.hardware.department, 1))
 
     def get_path(self):
-        return '/software/{}'.format(self.name_en)
+        return '/software/{}'.format(self.view_name)
 
