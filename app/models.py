@@ -10,6 +10,9 @@ class BaseClass(object):
                 'Printers', 
                 'Scanners', 
                 'Software']
+    
+    def __repr__(self):
+        return self.name
 
 class User(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
@@ -71,9 +74,6 @@ class Department(db.Model, BaseClass):
         Department.id==Hardware.department_id, Hardware.hardware_type==5)",
         backref="printers_department", lazy='dynamic')
 
-    def __repr__(self):
-        return self.name
-
     def repr_list(self):
         return ((self, 1),)
 
@@ -94,9 +94,6 @@ class Hardware(db.Model, BaseClass):
         lazy='dynamic')
     hardware_type = db.Column(db.Integer, index = True)
 
-    def __repr__(self):
-        return self.name
-
     def repr_list(self):
         return ((self, 1), (self.model, ), (self.department, 1),
          (self.user, 1))
@@ -111,9 +108,6 @@ class Software(db.Model, BaseClass):
     serial = db.Column(db.String, index = True)
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
-
-    def __repr__(self):
-        return self.name
 
     def repr_list(self):
         return ((self, 1), (self.hardware, 1), 
