@@ -20,6 +20,18 @@ class User(db.Model, BaseClass):
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     hardware_items = db.relationship('Hardware', backref='user', 
         lazy='dynamic')
+    computers = db.relationship('Hardware', primaryjoin="and_(\
+        User.id==Hardware.user_id, Hardware.hardware_type==1)", 
+        backref='comp_owner', lazy='dynamic')
+    monitors = db.relationship('Hardware', primaryjoin="and_(\
+        User.id==Hardware.user_id, Hardware.hardware_type==3)",
+        backref="monitor_owner", lazy='dynamic')
+    notebooks = db.relationship('Hardware', primaryjoin="and_(\
+        User.id==Hardware.user_id, Hardware.hardware_type==2)",
+        backref="notebooks_owner", lazy='dynamic')
+    upses = db.relationship('Hardware', primaryjoin="and_(\
+        User.id==Hardware.user_id, Hardware.hardware_type==4)",
+        backref="upses_owner", lazy='dynamic')
 
 
     def __repr__(self):
@@ -40,7 +52,24 @@ class Department(db.Model, BaseClass):
     users = db.relationship('User', backref='department', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', 
         lazy='dynamic')
-    
+    computers = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==1)", 
+        backref='comp_odepartment', lazy='dynamic')
+    monitors = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==3)",
+        backref="monitor_department", lazy='dynamic')
+    notebooks = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==2)",
+        backref="notebooks_department", lazy='dynamic')
+    upses = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==4)",
+        backref="upses_department", lazy='dynamic')
+    scanners = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==6)",
+        backref="scanners_department", lazy='dynamic')
+    printers = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==5)",
+        backref="printers_department", lazy='dynamic')
 
     def __repr__(self):
         return self.name

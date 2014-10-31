@@ -1,3 +1,3 @@
 #!../flask/bin/python
 from app import app
-app.run(port = 5020, debug = True)
+app.run(debug = True)

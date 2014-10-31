@@ -168,20 +168,10 @@ class UserEntity(BaseEntity):
         if rzlt[0] == 'template':
             
             user_software = []
-            computers = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_DESKTOP]
-            notebooks = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_NOTEBOOK]
-            monitors = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_MONITOR]
-            upses = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_UPS]
-            
-            
+            computers = rzlt[2]['_base_data'].computers.all()
+            notebooks = rzlt[2]['_base_data'].notebooks.all()
+            monitors = rzlt[2]['_base_data'].monitors.all()
+            upses = rzlt[2]['_base_data'].upses.all()            
 
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 user_software += item.software_items.all()
@@ -210,24 +200,12 @@ class DepartmentEntity(BaseEntity):
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 software += item.software_items.all()
 
-            computers = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_DESKTOP]
-            notebooks = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_NOTEBOOK]
-            monitors = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_MONITOR]
-            upses = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_UPS]
-            scanners = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_SCANNER]
-            printers = [item for item in rzlt[2][
-                '_base_data'].hardware_items.all() \
-                if item.hardware_type == HARDWARE_PRINTER]
+            computers = rzlt[2]['_base_data'].computers.all()
+            notebooks = rzlt[2]['_base_data'].notebooks.all()
+            monitors = rzlt[2]['_base_data'].monitors.all()
+            upses = rzlt[2]['_base_data'].upses.all()
+            scanners = rzlt[2]['_base_data'].monitors.all()
+            printers = rzlt[2]['_base_data'].printers.all()
 
             rzlt[2]['blocks'] = {'Users': users,
                                 'Computers': computers,

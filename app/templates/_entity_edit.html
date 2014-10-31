@@ -2,7 +2,7 @@
     {{data.form.hidden_tag()}}
     <table>
       {% for item in data.form.fields_order %}
-      <tr><td>{{data.form[item].label}}</td><td>{{data.form[item]}}</td><td>
+      <tr><td><b>{{data.form[item].label}}</b></td><td>{{data.form[item]}}</td><td>
           {% for i in data.form.errors[item] %}
              <span style="color: red;">[{{i}}]</span>
           {% endfor %}</td>

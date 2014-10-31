@@ -5,6 +5,8 @@
     </div>
 {% include '_entity_edit.html' %} 
 {% block edit_sub_content %}
+{#{{data['_base_data'].computers}}
+{{data['_base_data'].hardware_items}}#}
     {% if data.blocks %}
         <div class="edit_helper">   
             {% for elem in data['_base_data'].order %}
