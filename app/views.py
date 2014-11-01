@@ -167,20 +167,16 @@ class UserEntity(BaseEntity):
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             
-            user_software = []
-            computers = rzlt[2]['_base_data'].computers.all()
-            notebooks = rzlt[2]['_base_data'].notebooks.all()
-            monitors = rzlt[2]['_base_data'].monitors.all()
-            upses = rzlt[2]['_base_data'].upses.all()            
+            user_software = []          
 
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 user_software += item.software_items.all()
                 
 
-            rzlt[2]['blocks'] = {'Computers': computers,
-                                'Notebooks': notebooks,
-                                'Monitors': monitors,
-                                'Upses': upses,
+            rzlt[2]['blocks'] = {'Computers': rzlt[2]['_base_data'].computers.all(),
+                                'Notebooks': rzlt[2]['_base_data'].notebooks.all(),
+                                'Monitors': rzlt[2]['_base_data'].monitors.all(),
+                                'Upses': rzlt[2]['_base_data'].upses.all(),
                                 'Software': user_software
                                 }
             
@@ -200,20 +196,13 @@ class DepartmentEntity(BaseEntity):
             for item in rzlt[2]['_base_data'].hardware_items.all():
                 software += item.software_items.all()
 
-            computers = rzlt[2]['_base_data'].computers.all()
-            notebooks = rzlt[2]['_base_data'].notebooks.all()
-            monitors = rzlt[2]['_base_data'].monitors.all()
-            upses = rzlt[2]['_base_data'].upses.all()
-            scanners = rzlt[2]['_base_data'].monitors.all()
-            printers = rzlt[2]['_base_data'].printers.all()
-
             rzlt[2]['blocks'] = {'Users': users,
-                                'Computers': computers,
-                                'Notebooks': notebooks,
-                                'Monitors': monitors,
-                                'Upses': upses,
-                                'Printers': printers,
-                                "Scanners": scanners, 
+                                'Computers': rzlt[2]['_base_data'].computers.all(),
+                                'Notebooks': rzlt[2]['_base_data'].notebooks.all(),
+                                'Monitors': rzlt[2]['_base_data'].monitors.all(),
+                                'Upses': rzlt[2]['_base_data'].upses.all(),
+                                'Printers': rzlt[2]['_base_data'].printers.all(),
+                                "Scanners": rzlt[2]['_base_data'].scanners.all(), 
                                 "Software": software
                                 }
 
