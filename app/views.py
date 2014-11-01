@@ -166,21 +166,22 @@ class UserEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            
-            user_software = []          
-
-            for item in rzlt[2]['_base_data'].hardware_items.all():
-                user_software += item.software_items.all()
-                
-
-            rzlt[2]['blocks'] = {'Computers': rzlt[2]['_base_data'].computers.all(),
-                                'Notebooks': rzlt[2]['_base_data'].notebooks.all(),
-                                'Monitors': rzlt[2]['_base_data'].monitors.all(),
-                                'Upses': rzlt[2]['_base_data'].upses.all(),
-                                'Software': user_software
-                                }
+            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
             
         return rzlt
+
+    def get_blocks(self, result):
+        user_software = []          
+        for item in result['_base_data'].hardware_items.all():
+            user_software += item.software_items.all()
+
+        return {
+            'Computers': result['_base_data'].computers.all(),
+            'Notebooks': result['_base_data'].notebooks.all(),
+            'Monitors': result['_base_data'].monitors.all(),
+            'Upses': result['_base_data'].upses.all(),
+            'Software': user_software 
+        }
         
     def create_name(self, base_data, model):
         return entity_uniq_name('{} {}'.format(base_data.surname,
@@ -190,32 +191,36 @@ class DepartmentEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(DepartmentEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            users = rzlt[2]['_base_data'].users.all()
-            software = []
-
-            for item in rzlt[2]['_base_data'].hardware_items.all():
-                software += item.software_items.all()
-
-            rzlt[2]['blocks'] = {'Users': users,
-                                'Computers': rzlt[2]['_base_data'].computers.all(),
-                                'Notebooks': rzlt[2]['_base_data'].notebooks.all(),
-                                'Monitors': rzlt[2]['_base_data'].monitors.all(),
-                                'Upses': rzlt[2]['_base_data'].upses.all(),
-                                'Printers': rzlt[2]['_base_data'].printers.all(),
-                                "Scanners": rzlt[2]['_base_data'].scanners.all(), 
-                                "Software": software
-                                }
+            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
 
         return rzlt
+
+    def get_blocks(self, result):
+        user_software = []          
+        for item in result['_base_data'].hardware_items.all():
+            user_software += item.software_items.all()
+
+        return {
+            'Users': result['_base_data'].users.all(),
+            'Computers': result['_base_data'].computers.all(),
+            'Notebooks': result['_base_data'].notebooks.all(),
+            'Monitors': result['_base_data'].monitors.all(),
+            'Upses': result['_base_data'].upses.all(),
+            'Scanners': result['_base_data'].scanners.all(),
+            'Printers': result['_base_data'].printers.all(),
+            'Software': user_software 
+        }
 
 class HardwareEntity(BaseEntity):
     def _prepare_base_edit(self):
         rzlt = super(HardwareEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
-            rzlt[2]['blocks'] = {'Software': rzlt[2][
-                '_base_data'].software_items.all()}
+            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
             
         return rzlt
+
+    def get_blocks(self, result):
+        return {'Software': result['_base_data'].software_items.all()}
 
 class SoftwareEntity(BaseEntity):
     def create_name(self, base_data, model):
