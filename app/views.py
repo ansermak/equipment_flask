@@ -188,6 +188,23 @@ class UserEntity(BaseEntity):
             base_data.name), model)
 
 class DepartmentEntity(BaseEntity):
+    def _save_data(self, base_data, form):
+        super(DepartmentEntity, self)._save_data(base_data, form)
+        department_id = base_data.id
+        if base_data.id is None:
+            department_counter = db.session.query(db.func.max(Department.id)).scalar()
+            department_id = department_counter + 1 if department_counter else 1 
+        department = Department.query.get(department_id)
+        u = User.query.get('surname' == '--{}--'.format(department.view_name))
+        if not u:
+            u = User(login = department.name, name='Department', 
+                department_id = department_id)
+        u.view_name = '--{}-- Department'.format(department.name)
+        u.surname = '--{}--'.format(department.name)
+        db.session.add(u)
+        db.session.commit()
+
+
     def _prepare_base_edit(self):
         rzlt = super(DepartmentEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
@@ -243,7 +260,7 @@ def departments():
 
 @app.route('/departments/new/', methods=['GET', 'POST'])
 def department_new():
-    depart = BaseEntity('department')
+    depart = DepartmentEntity('department')
     return depart.base_new()
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
@@ -282,7 +299,7 @@ def user_new():
 @app.route('/hardware/')
 def hardwares():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
-    return hard.base_list('name')
+    return hard.base_list('view_name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):

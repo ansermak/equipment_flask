@@ -12,8 +12,10 @@
                     <div class="sub_edit_helper">
                         <p><b>{{elem.upper()}}</b></p>
                         {% for item in data.blocks[elem] %}
+                        {% if item.view_name[0:2] != '--' %}
                         <div id="{{item.view_name}}" class = "helper_item">
                             <a href="{{item.get_path()}}">{{item}}</a></div>
+                        {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}

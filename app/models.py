@@ -52,12 +52,16 @@ class Department(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
     view_name = db.Column(db.String(20), index = True, unique=True)   
-    users = db.relationship('User', backref='department', lazy='dynamic')
+    users = db.relationship('User', backref='department',
+        lazy='dynamic')
+    department_user = db.relationship('User', primaryjoin="and_(\
+        Department.id==User.department_id, User.name.like('--%'))", 
+        backref='department_user', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', 
         lazy='dynamic')
     computers = db.relationship('Hardware', primaryjoin="and_(\
         Department.id==Hardware.department_id, Hardware.hardware_type==1)", 
-        backref='comp_odepartment', lazy='dynamic')
+        backref='comp_department', lazy='dynamic')
     monitors = db.relationship('Hardware', primaryjoin="and_(\
         Department.id==Hardware.department_id, Hardware.hardware_type==3)",
         backref="monitor_department", lazy='dynamic')
