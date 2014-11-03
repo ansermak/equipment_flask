@@ -197,12 +197,22 @@ class DepartmentEntity(BaseEntity):
             department_id = department_counter + 1 if department_counter else 1 
         department = Department.query.get(department_id)
         u = User.query.filter(User.did == department_id).first()
+        h = Hardware.query.filter(Hardware.did == department_id).first()
         if not u:
             u = User(login = department.name, name='', 
                 department_id = department_id, 
                 did = department_id)
+            h = Hardware(serial = department_id,
+                inventory = department_id, 
+                department_id = department_id,
+                did = department_id,
+                model = '--department--'
+                )
         u.view_name = '--{}--'.format(department.name)
         u.surname = '--{}--'.format(department.name)
+        h.name = '--{}--'.format(department.name)
+        h.view_name = '--{}--'.format(department.name)
+        db.session.add(h)
         db.session.add(u)
         db.session.commit()
 
