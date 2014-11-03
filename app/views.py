@@ -192,14 +192,16 @@ class DepartmentEntity(BaseEntity):
         super(DepartmentEntity, self)._save_data(base_data, form)
         department_id = base_data.id
         if base_data.id is None:
-            department_counter = db.session.query(db.func.max(Department.id)).scalar()
+            department_counter = db.session.query(db.func.max(Department.id)
+                ).scalar()
             department_id = department_counter + 1 if department_counter else 1 
         department = Department.query.get(department_id)
-        u = User.query.get('surname' == '--{}--'.format(department.view_name))
+        u = User.query.filter(User.did == department_id).first()
         if not u:
-            u = User(login = department.name, name='Department', 
-                department_id = department_id)
-        u.view_name = '--{}-- Department'.format(department.name)
+            u = User(login = department.name, name='', 
+                department_id = department_id, 
+                did = department_id)
+        u.view_name = '--{}--'.format(department.name)
         u.surname = '--{}--'.format(department.name)
         db.session.add(u)
         db.session.commit()

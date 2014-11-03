@@ -21,6 +21,7 @@ class User(db.Model, BaseClass):
     view_name = db.Column(db.String(41), index = True, unique=True)   
     surname = db.Column(db.String(20), index = True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    did = db.Column(db.Integer)
     hardware_items = db.relationship('Hardware', backref='user', 
         lazy='dynamic')
     computers = db.relationship('Hardware', primaryjoin="and_(\

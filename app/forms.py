@@ -28,6 +28,7 @@ class UserForm(Form):
     department_id = SelectField('department', default=0, coerce=int,  
         choices=[], validators=[DataRequired(), 
             NoneOf([''], 'cannot be empty', None)])
+    did = None
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
