@@ -79,6 +79,7 @@ class Department(db.Model, BaseClass):
         Department.id==Hardware.department_id, Hardware.hardware_type==5)",
         backref="printers_department", lazy='dynamic')
 
+
     def repr_list(self):
         return ((self, 1),)
 
@@ -98,10 +99,14 @@ class Hardware(db.Model, BaseClass):
     software_items = db.relationship('Software', backref='hardware', 
         lazy='dynamic')
     hardware_type = db.Column(db.Integer, index = True)
+    did = db.Column(db.Integer)
 
     def repr_list(self):
+        if self.user.did is not None:
+            return ((self, 1), (self.model, ), (self.department, 1),
+            ('Not specified', ))
         return ((self, 1), (self.model, ), (self.department, 1),
-         (self.user, 1))
+        (self.user, 1))
 
     def get_path(self):
         return '/hardware/{}'.format(self.view_name)
@@ -115,6 +120,10 @@ class Software(db.Model, BaseClass):
     state = db.Column(db.Integer)
 
     def repr_list(self):
+        if self.hardware.did is not None:
+            return ((self, 1), ('Not specified', ), 
+                (self.hardware.department, 1))
+
         return ((self, 1), (self.hardware, 1), 
             (self.hardware.department, 1))
 

@@ -201,8 +201,17 @@ class DepartmentEntity(BaseEntity):
             u = User(login = department.name, name='', 
                 department_id = department_id, 
                 did = department_id)
+            h = Hardware(serial = department_id,
+                inventory = department_id, 
+                department_id = department_id,
+                did = department_id,
+                model = '--department--'
+                )
         u.view_name = '--{}--'.format(department.name)
         u.surname = '--{}--'.format(department.name)
+        h.name = '--{}--'.format(department.name)
+        h.view_name = '--{}--'.format(department.name)
+        db.session.add(h)
         db.session.add(u)
         db.session.commit()
 
