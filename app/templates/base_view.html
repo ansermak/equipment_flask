@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <div id="div_page_name">
+       {{data.page_name|default('base_list')}}
+    </div>
+    <table>
+        {% for elem in data['order']%}
+            {% if elem[1] %}
+            <tr><td><b>{{elem[0].capitalize()}}: </b></td><td><a href="{{data['_base_data'][elem[0]].get_path()}}">{{data['_base_data'][elem[0]]}}</a></td></td>
+            {% else %}
+            <tr><td><b>{{elem[0].capitalize()}}: </b></td><td>{{data['_base_data'][elem[0]]}}</td></td>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <p><a href="{{data['_base_data'].get_path()}}/edit">Edit</a> | 
+        <a href="{{data['_base_data'].get_path()}}/delete">Delete</a>
+
+{% endblock %}

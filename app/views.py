@@ -59,7 +59,7 @@ class BaseEntity(object):
 
 
     def __init__(self, entity_name, url_param=None, template_list=None, 
-        template_edit=None, entity_form=None):
+        template_edit=None, template_view = None, entity_form=None):
         self.name = entity_name.lower()
         self.name_display = entity_name.capitalize()
         self.model = globals()[self.name_display]
@@ -69,10 +69,12 @@ class BaseEntity(object):
         self.entity_url = url_for(self.name + 's')
         self.entity_url_new = url_for(self.name + '_new')
         self.entity_url_edit = self.name + '_edit'
-        self.template_list = template_list if template_list is not None\
+        self.template_list = template_list if template_list \
             else 'base_list.html'
-        self.template_edit = template_edit if template_edit is not None \
+        self.template_edit = template_edit if template_edit \
             else 'base_edit.html'
+        self.template_view = template_view if template_edit \
+            else 'base_view.html'
         self.url_param = url_param
         if self.url_param:
             self.entity_url_edit = url_for(self.entity_url_edit, 
@@ -127,6 +129,14 @@ class BaseEntity(object):
                 '_base_data':base_data
             })
 
+    def _prepare_base_view(self, order = None):
+        base_data = self._get_base_data()
+        return ('template', self.template_view, {
+            'page_name':self.name_display,
+            '_base_data':base_data,
+            'order':order,
+            })
+
 
     def base_list(self, sort_field ='name'):
         """generates list of entites. If the list is empty - returns new form
@@ -149,6 +159,10 @@ class BaseEntity(object):
             return redirect(rzlt[1])
         return render_template(rzlt[1], data=rzlt[2])
 
+    def base_view(self):
+        rzlt = self._prepare_base_view()
+        return render_template(rzlt[1], data=rzlt[2])
+
 
     def base_new(self):
         form = self.form()
@@ -169,6 +183,9 @@ class UserEntity(BaseEntity):
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
             
         return rzlt
+    def _prepare_base_view(self, order = None):
+        order = (('name',), ('surname',), ('login',), ('department', 1))
+        return super(UserEntity, self)._prepare_base_view(order)
 
     def get_blocks(self, result):
         user_software = []          
@@ -224,6 +241,10 @@ class DepartmentEntity(BaseEntity):
 
         return rzlt
 
+    def _prepare_base_view(self, order = None):
+        order = (('name', ),)
+        return super(DepartmentEntity, self)._prepare_base_view(order)
+
     def get_blocks(self, result):
         user_software = []          
         for item in result['_base_data'].hardware_items.all():
@@ -248,10 +269,19 @@ class HardwareEntity(BaseEntity):
             
         return rzlt
 
+    def _prepare_base_view(self, order = None):
+        order = (('hardware_type',), ('model',), ('name',), ('inventory',),
+            ('department', 1))
+        return super(HardwareEntity, self)._prepare_base_view(order)
+
     def get_blocks(self, result):
         return {'Software': result['_base_data'].software_items.all()}
 
 class SoftwareEntity(BaseEntity):
+    def _prepare_base_view(self, order = None):
+        order = (('name',), ('hardware', 1))
+        return super(SoftwareEntity, self)._prepare_base_view(order)
+
     def create_name(self, base_data, model):
         softCounter = db.session.query(db.func.max(model.id)).scalar()
         softCounter = softCounter + 1 if softCounter else 1 
@@ -275,7 +305,17 @@ def department_new():
     depart = DepartmentEntity('department')
     return depart.base_new()
 
-@app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
+@app.route('/departments/<url_parameter>', methods=['GET', 'POST'])
+def department_view(url_parameter):
+    depart = DepartmentEntity('department', 
+            template_view='base_view.html',
+            url_param=url_parameter)
+    try:
+        return depart.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
+@app.route('/departments/<url_parameter>/edit', methods=['GET', 'POST'])
 def department_edit(url_parameter):
     depart = DepartmentEntity('department', 
             template_edit='base_edit.html',
@@ -289,19 +329,28 @@ def department_edit(url_parameter):
 
 @app.route('/users/')
 def users():
-    users = UserEntity('user', template_edit='base_edit.html')
+    users = UserEntity('user', template_view='base_view.html')
     return users.base_list('surname')
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
-def user_edit(url_parameter):
+def user_view(url_parameter):
     users = UserEntity('user', 
-            template_edit='base_edit.html', 
+            template_view='base_view.html', 
             url_param=url_parameter)
     try:
-        return users.base_edit()
+        return users.base_view()
     except NoEntityFoundException:
         return render_template('404.html')
 
+@app.route('/users/<url_parameter>/edit', methods=['GET', 'POST'])
+def user_edit(url_parameter):
+    users = UserEntity('user',
+        template_edit='base_edit.html',
+        url_param = url_parameter)
+    try:
+        return users.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
 
 @app.route('/users/new/', methods=['GET', 'POST'])
 def user_new():
@@ -314,6 +363,16 @@ def hardwares():
     return hard.base_list('view_name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
+def hardware_view(url_parameter):
+    hard = HardwareEntity('hardware', 
+        template_view='base_view.html', 
+        url_param=url_parameter)
+    try:
+        return hard.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
+@app.route('/hardware/<url_parameter>/edit', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
     hard = HardwareEntity('hardware', 
         template_edit='base_edit.html', 
@@ -335,7 +394,15 @@ def softwares():
     soft = SoftwareEntity('software')
     return soft.base_list('name')
 
-@app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
+@app.route('/software/<url_parameter>', methods=['GET', 'POST'])
+def software_view(url_parameter):
+    soft = SoftwareEntity('software', url_param=url_parameter)
+    try:
+        return soft.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
+@app.route('/software/<url_parameter>/edit', methods=['GET', 'POST'])
 def software_edit(url_parameter):
     soft = SoftwareEntity('software', url_param=url_parameter)
     try:
