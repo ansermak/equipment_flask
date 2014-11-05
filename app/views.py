@@ -3,10 +3,11 @@
 from flask import render_template, flash, redirect, session, url_for, \
     request, g
 from app import app, db
+from config import MAX_SEARCH_RESULTS
 from models import User, Department, Hardware, Software
 from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm, \
-    STATUS_INUSE, STATUS_FREE, HARDWARE_DESKTOP, HARDWARE_NOTEBOOK, \
-    HARDWARE_UPS, HARDWARE_MONITOR, HARDWARE_PRINTER, HARDWARE_SCANNER
+    SearchForm, STATUS_INUSE, STATUS_FREE, HARDWARE_DESKTOP, HARDWARE_UPS,\
+    HARDWARE_NOTEBOOK, HARDWARE_MONITOR, HARDWARE_PRINTER, HARDWARE_SCANNER
 import re
 import types
 
@@ -245,6 +246,35 @@ class SoftwareEntity(BaseEntity):
         softCounter = softCounter + 1 if softCounter else 1 
 
         return entity_uniq_name('software_item_{}'.format(softCounter), model)
+
+@app.before_request
+def before_request():
+    g.search_form = SearchForm()
+
+@app.route('/search', methods=['POST'])
+def search():
+    if not g.search_form.validate_on_submit():
+        return redirect(url_for('index'))
+    return redirect(url_for('search_results', query=g.search_form.search.data))
+
+@app.route('/search_results/<query>')
+def search_results(query):
+    users = User.query.whoosh_search('*{}*'.format(query), 
+        MAX_SEARCH_RESULTS).all()
+    departments = Department.query.whoosh_search('*{}*'.format(query), 
+        MAX_SEARCH_RESULTS).all()
+    software = Software.query.whoosh_search('*{}*'.format(query), 
+        MAX_SEARCH_RESULTS).all()
+    hardware = Hardware.query.whoosh_search('*{}*'.format(query), 
+        MAX_SEARCH_RESULTS).all()
+    results = [('Users', users),
+        ('Departments', departments),
+        ('Software', software),
+        ('Hardware', hardware)]
+        
+    return render_template('search_results.html',
+        query = query,
+        results = results)
 
 @app.route('/')
 @app.route('/index')

@@ -1,0 +1,18 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Search results for "{{query}}":</h1>
+{% for result in results %}
+    {% if result[1] | length > 0 %}
+        <b>{{result[0].upper()}}:</b></br></br>
+        {% for item in result[1] %}
+            <a href='{{item.get_path()}}'>{{item}}</a><br>
+        {% endfor %}<br>
+    {% endif %}
+{% endfor %}
+
+{% for user in users %}
+    {{user}}
+{% endfor %}
+{% endblock %}
