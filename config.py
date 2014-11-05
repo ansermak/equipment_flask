@@ -11,3 +11,6 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 STATIC_FOLDER = 'static'
 ITEM_IMAGE_FOLDER = STATIC_FOLDER + '/item_images'
+
+WHOOSH_BASE = os.path.join(basedir, 'search_db')
+MAX_SEARCH_RESULTS = 50

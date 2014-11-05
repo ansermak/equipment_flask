@@ -1,5 +1,7 @@
 tmp/
 db_repository/
+search_db/
+whoosh_index/
 
 app.db
 *.pyc

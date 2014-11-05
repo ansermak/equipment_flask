@@ -45,7 +45,7 @@ class DepartmentForm(Form):
 class HardwareForm(Form):
     fields_order = ['hardware_type', 
         'serial', 
-        'inventory', 
+        'inum', 
         'model', 
         'name', 
         'department_id', 
@@ -54,7 +54,7 @@ class HardwareForm(Form):
         
     serial = StringField('serial', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
-    inventory = StringField('inventory', validators=[DataRequired(), 
+    inum = StringField('inum', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
     model = StringField('model', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
@@ -113,3 +113,7 @@ class SoftwareForm(Form):
         super(SoftwareForm, self).__init__(*args, **kwargs)
         self.comp_id.choices = [(0,'--Choose--')] + [(i.id, i.name) \
         for i in Hardware.query.order_by('name').all()]
+
+
+class SearchForm(Form):
+    search = StringField('search', validators=[DataRequired()])

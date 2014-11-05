@@ -1,4 +1,5 @@
-from app import db
+from app import app, db
+import flask.ext.whooshalchemy as whooshalchemy
 
 class BaseClass(object):
     order = [
@@ -15,6 +16,8 @@ class BaseClass(object):
         return self.name
 
 class User(db.Model, BaseClass):
+    __searchable__ = ['login', 'name', 'surname', 'view_name']
+
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(7), index = True, unique = True)
     name = db.Column(db.String(20), index = True)
@@ -50,6 +53,8 @@ class User(db.Model, BaseClass):
 
 
 class Department(db.Model, BaseClass):
+    __searchable__ = ['name']
+
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
     view_name = db.Column(db.String(20), index = True, unique=True)   
@@ -87,12 +92,14 @@ class Department(db.Model, BaseClass):
         return '/departments/{}'.format(self.view_name)
 
 class Hardware(db.Model, BaseClass):
+    __searchable__ = ['inum', 'serial', 'view_name']
+
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
-    inventory = db.Column(db.Integer, index = True, unique = True)
-    name = db.Column(db.String(100))
+    inum = db.Column(db.String, index = True, unique = True)
+    name = db.Column(db.String(100), index = True)
     view_name = db.Column(db.String(100), index = True, unique=True)   
-    model = db.Column(db.String(100))
+    model = db.Column(db.String(100), index = True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer)
@@ -112,6 +119,7 @@ class Hardware(db.Model, BaseClass):
         return '/hardware/{}'.format(self.view_name)
 
 class Software(db.Model, BaseClass):
+    __searchable__ = ['name', 'serial']
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
     view_name = db.Column(db.String(100), index = True, unique=True)   
@@ -129,4 +137,10 @@ class Software(db.Model, BaseClass):
 
     def get_path(self):
         return '/software/{}'.format(self.view_name)
+
+
+whooshalchemy.whoosh_index(app, User)
+whooshalchemy.whoosh_index(app, Department)
+whooshalchemy.whoosh_index(app, Hardware)
+whooshalchemy.whoosh_index(app, Software)
 
