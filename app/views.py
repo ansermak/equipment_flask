@@ -183,6 +183,7 @@ class UserEntity(BaseEntity):
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
             
         return rzlt
+
     def _prepare_base_view(self, order = None):
         order = (('name',), ('surname',), ('login',), ('department', 1))
         return super(UserEntity, self)._prepare_base_view(order)
@@ -305,17 +306,7 @@ def department_new():
     depart = DepartmentEntity('department')
     return depart.base_new()
 
-@app.route('/departments/<url_parameter>', methods=['GET', 'POST'])
-def department_view(url_parameter):
-    depart = DepartmentEntity('department', 
-            template_view='base_view.html',
-            url_param=url_parameter)
-    try:
-        return depart.base_view()
-    except NoEntityFoundException:
-        return render_template('404.html')
-
-@app.route('/departments/<url_parameter>/edit', methods=['GET', 'POST'])
+@app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
 def department_edit(url_parameter):
     depart = DepartmentEntity('department', 
             template_edit='base_edit.html',
@@ -332,7 +323,7 @@ def users():
     users = UserEntity('user', template_view='base_view.html')
     return users.base_list('surname')
 
-@app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
+@app.route('/users/<url_parameter>/view', methods=['GET', 'POST'])
 def user_view(url_parameter):
     users = UserEntity('user', 
             template_view='base_view.html', 
@@ -342,13 +333,13 @@ def user_view(url_parameter):
     except NoEntityFoundException:
         return render_template('404.html')
 
-@app.route('/users/<url_parameter>/edit', methods=['GET', 'POST'])
+@app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
 def user_edit(url_parameter):
     users = UserEntity('user',
         template_edit='base_edit.html',
         url_param = url_parameter)
     try:
-        return users.base_view()
+        return users.base_edit()
     except NoEntityFoundException:
         return render_template('404.html')
 
@@ -363,16 +354,6 @@ def hardwares():
     return hard.base_list('view_name')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
-def hardware_view(url_parameter):
-    hard = HardwareEntity('hardware', 
-        template_view='base_view.html', 
-        url_param=url_parameter)
-    try:
-        return hard.base_view()
-    except NoEntityFoundException:
-        return render_template('404.html')
-
-@app.route('/hardware/<url_parameter>/edit', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
     hard = HardwareEntity('hardware', 
         template_edit='base_edit.html', 
@@ -388,28 +369,18 @@ def hardware_new():
     hard = HardwareEntity('hardware')
     return hard.base_new()
  
-
 @app.route('/software/')
 def softwares():
     soft = SoftwareEntity('software')
     return soft.base_list('name')
 
-@app.route('/software/<url_parameter>', methods=['GET', 'POST'])
-def software_view(url_parameter):
-    soft = SoftwareEntity('software', url_param=url_parameter)
-    try:
-        return soft.base_view()
-    except NoEntityFoundException:
-        return render_template('404.html')
-
-@app.route('/software/<url_parameter>/edit', methods=['GET', 'POST'])
+@app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
 def software_edit(url_parameter):
     soft = SoftwareEntity('software', url_param=url_parameter)
     try:
         return soft.base_edit()
     except NoEntityFoundException:
         return render_template('404.html')
-
 
 @app.route('/software/new/', methods=['GET', 'POST'])
 def software_new():
