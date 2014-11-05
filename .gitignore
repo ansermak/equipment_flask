@@ -1,5 +1,6 @@
 tmp/
 db_repository/
+search_db/
 
 app.db
 *.pyc
