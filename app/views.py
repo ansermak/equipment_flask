@@ -222,7 +222,7 @@ class DepartmentEntity(BaseEntity):
                 department_id = department_id, 
                 did = department_id)
             h = Hardware(serial = department_id,
-                inventory = department_id, 
+                inum = department_id, 
                 department_id = department_id,
                 did = department_id,
                 model = '--department--'
@@ -272,7 +272,7 @@ class HardwareEntity(BaseEntity):
         return rzlt
 
     def _prepare_base_view(self, order = None):
-        order = (('hardware_type',), ('model',), ('name',), ('inventory',),
+        order = (('hardware_type',), ('model',), ('name',), ('inum',),
             ('department', 1))
         return super(HardwareEntity, self)._prepare_base_view(order)
 
