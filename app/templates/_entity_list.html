@@ -1,7 +1,6 @@
     <table border>
         
 	   {% for item in base_data %}
-            {% if item.view_name[0:2]!= '--' %}
             <tr>
                 {% for field in item.repr_list() %}
                         {% if field|length > 1 %}
@@ -14,7 +13,6 @@
                         {% endif %}
                 {% endfor%}
             </tr>
-            {% endif %}
         {% endfor %}
     </table>      
             

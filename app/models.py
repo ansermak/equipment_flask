@@ -46,7 +46,7 @@ class User(db.Model, BaseClass):
 
     def repr_list(self):
         # '1 'means that we want link for element to display; could be anything 
-        return ((self, 1), (self.login, ), (self.department, 1))
+        return ((self, 1), (self.login, ), (self.department, 2))
 
     def get_path(self):
         return '/users/{}'.format(self.view_name)
@@ -58,11 +58,9 @@ class Department(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True)   
     view_name = db.Column(db.String(20), index = True, unique=True)   
-    users = db.relationship('User', backref='department',
-        lazy='dynamic')
-    department_user = db.relationship('User', primaryjoin="and_(\
-        Department.id==User.department_id, User.name.like('--%'))", 
-        backref='department_user', lazy='dynamic')
+    users = db.relationship('User', primaryjoin="and_(\
+        Department.id==User.department_id, User.did == None)", 
+        backref='department', lazy='dynamic')
     hardware_items = db.relationship('Hardware', backref='department', 
         lazy='dynamic')
     computers = db.relationship('Hardware', primaryjoin="and_(\

@@ -86,8 +86,8 @@ class BaseEntity(object):
     def _save_data(self, base_data, form):
         for a,b in form.data.items():
             setattr(base_data, a,b)
-        if base_data.view_name is None:
-            base_data.view_name = self.create_name(base_data, self.model)
+        # if base_data.view_name is None:
+        base_data.view_name = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
 
@@ -139,14 +139,14 @@ class BaseEntity(object):
             })
 
 
-    def base_list(self, sort_field ='name'):
+    def base_list(self, sort_field ='name', model_filter='""'):
         """generates list of entites. If the list is empty - returns new form
         to input new data"""
         cnt = self.model.query.count()
         
         if cnt == 0:
             return redirect(self.entity_url_new)
-        base_data = self.model.query.order_by(sort_field).all()
+        base_data = self.model.query.filter(eval(model_filter)).order_by(sort_field).all()
         return render_template(self.template_list,
                 base_data=base_data,
                 page_name=self.name_display,
@@ -218,7 +218,7 @@ class DepartmentEntity(BaseEntity):
         u = User.query.filter(User.did == department_id).first()
         h = Hardware.query.filter(Hardware.did == department_id).first()
         if not u:
-            u = User(login = department.name, name='', 
+            u = User(name='', 
                 department_id = department_id, 
                 did = department_id)
             h = Hardware(serial = department_id,
@@ -229,6 +229,7 @@ class DepartmentEntity(BaseEntity):
                 )
         u.view_name = '--{}--'.format(department.name)
         u.surname = '--{}--'.format(department.name)
+        u.login = department.name
         h.name = '--{}--'.format(department.name)
         h.view_name = '--{}--'.format(department.name)
         db.session.add(h)
@@ -302,14 +303,15 @@ def search():
 
 @app.route('/search_results/<query>')
 def search_results(query):
-    users = User.query.whoosh_search('*{}*'.format(query), 
+    users = User.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
-    departments = Department.query.whoosh_search('*{}*'.format(query), 
+    departments = Department.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
-    software = Software.query.whoosh_search('*{}*'.format(query), 
+    software = Software.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
-    hardware = Hardware.query.whoosh_search('*{}*'.format(query), 
+    hardware = Hardware.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
+    print users, departments, software, hardware
     results = [('Users', users),
         ('Departments', departments),
         ('Software', software),
@@ -351,7 +353,7 @@ def department_edit(url_parameter):
 @app.route('/users/')
 def users():
     users = UserEntity('user', template_view='base_view.html')
-    return users.base_list('surname')
+    return users.base_list('surname', 'self.model.did == None')
 
 @app.route('/users/<url_parameter>/view', methods=['GET', 'POST'])
 def user_view(url_parameter):
@@ -381,7 +383,7 @@ def user_new():
 @app.route('/hardware/')
 def hardwares():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
-    return hard.base_list('view_name')
+    return hard.base_list('view_name', 'self.model.did == None')
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
 def hardware_edit(url_parameter):
