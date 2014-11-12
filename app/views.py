@@ -114,7 +114,6 @@ class BaseEntity(object):
     def _save_validated_form(self, form):
         base_data = self._get_base_data()
         self._save_data(base_data, form)
-        print request.values.get('submitted')
         if request.values.get('submitted') == 'Save & new':
             return self.entity_url_new
         elif request.values.get('submitted') is None:
@@ -215,7 +214,6 @@ class UserEntity(BaseEntity):
             base_data.name), model)
 
     def _delete_data(self, base_data):
-        print base_data.hardware_items.all()
         for item in base_data.hardware_items.all():
             new_user_id = User.query.filter(
                 User.did == base_data.department_id).first().id
@@ -312,13 +310,9 @@ class HardwareEntity(BaseEntity):
         return {'Software': result['_base_data'].software_items.all()}
 
     def _delete_data(self, base_data):
-        print base_data.software_items.all()
         for item in base_data.software_items.all():
-            print item.comp_id
-            print Hardware.query.filter(Hardware.did == base_data.user.department_id).first().id
             item.comp_id = Hardware.query.filter(
                 Hardware.did == base_data.user.department_id).first().id
-            print item.comp_id
             db.session.add(item)
             db.session.commit()
         super(HardwareEntity, self)._delete_data(base_data)
@@ -354,7 +348,6 @@ def search_results(query):
         MAX_SEARCH_RESULTS).all()
     hardware = Hardware.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
-    print users, departments, software, hardware
     results = [('Users', users),
         ('Departments', departments),
         ('Software', software),
