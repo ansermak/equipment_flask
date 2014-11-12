@@ -13,5 +13,13 @@
     <input class="div_a" type="submit" name="submitted" value="Save & list"/>
     <input class="div_a" type="submit" name="submitted" value="Save & new"/>
     <input class="div_a" type="reset" name="submitted" onclick="javascript:window.history.back()" value="Back"/>
+    <input class="div_a" id="Delete" type="submit" value="Delete">
+
     </div>
   </form>
+  <script>
+    var a = document.getElementById('Delete')
+    a.onclick = function() {
+      return confirm('Are you sure to delete?')
+    }
+  </script>

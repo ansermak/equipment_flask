@@ -91,6 +91,10 @@ class BaseEntity(object):
         db.session.add(base_data)
         db.session.commit()
 
+    def _delete_data(self, base_data):
+        db.session.delete(base_data)
+        db.session.commit()
+
     def create_name(self, base_data, model):
         return entity_uniq_name(base_data.name, model)
 
@@ -110,10 +114,13 @@ class BaseEntity(object):
     def _save_validated_form(self, form):
         base_data = self._get_base_data()
         self._save_data(base_data, form)
+        print request.values.get('submitted')
         if request.values.get('submitted') == 'Save & new':
             return self.entity_url_new
-        else:
-            return self.entity_url
+        elif request.values.get('submitted') is None:
+            self._delete_data(base_data)
+        
+        return self.entity_url
 
 
     def _prepare_base_edit(self):
@@ -146,7 +153,8 @@ class BaseEntity(object):
         
         if cnt == 0:
             return redirect(self.entity_url_new)
-        base_data = self.model.query.filter(eval(model_filter)).order_by(sort_field).all()
+        base_data = self.model.query.filter(
+            eval(model_filter)).order_by(sort_field).all()
         return render_template(self.template_list,
                 base_data=base_data,
                 page_name=self.name_display,
@@ -206,6 +214,16 @@ class UserEntity(BaseEntity):
         return entity_uniq_name('{} {}'.format(base_data.surname,
             base_data.name), model)
 
+    def _delete_data(self, base_data):
+        print base_data.hardware_items.all()
+        for item in base_data.hardware_items.all():
+            new_user_id = User.query.filter(
+                User.did == base_data.department_id).first().id
+            item.user_id = new_user_id
+            db.session.add(item)
+            db.session.commit()
+        super(UserEntity, self)._delete_data(base_data)
+
 class DepartmentEntity(BaseEntity):
     def _save_data(self, base_data, form):
         super(DepartmentEntity, self)._save_data(base_data, form)
@@ -264,7 +282,20 @@ class DepartmentEntity(BaseEntity):
             'Software': user_software 
         }
 
+    def _delete_data(self, base_data):
+        if len(base_data.users.all() > 0 or \
+            base_data.hardware_items.all()) > 0:
+            print "Not empty!"
+        else:
+            print "Empty!"
+        #super(UserEntity, self)._delete_data(base_data)
+
 class HardwareEntity(BaseEntity):
+    def _save_data(self, base_data, form):
+        user = User.query.filter(User.id == form.user_id.data).first()
+        form.department_id.data = base_data.user.department_id
+        super(HardwareEntity, self)._save_data(base_data, form)
+
     def _prepare_base_edit(self):
         rzlt = super(HardwareEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
@@ -279,6 +310,18 @@ class HardwareEntity(BaseEntity):
 
     def get_blocks(self, result):
         return {'Software': result['_base_data'].software_items.all()}
+
+    def _delete_data(self, base_data):
+        print base_data.software_items.all()
+        for item in base_data.software_items.all():
+            print item.comp_id
+            print Hardware.query.filter(Hardware.did == base_data.user.department_id).first().id
+            item.comp_id = Hardware.query.filter(
+                Hardware.did == base_data.user.department_id).first().id
+            print item.comp_id
+            db.session.add(item)
+            db.session.commit()
+        super(HardwareEntity, self)._delete_data(base_data)
 
 class SoftwareEntity(BaseEntity):
     def _prepare_base_view(self, order = None):
