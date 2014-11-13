@@ -16,6 +16,13 @@
       {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}
       <input type="submit" value="Search"></form>
     {% endblock %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+      <br>{{message}}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
     {% block content %}{% endblock %}
   </body>

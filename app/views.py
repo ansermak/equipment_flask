@@ -52,8 +52,6 @@ class NoEntityFoundException(Exception):
         return repr(self.value)
 
 
-# class should be a child of object 'object' to weork with 'super' func
-
 class BaseEntity(object):
     """ Entity model should have fields name and view_name. 
     Second one is used for generating url"""
@@ -158,8 +156,6 @@ class BaseEntity(object):
                 base_data=base_data,
                 page_name=self.name_display,
                 add_item_url=self.entity_url_new)
-
-
 
     def base_edit(self):
         rzlt = self._prepare_base_edit()
@@ -281,17 +277,36 @@ class DepartmentEntity(BaseEntity):
         }
 
     def _delete_data(self, base_data):
-        if len(base_data.users.all() > 0 or \
-            base_data.hardware_items.all()) > 0:
-            print "Not empty!"
+        hardware_dept = Hardware.query.filter(
+            Hardware.did == base_data.id).first()
+        user_dept = User.query.filter(
+            User.did == base_data.id).first()
+
+        print '_*_' * 5
+        print hardware_dept, user_dept
+        print '_*_' * 5
+        hardware = Hardware.query.filter(
+            Hardware.department_id == user_dept.department_id).filter(
+            Hardware.did == None).all()
+        free_software = Software.query.filter(
+            Software.comp_id == hardware_dept.id).all()
+        print hardware_dept, '____', user_dept
+        print hardware, '______', free_software
+
+        if len(hardware) > 0 or len(free_software) > 0 or\
+            len(base_data.users.all()) > 0:
+            flash('Department {} is not empty. Cannot delete.'.format(
+                base_data.name))
         else:
-            print "Empty!"
-        #super(UserEntity, self)._delete_data(base_data)
+            flash('Department {} was deleted'.format(base_data.name))
+            db.session.delete(hardware_dept)
+            db.session.delete(user_dept)
+            super(DepartmentEntity, self)._delete_data(base_data)
 
 class HardwareEntity(BaseEntity):
     def _save_data(self, base_data, form):
         user = User.query.filter(User.id == form.user_id.data).first()
-        form.department_id.data = base_data.user.department_id
+        form.department_id.data = user.department_id
         super(HardwareEntity, self)._save_data(base_data, form)
 
     def _prepare_base_edit(self):
