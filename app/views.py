@@ -6,10 +6,16 @@ from app import app, db
 from config import MAX_SEARCH_RESULTS
 from models import User, Department, Hardware, Software
 from forms import UserForm, DepartmentForm, HardwareForm, SoftwareForm, \
-    SearchForm, STATUS_INUSE, STATUS_FREE, HARDWARE_DESKTOP, HARDWARE_UPS,\
-    HARDWARE_NOTEBOOK, HARDWARE_MONITOR, HARDWARE_PRINTER, HARDWARE_SCANNER
+    SearchForm, STATUSES, HARDWARE_TYPES
 import re
 import types
+
+PLURALS = {
+    'user': 'users',
+    'department': 'departments',
+    'software': 'software_items',
+    'hardware': 'hardware_items'
+    }
 
 def replace_other_chars(string):
     """replace all not latin and not numeric chars with hyphen
@@ -65,7 +71,7 @@ class BaseEntity(object):
         self.form = entity_form if entity_form is not None \
             else self.name_display + 'Form' 
         self.form = globals()[self.form]
-        self.entity_url = url_for(self.name + 's')
+        self.entity_url = url_for(PLURALS[self.name])
         self.entity_url_new = url_for(self.name + '_new')
         self.entity_url_edit = self.name + '_edit'
         self.template_list = template_list if template_list \
@@ -432,7 +438,7 @@ def user_new():
     return users.base_new()
  
 @app.route('/hardware/')
-def hardwares():
+def hardware_items():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
     return hard.base_list('view_name', 'self.model.did == None')
 
@@ -453,7 +459,7 @@ def hardware_new():
     return hard.base_new()
  
 @app.route('/software/')
-def softwares():
+def software_items():
     soft = SoftwareEntity('software')
     return soft.base_list('name')
 

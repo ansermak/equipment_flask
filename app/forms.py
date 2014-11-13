@@ -4,16 +4,20 @@ from wtforms.validators import DataRequired, NoneOf
 from app.models import Department, User, Hardware
 
 
-STATUS_INUSE = 1
-STATUS_REPAIR = 2
-STATUS_FREE = 3
+STATUSES = {
+    'STATUS_INUSE': 1,
+    'STATUS_REPAIR': 2,
+    'STATUS_FREE': 3
+}
 
-HARDWARE_DESKTOP = 1
-HARDWARE_NOTEBOOK = 2
-HARDWARE_MONITOR = 3
-HARDWARE_UPS = 4
-HARDWARE_PRINTER = 5
-HARDWARE_SCANNER = 6
+HARDWARE_TYPES = {
+    'HARDWARE_DESKTOP': 1,
+    'HARDWARE_NOTEBOOK': 2,
+    'HARDWARE_MONITOR': 3,
+    'HARDWARE_UPS': 4,
+    'HARDWARE_PRINTER': 5,
+    'HARDWARE_SCANNER': 6
+    }
 
 
 class UserForm(Form):
@@ -68,20 +72,20 @@ class HardwareForm(Form):
             NoneOf([''], 'cannot be empty', None)])
     state = SelectField('state', 
             coerce=int,
-            choices=[(STATUS_INUSE, 'In use'),
-                        (STATUS_REPAIR, 'Under repair'), 
-                        (STATUS_FREE, 'Free'),
+            choices=[(STATUSES['STATUS_INUSE'], 'In use'),
+                        (STATUSES['STATUS_REPAIR'], 'Under repair'), 
+                        (STATUSES['STATUS_FREE'], 'Free'),
             ], validators=[DataRequired(), 
             NoneOf([''], 'cannot be empty', None)])
     hardware_type = SelectField('hardware_type', 
             coerce=int,
             choices=[(0, '--Choose--'),
-                        (HARDWARE_DESKTOP, 'Desktop'),
-                        (HARDWARE_NOTEBOOK, 'Notebook'),
-                        (HARDWARE_MONITOR, 'Monitor'),
-                        (HARDWARE_UPS, 'UPS'),
-                        (HARDWARE_PRINTER, 'Printer'),
-                        (HARDWARE_SCANNER, 'Scaner'),
+                        (HARDWARE_TYPES['HARDWARE_DESKTOP'], 'Desktop'),
+                        (HARDWARE_TYPES['HARDWARE_NOTEBOOK'], 'Notebook'),
+                        (HARDWARE_TYPES['HARDWARE_MONITOR'], 'Monitor'),
+                        (HARDWARE_TYPES['HARDWARE_UPS'], 'UPS'),
+                        (HARDWARE_TYPES['HARDWARE_PRINTER'], 'Printer'),
+                        (HARDWARE_TYPES['HARDWARE_SCANNER'], 'Scaner'),
             ], validators=[DataRequired(), 
             NoneOf([''], 'cannot be empty', None)])
   
@@ -104,8 +108,8 @@ class SoftwareForm(Form):
         NoneOf([''], 'cannot be empty', None)])
     state = SelectField('state', 
             coerce=int,
-            choices=[(STATUS_INUSE, 'In use'),
-                        (STATUS_FREE, 'Free'),
+            choices=[(STATUSES['STATUS_INUSE'], 'In use'),
+                        (STATUSES['STATUS_FREE'], 'Free'),
             ])
 
             
