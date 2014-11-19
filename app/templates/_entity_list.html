@@ -1,5 +1,13 @@
-    <table border>
-        
+    <table id = "mytable" border class="tablesorter">
+        <thead>
+            <tr>
+            {% for item in base_data[0].column_names() %}
+                <th>{{item}}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+
 	   {% for item in base_data %}
             <tr>
                 {% for field in item.repr_list() %}
@@ -14,6 +22,15 @@
                 {% endfor%}
             </tr>
         {% endfor %}
+        </tbody>
     </table>      
             
+    <script>
+    $(document).ready(function() 
+        { 
+            $("table").tablesorter(); 
+        } 
+    );
+    
 
+    </script>

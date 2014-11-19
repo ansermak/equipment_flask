@@ -51,6 +51,9 @@ class User(db.Model, BaseClass):
     def get_path(self):
         return '/users/{}'.format(self.view_name)
 
+    def column_names(self):
+        return(['Name', 'Login', 'Department'])
+
 
 class Department(db.Model, BaseClass):
     __searchable__ = ['name']
@@ -84,12 +87,14 @@ class Department(db.Model, BaseClass):
         Department.id==Hardware.department_id, Hardware.hardware_type==5)",
         backref="printers_department", lazy='dynamic')
 
-
     def repr_list(self):
         return ((self, 1),)
 
     def get_path(self):
         return '/departments/{}'.format(self.view_name)
+
+    def column_names(self):
+        return(['Name'])
 
 class Hardware(db.Model, BaseClass):
     __searchable__ = ['inum', 'serial', 'view_name']
@@ -118,6 +123,9 @@ class Hardware(db.Model, BaseClass):
     def get_path(self):
         return '/hardware/{}'.format(self.view_name)
 
+    def column_names(self):
+        return(['Name', 'Model', 'Department', 'User'])
+
 class Software(db.Model, BaseClass):
     __searchable__ = ['name', 'serial']
     id = db.Column(db.Integer, primary_key = True)
@@ -138,6 +146,8 @@ class Software(db.Model, BaseClass):
     def get_path(self):
         return '/software/{}'.format(self.view_name)
 
+    def column_names(self):
+        return(['Name', 'Computer', 'Department'])
 
 whooshalchemy.whoosh_index(app, User)
 whooshalchemy.whoosh_index(app, Department)
