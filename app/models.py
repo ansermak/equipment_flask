@@ -129,7 +129,7 @@ class Software(db.Model, BaseClass):
 
     def repr_list(self):
         if self.hardware.did is not None:
-            return ((self, 1), (self.hardware, 1),
+            return ((self, 1), ('Not specified',),
                 (self.hardware.department, 1))
 
         return ((self, 1), (self.hardware, 1), 
