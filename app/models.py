@@ -98,6 +98,14 @@ class Department(db.Model, BaseClass):
 
 class Hardware(db.Model, BaseClass):
     __searchable__ = ['inum', 'serial', 'view_name']
+    types = {
+        1 : 'Desktop',
+        2 : 'Notebook',
+        3 : 'Monitor',
+        4 : 'Ups',
+        5 : 'Printer',
+        6 : 'Scanner',
+    }
 
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String, index = True, unique = True)
@@ -115,16 +123,16 @@ class Hardware(db.Model, BaseClass):
 
     def repr_list(self):
         if self.user.did is not None:
-            return ((self, 1), (self.model, ), (self.user.own_department, 1),
+            return ((self.types[self.hardware_type], ), (self, 1), (self.model, ), (self.user.own_department, 1),
             ('Not specified', ))
-        return ((self, 1), (self.model, ), (self.user.own_department, 1),
+        return ((self.types[self.hardware_type], ), (self, 1), (self.model, ), (self.user.own_department, 1),
         (self.user, 1))
 
     def get_path(self):
         return '/hardware/{}'.format(self.view_name)
 
     def column_names(self):
-        return(['Name', 'Model', 'Department', 'User'])
+        return(['Type', 'Name', 'Model', 'Department', 'User'])
 
 class Software(db.Model, BaseClass):
     __searchable__ = ['name', 'serial']

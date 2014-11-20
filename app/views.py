@@ -362,13 +362,13 @@ def search():
 @app.route('/search_results/<query>')
 def search_results(query):
     users = User.query.whoosh_search(query, 
-        MAX_SEARCH_RESULTS).all()
+        MAX_SEARCH_RESULTS).filter(User.did == None).all()
     departments = Department.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
     software = Software.query.whoosh_search(query, 
         MAX_SEARCH_RESULTS).all()
     hardware = Hardware.query.whoosh_search(query, 
-        MAX_SEARCH_RESULTS).all()
+        MAX_SEARCH_RESULTS).filter(Hardware.did == None).all()
     results = [('Users', users),
         ('Departments', departments),
         ('Software', software),
