@@ -29,10 +29,10 @@ class UserForm(Form):
         NoneOf([''], 'cannot be empty', None)])
     surname = StringField('surname', validators=[DataRequired(), 
         NoneOf([''], 'cannot be empty', None)])
-    department_id = SelectField('department', default=0, coerce=int,  
+    did = None
+    department_id = SelectField('department', coerce=int,  
         choices=[], validators=[DataRequired(), 
             NoneOf([''], 'cannot be empty', None)])
-    did = None
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -93,8 +93,13 @@ class HardwareForm(Form):
         super(HardwareForm, self).__init__(*args, **kwargs)
         self.department_id.choices = [(0,'--Choose--')] + [(i.id, i.name) \
         for i in Department.query.order_by('name').all()]
-        self.user_id.choices = [(0,'--Choose--')] + [(i.id, i) \
-        for i in User.query.order_by('surname').all()]
+        self.user_id.choices2 = [(0,'--Choose--')] + [(i.id, i, 
+            ((subi.id, subi) for subi in User.query.order_by('surname').filter(
+                User.department_id == i.department_id, User.did == None))) \
+        for i in User.query.order_by('surname').filter(User.did != None)]
+        self.user_id.choices =  [(0,'--Choose--')] + [(i.id, i.name) \
+        for i in User.query.order_by('name').all()]
+
 
 
 class SoftwareForm(Form):

@@ -1,12 +1,39 @@
+
 <form class="base_form_edit" action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.form.hidden_tag()}}
     <table>
       {% for item in data.form.fields_order %}
-      <tr><td><b>{{data.form[item].label}}</b></td><td>{{data.form[item]}}</td><td>
-          {% for i in data.form.errors[item] %}
-             <span style="color: red;">[{{i}}]</span>
-          {% endfor %}</td>
-      </tr>
+      {% if data.form[item].name == 'user_id' %}
+          <tr><td><b>{{data.form[item].label}}</b></td>
+              <td>
+                  <select id = "user_id" name = "user_id">
+                      {% for elem in data.form[item].choices2 %}
+                         <option {% if data.form[item].data == elem[0] %} 
+                                    selected="selected" 
+                                 {% endif %}
+                            value = "{{ elem[0] }}">{{ elem[1] }}</option>
+                            {% for subelem in elem[2] %}
+                                 <option {% if data.form[item].data == subelem[0] %} 
+                                            selected="selected" 
+                                         {% endif %}
+                                         value = "{{ subelem[0] }}"
+                                         style = "padding-left: 30px">{{ subelem[1] }}</option>
+                            {% endfor %}
+                      {% endfor %}
+                  </select></td>
+              <td>
+              {% for i in data.form.errors[item] %}
+                 <span style="color: red;">[{{i}}]</span>
+              {% endfor %}</td>
+          </tr>
+
+      {% else %}
+          <tr><td><b>{{data.form[item].label}}</b></td><td>{{data.form[item]}}</td><td>
+              {% for i in data.form.errors[item] %}
+                 <span style="color: red;">[{{i}}]</span>
+              {% endfor %}</td>
+          </tr>
+      {% endif %}
       {% endfor %}
     </table><br/>
     <div style="width:500px">

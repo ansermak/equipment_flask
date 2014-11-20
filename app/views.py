@@ -17,6 +17,7 @@ PLURALS = {
     'hardware': 'hardware_items'
     }
 
+
 def replace_other_chars(string):
     """replace all not latin and not numeric chars with hyphen
     >>> replace_other_chars(u'мама мыла ramy мылом23!')
