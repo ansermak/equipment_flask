@@ -1,9 +1,11 @@
     <table id = "mytable" border class="tablesorter">
         <thead>
             <tr>
-            {% for item in base_data[0].column_names() %}
-                <th>{{item}}</th>
-            {% endfor %}
+            {% if base_data[0] %}
+                {% for item in base_data[0].column_names() %}
+                    <th>{{item}}</th>
+                {% endfor %}
+            {% endif %}
             </tr>
         </thead>
         <tbody>
