@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+
+<br><input type="text" id="filter" value="filter"></br>
+      
 <div id="div_page_name">
    {{page_name|default('base_list')}}
    <a href="{{add_item_url}}" class="div_add_item div_a">+</a>

@@ -123,10 +123,12 @@ class Hardware(db.Model, BaseClass):
 
     def repr_list(self):
         if self.user.did is not None:
-            return ((self.types[self.hardware_type], ), (self, 1), (self.model, ), (self.user.own_department, 1),
+            return ((self.types[self.hardware_type], ), (self, 1),
+            (self.model, ), (self.user.own_department, 1),
             ('Not specified', ))
-        return ((self.types[self.hardware_type], ), (self, 1), (self.model, ), (self.user.own_department, 1),
-        (self.user, 1))
+        return ((self.types[self.hardware_type], ), (self, 1),
+            (self.model, ), (self.user.own_department, 1),
+            (self.user, 1))
 
     def get_path(self):
         return '/hardware/{}'.format(self.view_name)

@@ -36,8 +36,8 @@ class UserForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
-        self.department_id.choices=[(0,'--Choose--')] + [(i.id, i.name) \
-        for i in Department.query.order_by('name').all()]
+        self.department_id.choices=([(0,'--Choose--')] + [(i.id, i.name)
+                for i in Department.query.order_by('name').all()])
         
 
 
@@ -91,10 +91,10 @@ class HardwareForm(Form):
   
     def __init__(self, *args, **kwargs):
         super(HardwareForm, self).__init__(*args, **kwargs)
-        self.department_id.choices = [(0,'--Choose--')] + [(i.id, i.name) \
-        for i in Department.query.order_by('name').all()]
-        self.user_id.choices = [(0,'--Choose--')] + [(i.id, i) \
-        for i in User.query.order_by('surname').all()]
+        self.department_id.choices = ([(0,'--Choose--')] + [(i.id, i.name) 
+        for i in Department.query.order_by('name').all()])
+        self.user_id.choices = ([(0,'--Choose--')] + [(i.id, i) 
+        for i in User.query.order_by('surname').all()])
 
 
 
@@ -116,8 +116,9 @@ class SoftwareForm(Form):
             
     def __init__(self, *args, **kwargs):
         super(SoftwareForm, self).__init__(*args, **kwargs)
-        self.comp_id.choices = [(0,'--Choose--')] + [(i.id, i.name) \
-        for i in Hardware.query.order_by('name').filter(Hardware.hardware_type == 1 or Hardware.did is not None).all()]
+        self.comp_id.choices = ([(0,'--Choose--')] + [(i.id, i.name) 
+        for i in Hardware.query.order_by('name').filter(
+            Hardware.hardware_type == 1 or Hardware.did is not None).all()])
 
 
 class SearchForm(Form):
