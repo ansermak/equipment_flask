@@ -16,7 +16,6 @@
     {% block search %}
     <form style="display:inline;" action="{{url_for('search')}}" method="post"
       name="search">
-      <input type="text" id="filter" value="filter">
       {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}
       <input type="submit" value="Search"></form>
     {% endblock %}
