@@ -80,6 +80,7 @@ class BaseEntity(object):
         self.template_edit = (template_edit if template_edit
             else 'base_edit.html')
         self.template_view = (template_view if template_edit
+
             else 'base_view.html')
         self.url_param = url_param
         if self.url_param:
@@ -288,7 +289,6 @@ class DepartmentEntity(BaseEntity):
             Hardware.did == None).all()
         free_software = Software.query.filter(
             Software.comp_id == hardware_dept.id).all()
-
 
         if (len(hardware) > 0 or len(free_software) > 0 or
                 len(base_data.users.all()) > 0):

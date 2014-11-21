@@ -97,6 +97,7 @@ class HardwareForm(Form):
         for i in User.query.order_by('surname').all()])
 
 
+
 class SoftwareForm(Form):
     fields_order = ['name', 'serial', 'comp_id', 'state']
 
