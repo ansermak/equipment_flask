@@ -200,7 +200,7 @@ class UserEntity(BaseEntity):
         user_software = []
         for item in result['_base_data'].hardware_items.all():
             user_software += item.software_items.all()
-
+        print result['_base_data'].computers.all()
         return {
             'Computers': result['_base_data'].computers.all(),
             'Notebooks': result['_base_data'].notebooks.all(),

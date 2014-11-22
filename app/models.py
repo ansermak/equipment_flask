@@ -18,6 +18,9 @@ class BaseClass(object):
     def __repr__(self):
         return self.name
 
+    def get_type_image(self):
+        return ''
+
 class User(db.Model, BaseClass):
     __searchable__ = ['login', 'name', 'surname', 'view_name']
 
@@ -57,6 +60,8 @@ class User(db.Model, BaseClass):
     def column_names(self):
         return(['Name', 'Login', 'Department'])
 
+    def get_type_image(self):
+        return '/static/img/user.png'
 
 class Department(db.Model, BaseClass):
     __searchable__ = ['name']
@@ -139,6 +144,9 @@ class Hardware(db.Model, BaseClass):
     def column_names(self):
         return(['Type', 'Name', 'Model', 'Department', 'User'])
 
+    def get_type_image(self):
+        return '/static/img/{}.png'.format(self.types[self.hardware_type].lower())
+
 class Software(db.Model, BaseClass):
     __searchable__ = ['name', 'serial']
     id = db.Column(db.Integer, primary_key = True)
@@ -161,6 +169,9 @@ class Software(db.Model, BaseClass):
 
     def column_names(self):
         return(['Name', 'Computer', 'Department'])
+
+    def get_type_image(self):
+        return '/static/img/software.png'
 
 whooshalchemy.whoosh_index(app, User)
 whooshalchemy.whoosh_index(app, Department)

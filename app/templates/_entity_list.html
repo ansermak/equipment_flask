@@ -19,7 +19,7 @@
                                 <a class="div_a main_list_item" 
                                     href="{{field[0].get_path()}}">{{field[0]}}</a>
 			    {% elif field[1] == 2 %}
-				<img src="/static/img/{{field[0].lower()}}.png"/>
+                            <img src="{{item.get_type_image()}}"/>
 			    {% endif %}
                         {% else %}
                                 <div class="main_list_item" >{{field[0]}}<div>
