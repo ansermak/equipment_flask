@@ -13,14 +13,18 @@
 	   {% for item in base_data %}
            <tr id="tr_{{item.id}}" class="mytable_row">
                 {% for field in item.repr_list() %}
+		     <td>
                         {% if field|length > 1 %}
-                            <td><a class="div_a main_list_item" 
-                                href="{{field[0].get_path()}}">{{field[0]}}</a></td>
+		            {% if field[1] == 1 %}
+                                <a class="div_a main_list_item" 
+                                    href="{{field[0].get_path()}}">{{field[0]}}</a>
+			    {% elif field[1] == 2 %}
+				<img src="/static/img/{{field[0].lower()}}.png"/>
+			    {% endif %}
                         {% else %}
-                            <td>
-                                <div class="div_a main_list_item" >{{field[0]}}<div>
-                            </td>
+                                <div class="main_list_item" >{{field[0]}}<div>
                         {% endif %}
+		     </td>  
                 {% endfor%}
             </tr>
         {% endfor %}

@@ -1,6 +1,8 @@
 from app import app, db
 import flask.ext.whooshalchemy as whooshalchemy
 
+TEMPLATE_ANCHOR = 1
+TEMPLATE_IMG = 2
 
 class BaseClass(object):
     order = [
@@ -47,7 +49,7 @@ class User(db.Model, BaseClass):
 
     def repr_list(self):
         # '1 'means that we want link for element to display; could be anything 
-        return ((self, 1), (self.login, ), (self.department, 2))
+        return ((self, TEMPLATE_ANCHOR), (self.login, ), (self.department, TEMPLATE_ANCHOR))
 
     def get_path(self):
         return '/users/{}'.format(self.view_name)
@@ -89,7 +91,7 @@ class Department(db.Model, BaseClass):
         backref="printers_department", lazy='dynamic')
 
     def repr_list(self):
-        return ((self, 1),)
+        return ((self, TEMPLATE_ANCHOR),)
 
     def get_path(self):
         return '/departments/{}'.format(self.view_name)
@@ -124,12 +126,12 @@ class Hardware(db.Model, BaseClass):
 
     def repr_list(self):
         if self.user.did is not None:
-            return ((self.types[self.hardware_type], ), (self, 1),
-            (self.model, ), (self.user.own_department, 1),
+            return ((self.types[self.hardware_type], TEMPLATE_IMG ), (self, TEMPLATE_ANCHOR),
+            (self.model, ), (self.user.own_department, TEMPLATE_ANCHOR),
             ('Not specified', ))
-        return ((self.types[self.hardware_type], ), (self, 1),
-            (self.model, ), (self.user.own_department, 1),
-            (self.user, 1))
+        return ((self.types[self.hardware_type], TEMPLATE_IMG), (self, TEMPLATE_ANCHOR),
+            (self.model, ), (self.user.own_department, TEMPLATE_ANCHOR),
+            (self.user, TEMPLATE_ANCHOR))
 
     def get_path(self):
         return '/hardware/{}'.format(self.view_name)
@@ -148,11 +150,11 @@ class Software(db.Model, BaseClass):
 
     def repr_list(self):
         if self.hardware.did is not None:
-            return ((self, 1), ('Not specified',),
-                (self.hardware.department, 1))
+            return ((self, TEMPLATE_ANCHOR), ('Not specified',),
+                (self.hardware.department, TEMPLATE_ANCHOR))
 
-        return ((self, 1), (self.hardware, 1), 
-            (self.hardware.department, 1))
+        return ((self, TEMPLATE_ANCHOR), (self.hardware, TEMPLATE_ANCHOR), 
+            (self.hardware.department, TEMPLATE_ANCHOR))
 
     def get_path(self):
         return '/software/{}'.format(self.view_name)

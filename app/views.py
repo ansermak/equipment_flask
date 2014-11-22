@@ -101,6 +101,8 @@ class BaseEntity(object):
 
     def create_name(self, base_data, model):
         return entity_uniq_name(base_data.name, model)
+        
+        print "mama"
 
     def _get_base_data(self):
         if self.url_param is not None:
