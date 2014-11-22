@@ -123,5 +123,9 @@ float: left;
 }
 
 #mytable td {
-white-space:nowrap;
+    white-space:nowrap;
+}
+
+#mytable th {
+    cursor: pointer;
 }
