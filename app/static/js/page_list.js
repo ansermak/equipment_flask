@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#filter').keyup(function() {
-
+        $(this).attr('changed', true);
         var filter_value = this.value.toLowerCase();
         $('.mytable_row').each(function(){
             if ($(this).text().toLowerCase().indexOf(filter_value) == -1) {
@@ -10,27 +10,6 @@ $(document).ready(function() {
             }
         });
         return;
-/*
-        $.ajax ({
-            url: '/ajax/filter',
-            data: {
-		filter_value: this.value, 
-                page_name: window.location.href
-	    },
-            type: 'POST',
-            success: function (data) {
-                if (!data || !data.rzlt) return;
-                $('.mytable_row').each(function() {
-                    var id = parseInt(this.id.split('_')[1]);
-                    if (data.rzlt.indexOf(id) == -1) {
-                        $(this).hide()
-                    } else {
-                        $(this).show()
-                    }
-                })
-            }
-        })
-*/
     });
     
     // filtering list of user by department for hardwere_edit_page
@@ -57,7 +36,17 @@ $(document).ready(function() {
 
     // обмежуємо користувачів по відділу відразу після завантаження сторінки
     prepare_user_list($('#department_id').val());
-
+    
+    $('#filter').focus(function(){
+        if(this.value == 'filter' && ! this.getAttribute('changed')) {
+            this.value = '';
+        }
+    });
+    $('#filter').blur(function(){
+        if(this.value == '') {
+            this.value = 'filter';
+        }
+    });
 })
 
 
