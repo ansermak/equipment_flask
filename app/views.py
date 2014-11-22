@@ -508,15 +508,13 @@ def ajax_filter():
         elif page_name == 'users':
             data = [i.id for i in
                     User.query.filter(User.view_name.like('%{}%'.format(
-                        filter_value))).all() +
-                    User.query.filter(User.login.like('%{}%'.format(
+                        filter_value)) | User.login.like('%{}%'.format(
                         filter_value))).all()]
 
         elif page_name == 'hardware':
             data = [i.id for i in
                     Hardware.query.filter(Hardware.name.like('%{}%'.format(
-                        filter_value))).all() +
-                    Hardware.query.filter(Hardware.model.like('%{}%'.format(
+                        filter_value)) | Hardware.model.like('%{}%'.format(
                         filter_value))).all()]
 
         elif page_name == 'software':

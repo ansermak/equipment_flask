@@ -1,5 +1,16 @@
 $(document).ready(function() {
     $('#filter').keyup(function() {
+
+        var filter_value = this.value.toLowerCase();
+        $('.mytable_row').each(function(){
+            if ($(this).text().toLowerCase().indexOf(filter_value) == -1) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+        return;
+/*
         $.ajax ({
             url: '/ajax/filter',
             data: {
@@ -19,5 +30,6 @@ $(document).ready(function() {
                 })
             }
         })
+*/
     });
 })
