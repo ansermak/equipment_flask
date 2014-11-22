@@ -495,31 +495,3 @@ def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
 
-
-@app.route('/ajax/filter', methods=['POST'])
-def ajax_filter():
-    filter_value = request.values['filter_value']
-    page_name = request.values['page_name'].split('/')
-    try:
-        page_name = page_name[-1 - (not page_name[-1])].lower()
-        if page_name == 'departments':
-            data = [i.id for i in Department.query.filter(
-                    Department.name.like('%{}%'.format(filter_value))).all()]
-        elif page_name == 'users':
-            data = [i.id for i in
-                    User.query.filter(User.view_name.like('%{}%'.format(
-                        filter_value)) | User.login.like('%{}%'.format(
-                        filter_value))).all()]
-
-        elif page_name == 'hardware':
-            data = [i.id for i in
-                    Hardware.query.filter(Hardware.name.like('%{}%'.format(
-                        filter_value)) | Hardware.model.like('%{}%'.format(
-                        filter_value))).all()]
-
-        elif page_name == 'software':
-            data = [i.id for i in Software.query.filter(
-                    Software.name.like('%{}%'.format(filter_value))).all()]
-        return jsonify(rzlt=data)
-    except:
-        return []
