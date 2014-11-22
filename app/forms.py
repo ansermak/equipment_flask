@@ -1,3 +1,4 @@
+#-*-coding: utf-8 -*-
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired, NoneOf
@@ -94,6 +95,10 @@ class HardwareForm(Form):
         self.department_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
         for i in Department.query.order_by('name').all()])
         self.user_id.choices = ([(0, '--Choose--')] + [(i.id, i)
+        for i in User.query.order_by('surname').all()])
+        # не, ну а шо робить, якщо мені потрібне третє значення
+        # в кожному туполі, а фласк, розраховує що їх там тільки два ?!
+        self.user_id.choices2 = ([(0, '--Choose--', -1)] + [(i.id, i, i.department_id)
         for i in User.query.order_by('surname').all()])
 
 

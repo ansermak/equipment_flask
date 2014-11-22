@@ -1,21 +1,39 @@
-<form class="base_form_edit" action = "" method="post" name="data" 
-    enctype="multipart/form-data">
+
+<form class="base_form_edit" action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.form.hidden_tag()}}
     <table>
       {% for item in data.form.fields_order %}
-      <tr><td><b>{{data.form[item].label}}</b></td>
-        <td>{{data.form[item]}}</td><td>
-          {% for i in data.form.errors[item] %}
-             <span style="color: red;">[{{i}}]</span>
-          {% endfor %}</td>
-      </tr>
+      {% if data.form[item].name == 'user_id' %}
+          <tr><td><b>{{data.form[item].label}}</b></td>
+              <td>
+                  <select id = "user_id" name = "user_id">
+                      {% for elem in data.form[item].choices2 %}
+                         <option {% if data.form[item].data == elem[0] %} 
+                                    selected="selected" 
+                                 {% endif %}
+                            value = "{{ elem[0] }}"
+                            data-department-id="{{ elem[2] }}">{{ elem[1] }}</option>
+                       {% endfor %}
+                  </select></td>
+              <td>
+              {% for i in data.form.errors[item] %}
+                 <span style="color: red;">[{{i}}]</span>
+              {% endfor %}</td>
+          </tr>
+
+      {% else %}
+          <tr><td><b>{{data.form[item].label}}</b></td><td>{{data.form[item]}}</td><td>
+              {% for i in data.form.errors[item] %}
+                 <span style="color: red;">[{{i}}]</span>
+              {% endfor %}</td>
+          </tr>
+      {% endif %}
       {% endfor %}
     </table><br/>
     <div style="width:500px">
     <input class="div_a" type="submit" name="submitted" value="Save & list"/>
     <input class="div_a" type="submit" name="submitted" value="Save & new"/>
-    <input class="div_a" type="reset" name="submitted" 
-    onclick="javascript:window.history.back()" value="Back"/>
+    <input class="div_a" type="reset" name="submitted" onclick="javascript:window.history.back()" value="Back"/>
     <input class="div_a" id="Delete" type="submit" value="Delete">
 
     </div>
