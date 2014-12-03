@@ -104,27 +104,39 @@ margin:0 5px;
 font-size:20pt;
 } 
 .base_form_edit{
-width: 500px;
+width: 400px;
 float: left;
 }
 /* helpers of edit form */
 
 .edit_helper{
   float: left;
-  border-radius: 5px;
+  /*border-radius: 5px;*/
   padding: 15px;
-  box-shadow: 0 0 0 5px rgba(0,0,0,0.1);
+  /*box-shadow: 0 0 0 5px rgba(0,0,0,0.1);*/
   position: absolute;
-  left: 500px;
+  left: 350px;
   top: 200px;
   min-width: 200px;
 }
 .sub_edit_helper{
-  /* margin : 20px 0; */
+  width: 200px;
+  margin : 10px 5px; 
   border-radius: 5px;
-  padding: 5px 0;
-  /*#box-shadow: 0 0 0 5px rgba(0,0,0,0.1);v*/
+  padding: 5px;
+  display: inline-block;
+  vertical-align: top;
+  box-shadow: 0 0 0 5px rgba(0,0,0,0.1);
 }
+
+.displayed {
+    display:block;
+}
+
+.hidden {
+    display:none;
+}
+
 
 #mytable td {
     white-space:nowrap;

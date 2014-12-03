@@ -1,3 +1,18 @@
+<script type="text/javascript">
+    function expand(id) {
+        console.log(id);
+        elem = document.getElementById(id).getElementsByTagName("p")[0];
+
+        if (elem.className == "displayed") {
+            elem.className = 'hidden'
+        }
+        else {
+            elem.className = "displayed"
+        }
+
+    }
+</script>
+
 {% extends "base.html" %}
 {% block content %}
     <div id="div_page_name">
@@ -9,13 +24,14 @@
         <div class="edit_helper">   
             {% for elem in data['_base_data'].order %}
                 {% if data.blocks[elem] %}
-                    <div class="sub_edit_helper">
-                        <p><b>{{elem.upper()}}</b></p>
-                        {% for item in data.blocks[elem] %}
-                        <div id="{{item.view_name}}" class = "helper_item">
-                            <img style="vertical-align:middle"src="{{item.get_type_image()}}"/>
-                            <a class ="div_a" href="{{item.get_path()}}">{{item}}</a></div>
-                        {% endfor %}
+                    <div class="sub_edit_helper" id="{{elem.lower()}}" onclick="expand(this.id);">
+                        <h2><b>{{elem.upper()}}</b></h2>
+                        <p class = "displayed"> 
+                            {% for item in data.blocks[elem] %}
+                                <img style="vertical-align:middle"src="{{item.get_type_image()}}"/>
+                                <a class ="div_a" href="{{item.get_path()}}">{{item}}</a></br>
+                            {% endfor %}
+                        </p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -23,3 +39,5 @@
     {% endif %}
 {% endblock %}
 {% endblock %}
+
+
