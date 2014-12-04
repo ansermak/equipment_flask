@@ -1,18 +1,3 @@
-<script type="text/javascript">
-    function expand(id) {
-        console.log(id);
-        elem = document.getElementById(id).getElementsByTagName("p")[0];
-
-        if (elem.className == "displayed") {
-            elem.className = 'hidden'
-        }
-        else {
-            elem.className = "displayed"
-        }
-
-    }
-</script>
-
 {% extends "base.html" %}
 {% block content %}
     <div id="div_page_name">

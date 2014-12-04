@@ -116,8 +116,8 @@ class Hardware(db.Model, BaseClass):
     }
 
     id = db.Column(db.Integer, primary_key = True)
-    serial = db.Column(db.String, index = True, unique = True)
-    inum = db.Column(db.String, index = True, unique = True)
+    serial = db.Column(db.String, index = True)
+    inum = db.Column(db.String, index = True)
     name = db.Column(db.String(100), index = True)
     view_name = db.Column(db.String(100), index = True, unique=True)   
     model = db.Column(db.String(100), index = True)
