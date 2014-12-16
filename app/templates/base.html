@@ -3,7 +3,7 @@
 <script type="text/javascript">
     function expand(id) {
         console.log(id);
-        elem = document.getElementById(id).getElementsByTagName("p")[0];
+        elem = document.getElementById(id).parentNode.getElementsByTagName("p")[0];
 
         if (elem.className == "displayed") {
             elem.className = 'hidden'

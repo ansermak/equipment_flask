@@ -9,8 +9,8 @@
         <div class="edit_helper">   
             {% for elem in data['_base_data'].order %}
                 {% if data.blocks[elem] %}
-                    <div class="sub_edit_helper" id="{{elem.lower()}}" onclick="expand(this.id);">
-                        <h2><b>{{elem.upper()}}</b></h2>
+                    <div class="sub_edit_helper">
+                        <h2 onclick="expand(this.id);" id="{{elem.lower()}}"><b>{{elem.upper()}}</b></h2>
                         <p class = "displayed"> 
                             {% for item in data.blocks[elem] %}
                                 <img style="vertical-align:middle"src="{{item.get_type_image()}}"/>
