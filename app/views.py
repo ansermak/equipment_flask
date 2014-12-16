@@ -18,11 +18,12 @@ PLURALS = {
 }
 
 BUTTONS = {'department':{'user':'/users/new',
-                                'hardware':'/hardware/new',
-                                'software':'/software/new'},
-                    'user': {},
-                    'hardware': {},
-                    'software': {}
+                        'hardware':'/hardware/new',
+                        'software':'/software/new'},
+        'user': {'hardware':'/hardware/new',
+                'software':'/software/new'},
+        'hardware': {'hardware':'/hardware/new',
+                    'software':'/software/new'},
                     }
 
 
@@ -198,7 +199,6 @@ class BaseEntity(object):
 class UserEntity(BaseEntity):
 
     def _prepare_base_edit(self):
-        self.buttons = {'computer':'/hardware/new/'}
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
