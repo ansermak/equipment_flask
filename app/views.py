@@ -17,6 +17,14 @@ PLURALS = {
     'hardware': 'hardware_items'
 }
 
+BUTTONS = {'department':{'user':'/users/new',
+                                'hardware':'/hardware/new',
+                                'software':'/software/new'},
+                    'user': {},
+                    'hardware': {},
+                    'software': {}
+                    }
+
 
 def replace_other_chars(string):
     """replace all not latin and not numeric chars with hyphen
@@ -64,8 +72,10 @@ class BaseEntity(object):
     """ Entity model should have fields name and view_name. 
     Second one is used for generating url"""
 
-    def __init__(self, entity_name, url_param=None, template_list=None,
-                 template_edit=None, template_view=None, entity_form=None):
+    def __init__(self, entity_name, url_param=None, 
+                template_list='base_list.html', template_edit='base_edit.html',
+                template_view='base_view.html', entity_form=None):
+
         self.name = entity_name.lower()
         self.name_display = entity_name.capitalize()
         self.model = globals()[self.name_display]
@@ -75,14 +85,16 @@ class BaseEntity(object):
         self.entity_url = url_for(PLURALS[self.name])
         self.entity_url_new = url_for(self.name + '_new')
         self.entity_url_edit = self.name + '_edit'
-        self.template_list = (template_list if template_list
-            else 'base_list.html')
-        self.template_edit = (template_edit if template_edit
-            else 'base_edit.html')
-        self.template_view = (template_view if template_edit
-
-            else 'base_view.html')
+        self.template_list = template_list
+        self.template_edit = template_edit
+        self.template_view = template_view
         self.url_param = url_param
+        
+        if self.name in BUTTONS:
+            self.buttons = BUTTONS[self.name]
+        else:
+            buttons = {}
+
         if self.url_param:
             self.entity_url_edit = url_for(self.entity_url_edit,
                                            url_parameter=self.url_param)
@@ -90,7 +102,6 @@ class BaseEntity(object):
     def _save_data(self, base_data, form):
         for a, b in form.data.items():
             setattr(base_data, a, b)
-        # if base_data.view_name is None:
         base_data.view_name = self.create_name(base_data, self.model)
         db.session.add(base_data)
         db.session.commit()
@@ -101,8 +112,7 @@ class BaseEntity(object):
 
     def create_name(self, base_data, model):
         return entity_uniq_name(base_data.name, model)
-        
-        print "mama"
+
 
     def _get_base_data(self):
         if self.url_param is not None:
@@ -133,11 +143,13 @@ class BaseEntity(object):
         base_data = self._get_base_data()
         if not form.errors:
             form = self.form(obj=base_data)
+
         return ('template', self.template_edit, {
                 'page_name': self.name_display,
                 'add_item_url': self.entity_url_new,
                 'form': form,
-                '_base_data': base_data
+                '_base_data': base_data,
+                'buttons': self.buttons
                 })
 
     def _prepare_base_view(self, order=None):
@@ -186,6 +198,7 @@ class BaseEntity(object):
 class UserEntity(BaseEntity):
 
     def _prepare_base_edit(self):
+        self.buttons = {'computer':'/hardware/new/'}
         rzlt = super(UserEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template':
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
@@ -194,13 +207,14 @@ class UserEntity(BaseEntity):
 
     def _prepare_base_view(self, order=None):
         order = (('name',), ('surname',), ('login',), ('department', 1))
+        self.buttons = {'computer':'/hardware/new/'}
         return super(UserEntity, self)._prepare_base_view(order)
 
     def get_blocks(self, result):
         user_software = []
         for item in result['_base_data'].hardware_items.all():
             user_software += item.software_items.all()
-        print result['_base_data'].computers.all()
+        
         return {
             'Computers': result['_base_data'].computers.all(),
             'Notebooks': result['_base_data'].notebooks.all(),
@@ -224,7 +238,6 @@ class UserEntity(BaseEntity):
 
 
 class DepartmentEntity(BaseEntity):
-
     def _save_data(self, base_data, form):
         super(DepartmentEntity, self)._save_data(base_data, form)
         department_id = base_data.id

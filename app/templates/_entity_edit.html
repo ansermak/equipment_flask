@@ -37,7 +37,14 @@
     <input class="div_a" id="Delete" type="submit" value="Delete">
 
     </div>
+    <div>
+      {% for button in data.buttons %}
+      <br><a href="{{data.buttons[button]}}" class="div_add_item div_a">+ {{button}}</a>
+      {% endfor %}
+      
+    </div>
   </form>
+
   <script>
     var a = document.getElementById('Delete')
     a.onclick = function() {
