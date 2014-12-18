@@ -1,5 +1,5 @@
-
-<form class="base_form_edit" action = "" method="post" name="data" enctype="multipart/form-data">
+<div class="base_form_edit">
+<form  action = "" method="post" name="data" enctype="multipart/form-data">
     {{data.form.hidden_tag()}}
     <table>
       {% for item in data.form.fields_order %}
@@ -31,19 +31,31 @@
       {% endfor %}
     </table><br/>
     <div>
+    
     <input class="div_a" type="submit" name="submitted" value="Save & list"/>
     <input class="div_a" type="submit" name="submitted" value="Save & new"/>
     <input class="div_a" type="reset" name="submitted" onclick="javascript:window.history.back()" value="Back"/>
-    <input class="div_a" id="Delete" type="submit" value="Delete">
+    <input class="div_a" name="submitted"  id="Delete" type="submit" value="Delete">
 
     </div>
+    </form>
+    <br/>
     <div>
       {% for button in data.buttons %}
-      <br><a href="{{data.buttons[button]}}" class="div_add_item div_a">+ {{button}}</a>
+      <!--<a href="{{data.buttons[button]}}" class="div_add_item div_a">+ {{button}}</a>-->
+      <form action="{{data.buttons[button]}}" method="post">
+        <input type="hidden" name="location" class="current_url"/>
+        <input type="submit" name="{{button}}" value="{{button}}" class="div_a"/>
+        
+      </form>
       {% endfor %}
-      
+      <script type="text/javascript">
+        $('.current_url').each(function(){
+            $(this).val(window.location);
+        });      
+      </script>
     </div>
-  </form>
+    </div>
 
   <script>
     var a = document.getElementById('Delete')
