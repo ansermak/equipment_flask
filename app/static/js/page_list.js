@@ -1,14 +1,19 @@
 $(document).ready(function() {
-    $('#filter').keyup(function() {
-        $(this).attr('changed', true);
-        var filter_value = this.value.toLowerCase();
-        $('.mytable_row').each(function(){
+   var do_filter = function(filter_value){
+     $('.mytable_row').each(function(){
             if ($(this).text().toLowerCase().indexOf(filter_value) == -1) {
                 $(this).hide();
             } else {
                 $(this).show();
             }
         });
+
+   }
+    
+    
+    $('#filter').keyup(function() {
+        $(this).attr('changed', true);
+        do_filter(this.value.toLowerCase());
         return;
     });
     
@@ -47,6 +52,7 @@ $(document).ready(function() {
             this.value = 'filter';
         }
     });
+    if ($('#filter').attr('changed')) do_filter($('#filter').val().toLowerCase());
 })
 
 
