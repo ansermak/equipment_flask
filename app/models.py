@@ -133,7 +133,7 @@ class Hardware(db.Model, BaseClass):
         if self.user.did is not None:
             return ((self.types[self.hardware_type], TEMPLATE_IMG ), (self, TEMPLATE_ANCHOR),
             (self.model, ), (self.user.own_department, TEMPLATE_ANCHOR),
-            ('Not specified', ))
+            ('not specified', ))
         return ((self.types[self.hardware_type], TEMPLATE_IMG), (self, TEMPLATE_ANCHOR),
             (self.model, ), (self.user.own_department, TEMPLATE_ANCHOR),
             (self.user, TEMPLATE_ANCHOR))
@@ -158,7 +158,7 @@ class Software(db.Model, BaseClass):
 
     def repr_list(self):
         if self.hardware.did is not None:
-            return ((self, TEMPLATE_ANCHOR), ('Not specified',),
+            return ((self, TEMPLATE_ANCHOR), ('not specified',),
                 (self.hardware.department, TEMPLATE_ANCHOR))
 
         return ((self, TEMPLATE_ANCHOR), (self.hardware, TEMPLATE_ANCHOR), 

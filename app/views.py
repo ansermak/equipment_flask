@@ -216,10 +216,10 @@ class UserEntity(BaseEntity):
             user_software += item.software_items.all()
         
         return {
-            'Computers': result['_base_data'].computers.all(),
-            'Notebooks': result['_base_data'].notebooks.all(),
-            'Monitors': result['_base_data'].monitors.all(),
-            'Upses': result['_base_data'].upses.all(),
+            'Computers': result['_base_data'].computers.order_by('view_name').all(),
+            'Notebooks': result['_base_data'].notebooks.order_by('view_name').all(),
+            'Monitors': result['_base_data'].monitors.order_by('view_name').all(),
+            'Upses': result['_base_data'].upses.order_by('view_name').all(),
             'Software': user_software
         }
 
@@ -284,13 +284,13 @@ class DepartmentEntity(BaseEntity):
             user_software += item.software_items.all()
 
         return {
-            'Users': result['_base_data'].users.all(),
-            'Computers': result['_base_data'].computers.all(),
-            'Notebooks': result['_base_data'].notebooks.all(),
-            'Monitors': result['_base_data'].monitors.all(),
-            'Upses': result['_base_data'].upses.all(),
-            'Scanners': result['_base_data'].scanners.all(),
-            'Printers': result['_base_data'].printers.all(),
+            'Users': result['_base_data'].users.order_by('view_name').all(),
+            'Computers': result['_base_data'].computers.order_by('view_name').all(),
+            'Notebooks': result['_base_data'].notebooks.order_by('view_name').all(),
+            'Monitors': result['_base_data'].monitors.order_by('view_name').all(),
+            'Upses': result['_base_data'].upses.order_by('view_name').all(),
+            'Scanners': result['_base_data'].scanners.order_by('view_name').all(),
+            'Printers': result['_base_data'].printers.order_by('view_name').all(),
             'Software': user_software
         }
 
@@ -336,7 +336,7 @@ class HardwareEntity(BaseEntity):
         return super(HardwareEntity, self)._prepare_base_view(order)
 
     def get_blocks(self, result):
-        return {'Software': result['_base_data'].software_items.all()}
+        return {'Software': result['_base_data'].software_items.order_by('view_name').all()}
 
     def _delete_data(self, base_data):
         for item in base_data.software_items.all():
