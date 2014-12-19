@@ -22,8 +22,7 @@ BUTTONS = {'department':{'user':'/users/new/',
                         'software':'/software/new/'},
         'user': {'hardware':'/hardware/new/',
                 'software':'/software/new/'},
-        'hardware': {'hardware':'/hardware/new/',
-                    'software':'/software/new/'},
+        'hardware': {'software':'/software/new/'},
                     }
 
 
@@ -336,6 +335,7 @@ class HardwareEntity(BaseEntity):
             view_name = request.values['location'].split('/')[-2]
             if location[-3] == 'departments':
                 form.department_id.data = Department.query.filter(Department.view_name==view_name).first().id
+                form.user_id.data = User.query.filter(User.did==form.department_id.data).first().id
             elif location[-3] == 'users':
                 form.user_id.data = User.query.filter(User.view_name==view_name).first().id
                 form.department_id.data = User.query.filter(User.view_name==view_name).first().department_id
