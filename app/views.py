@@ -199,7 +199,7 @@ class BaseEntity(object):
 class UserEntity(BaseEntity):
 
     def base_new(self):
-        if request.values['location']:
+        if 'location' in request.values:
             form = UserForm()
             view_name = request.values['location'].split('/')[-2]
             form.department_id.data = Department.query.filter(Department.view_name==view_name).first().id
@@ -207,8 +207,8 @@ class UserEntity(BaseEntity):
                                    data={'page_name': self.name_display,
                                          'add_item_url': self.entity_url_new,
                                          'form': form})
-        else:
-            super(UserEntity, self).base_new()
+        else: 
+            return super(UserEntity, self).base_new()
 
     def _prepare_base_edit(self):
         rzlt = super(UserEntity, self)._prepare_base_edit()
@@ -425,7 +425,6 @@ def department_new():
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
 def department_edit(url_parameter):
-    print 'Im here'
     depart = DepartmentEntity('department',
                               template_edit='base_edit.html',
                               url_param=url_parameter)
