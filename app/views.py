@@ -20,8 +20,7 @@ PLURALS = {
 BUTTONS = {'department':{'user':'/users/new/',
                         'hardware':'/hardware/new/',
                         'software':'/software/new/'},
-        'user': {'hardware':'/hardware/new/',
-                'software':'/software/new/'},
+        'user': {'hardware':'/hardware/new/'},
         'hardware': {'software':'/software/new/'},
                     }
 
@@ -201,7 +200,8 @@ class UserEntity(BaseEntity):
         if 'location' in request.values:
             form = UserForm()
             view_name = request.values['location'].split('/')[-2]
-            form.department_id.data = Department.query.filter(Department.view_name==view_name).first().id
+            form.department_id.data = Department.query.filter(
+                Department.view_name==view_name).first().id
             return render_template(self.template_edit,
                                    data={'page_name': self.name_display,
                                          'add_item_url': self.entity_url_new,
@@ -227,10 +227,14 @@ class UserEntity(BaseEntity):
             user_software += item.software_items.all()
         
         return {
-            'Computers': result['_base_data'].computers.order_by('view_name').all(),
-            'Notebooks': result['_base_data'].notebooks.order_by('view_name').all(),
-            'Monitors': result['_base_data'].monitors.order_by('view_name').all(),
-            'Upses': result['_base_data'].upses.order_by('view_name').all(),
+            'Computers': result['_base_data'].computers.order_by(
+                'view_name').all(),
+            'Notebooks': result['_base_data'].notebooks.order_by(
+                'view_name').all(),
+            'Monitors': result['_base_data'].monitors.order_by(
+                'view_name').all(),
+            'Upses': result['_base_data'].upses.order_by(
+                'view_name').all(),
             'Software': user_software
         }
 
@@ -296,12 +300,17 @@ class DepartmentEntity(BaseEntity):
 
         return {
             'Users': result['_base_data'].users.order_by('view_name').all(),
-            'Computers': result['_base_data'].computers.order_by('view_name').all(),
-            'Notebooks': result['_base_data'].notebooks.order_by('view_name').all(),
-            'Monitors': result['_base_data'].monitors.order_by('view_name').all(),
+            'Computers': result['_base_data'].computers.order_by(
+                'view_name').all(),
+            'Notebooks': result['_base_data'].notebooks.order_by(
+                'view_name').all(),
+            'Monitors': result['_base_data'].monitors.order_by(
+                'view_name').all(),
             'Upses': result['_base_data'].upses.order_by('view_name').all(),
-            'Scanners': result['_base_data'].scanners.order_by('view_name').all(),
-            'Printers': result['_base_data'].printers.order_by('view_name').all(),
+            'Scanners': result['_base_data'].scanners.order_by(
+                'view_name').all(),
+            'Printers': result['_base_data'].printers.order_by(
+                'view_name').all(),
             'Software': user_software
         }
 
@@ -334,11 +343,15 @@ class HardwareEntity(BaseEntity):
             form = HardwareForm()
             view_name = request.values['location'].split('/')[-2]
             if location[-3] == 'departments':
-                form.department_id.data = Department.query.filter(Department.view_name==view_name).first().id
-                form.user_id.data = User.query.filter(User.did==form.department_id.data).first().id
+                form.department_id.data = Department.query.filter(
+                    Department.view_name==view_name).first().id
+                form.user_id.data = User.query.filter(
+                    User.did==form.department_id.data).first().id
             elif location[-3] == 'users':
-                form.user_id.data = User.query.filter(User.view_name==view_name).first().id
-                form.department_id.data = User.query.filter(User.view_name==view_name).first().department_id
+                form.user_id.data = User.query.filter(
+                    User.view_name==view_name).first().id
+                form.department_id.data = User.query.filter(
+                    User.view_name==view_name).first().department_id
                  
             return render_template(self.template_edit,
                                    data={'page_name': self.name_display,
@@ -365,7 +378,8 @@ class HardwareEntity(BaseEntity):
         return super(HardwareEntity, self)._prepare_base_view(order)
 
     def get_blocks(self, result):
-        return {'Software': result['_base_data'].software_items.order_by('view_name').all()}
+        return {'Software': result['_base_data'].software_items.order_by(
+            'view_name').all()}
 
     def _delete_data(self, base_data):
         for item in base_data.software_items.all():
@@ -377,6 +391,27 @@ class HardwareEntity(BaseEntity):
 
 
 class SoftwareEntity(BaseEntity):
+    def base_new(self):
+        if 'location' in request.values:
+            location =  request.values['location'].split('/')
+            form = SoftwareForm()
+            view_name = request.values['location'].split('/')[-2]
+            if location[-3] == 'departments':
+                
+                form.comp_id.data = Hardware.query.filter(
+                    Hardware.did==Department.query.filter(
+                        Department.view_name==view_name).first().id).first().id
+            elif location[-3] == 'hardware':
+                pass
+                form.comp_id.data = Hardware.query.filter(
+                    Hardware.view_name==view_name).first().id
+                 
+            return render_template(self.template_edit,
+                                   data={'page_name': self.name_display,
+                                         'add_item_url': self.entity_url_new,
+                                         'form': form})
+
+        return super(SoftwareEntity, self).base_new()
 
     def _prepare_base_view(self, order=None):
         order = (('name',), ('hardware', 1))
