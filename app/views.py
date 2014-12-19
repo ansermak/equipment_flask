@@ -329,6 +329,23 @@ class DepartmentEntity(BaseEntity):
 
 
 class HardwareEntity(BaseEntity):
+    def base_new(self):
+        if 'location' in request.values:
+            location =  request.values['location'].split('/')
+            form = HardwareForm()
+            view_name = request.values['location'].split('/')[-2]
+            if location[-3] == 'departments':
+                form.department_id.data = Department.query.filter(Department.view_name==view_name).first().id
+            elif location[-3] == 'users':
+                form.user_id.data = User.query.filter(User.view_name==view_name).first().id
+                form.department_id.data = User.query.filter(User.view_name==view_name).first().department_id
+                 
+            return render_template(self.template_edit,
+                                   data={'page_name': self.name_display,
+                                         'add_item_url': self.entity_url_new,
+                                         'form': form})
+
+        return super(HardwareEntity, self).base_new()
 
     def _save_data(self, base_data, form):
         user = User.query.filter(User.id == form.user_id.data).first()
