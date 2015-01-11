@@ -19,6 +19,25 @@ a{
   color: white;
   border-color: #f9f9f9;
 }
+.div_a:active{
+  background-color:blue;
+}
+
+#contentliquid {
+    float: left;
+    width: 100%;
+}
+
+#content {
+    /*background: #FFFFFF;*/
+    margin-left: 280px;
+}
+
+#leftcolumn {
+    float: left;
+    /*background: #CC33FF;*/
+    width: 280px;
+}
 /* main image + menu in the top of page */
 
 #img_main_index_page{
@@ -115,7 +134,7 @@ float: left;
   padding: 15px;
   /*box-shadow: 0 0 0 5px rgba(0,0,0,0.1);*/
   position: absolute;
-  left: 350px;
+  left: 630px;
   top: 200px;
   min-width: 200px;
 }

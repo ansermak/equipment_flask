@@ -28,20 +28,34 @@
     {% block menu %}
     {% include 'menu_header_page.html' %}
     {% endblock %}
-    {% block search %}
-    <form style="display:inline;" action="{{url_for('search')}}" method="post"
-      name="search">
-      {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}
-      <input type="submit" value="Search"></form>
-    {% endblock %}
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-      <br>{{message}}
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+    
+    <div id="contentliquid">    
+      <div id="leftcolumn">
+        <table >
+          {% for d in ('Entry and Data Processing', 'Accounting', 'Media', 'IT Department', 'Consumer Goods', 'Retail and Technology', 'Consumer Scan Panel', 'Services Research') %}
+          <tr><td class="div_a"><a  href="/departments/{{d}}" id="">{{d}}</a></td?</tr>
+          {% endfor %}
+        </table>
+      </div> 
+      <div id="content">
+         {% block search %}
+        <form style="display:inline;" action="{{url_for('search')}}" method="post"
+        name="search">
+        {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}
+        <input type="submit" value="Search"></form>
+        {% endblock %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+          <br>{{message}}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+      </div>
 
-    {% block content %}{% endblock %}
+    </div>
+
   </body>
 </html>
