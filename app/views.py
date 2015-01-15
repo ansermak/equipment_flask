@@ -428,6 +428,10 @@ class SoftwareEntity(BaseEntity):
 def before_request():
     g.search_form = SearchForm()
 
+@app.context_processor
+def menu_items():
+    return dict(menu_items=Department.query.order_by('name').all())
+
 
 @app.route('/search', methods=['POST'])
 def search():

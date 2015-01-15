@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<br><input type="text" id="filter" value="filter"></br>
+
+<div class="div_search">
+    <div class="div_inner_search">
+        <input type="text" id="filter" value="Filter">
+    </div>
+</div>
       
 <div id="div_page_name">
    {{page_name|default('base_list')}}

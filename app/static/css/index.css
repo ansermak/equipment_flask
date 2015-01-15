@@ -1,6 +1,8 @@
 body{
   background-color: #f9f9f9;
   color: #393633;
+  font-family: "Times New Roman", Times, serif;
+  overflow: scroll;
 }
 a{
    text-decoration:none;
@@ -18,9 +20,6 @@ a{
   background-color:#fc5755;
   color: white;
   border-color: #f9f9f9;
-}
-.div_a:active{
-  background-color:blue;
 }
 
 #contentliquid {
@@ -83,6 +82,13 @@ a{
    display: inline-block;
    font-weight: 600;
 }
+.div_search{
+   background-color: #f9f9f9;
+   border-radius: 8px;
+   padding: 2px;
+   display: inline-block;
+   font-weight: 600;
+}
 
 .div_button :hover{
   background-color:#fc5755;
@@ -90,14 +96,28 @@ a{
   border-color: #f9f9f9;
 }
 .div_inner_button{
-   padding: 2px;
-   width: 150px;
-   height: 30px;
-   border-radius: 8px;
-   border: 2px solid #aaaaaa;
-   display: table-cell;
-   vertical-align: middle;
-   text-align: center;
+  padding: 2px;
+  width: 150px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid #aaaaaa;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+.div_inner_search{
+  padding: 2px;
+  width: 300px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid #aaaaaa;
+  display: table-cell;
+  vertical-align: middle;
+}
+.div_inner_search input {
+  margin-left:10px;
+  padding-left:20px;
+  /*border-radius: 8px;*/
 }
 
 

@@ -1,5 +1,5 @@
     <div id="img_main_menu_page">
-      <h1 style="padding-top:30px">Инвентаризационная база </h1>
+      <h1 style="padding-top:30px"><a href="/index" style="color:white">Инвентаризационная база</a></h1>
     </div>
       <div id="div_buttons_menu_page">
         <div style="text-align:center;">
@@ -10,11 +10,11 @@
             </a>
           </div>
 
-          <div class="div_button">
+          {#<div class="div_button">
             <a href="/departments">
               <div class="div_inner_button">Departments</div>
             </a>
-          </div>
+          </div>#}
 
           <div class="div_button">
             <a href="/hardware">
@@ -27,7 +27,16 @@
               <div class="div_inner_button">Software</div>
             </a>
           </div>
-
+          <div class="div_search" style="float:right; margin-right:50px">
+            <div class="div_inner_search">
+              {% block search %}
+              <form style="display:inline;" action="{{url_for('search')}}" method="post"
+              name="search">
+              {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}
+              <input type="submit" value="Search"></form>
+              {% endblock %}
+            </div>
+          </div>
         </div>
       </div>
   <div style="height:50px"></div>

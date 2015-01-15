@@ -43,13 +43,13 @@ $(document).ready(function() {
     prepare_user_list($('#department_id').val());
     
     $('#filter').focus(function(){
-        if(this.value == 'filter' && ! this.getAttribute('changed')) {
+        if(this.value == 'Filter' && ! this.getAttribute('changed')) {
             this.value = '';
         }
     });
     $('#filter').blur(function(){
         if(this.value == '') {
-            this.value = 'filter';
+            this.value = 'Filter';
         }
     });
     if ($('#filter').attr('changed')) do_filter($('#filter').val().toLowerCase());
