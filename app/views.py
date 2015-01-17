@@ -1,13 +1,13 @@
 #-*-coding: utf-8-*-
 
 from flask import (render_template, flash, redirect, url_for, 
-    request, g, jsonify)
+    request, g, session, jsonify)
 from app import app, db
 from config import MAX_SEARCH_RESULTS
-from models import User, Department, Hardware, Software
+from models import User, Department, Hardware, Software, Admin
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm, 
-    SoftwareForm, STATUSES, HARDWARE_TYPES)
-import re
+    SoftwareForm, LoginForm, STATUSES, HARDWARE_TYPES)
+import re, md5
 
 
 PLURALS = {
@@ -424,13 +424,46 @@ class SoftwareEntity(BaseEntity):
         return entity_uniq_name('software_item_{}'.format(softCounter), model)
 
 
+def login_required(f):
+    def wrapper():
+        if hasattr(g, 'user') and g.user:
+            return f()
+        else:
+            return redirect(url_for('login'))
+
+    return wrapper
+
 @app.before_request
 def before_request():
+    if 'admin_id' in session:
+        g.user = Admin.query.filter_by(id=session['admin_id']).first()
+    else:
+        g.user = None
+
     g.search_form = SearchForm()
 
 @app.context_processor
 def menu_items():
     return dict(menu_items=Department.query.order_by('name').all())
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if g.user is not None:
+        return redirect('/')
+    form = LoginForm()
+    if form.validate_on_submit():
+        session['admin_id'] = Admin.query.filter_by(name=form.name.data,
+            password=md5.new(form.password.data).hexdigest()).first()
+        if session['admin_id']:
+            session['admin_id'] = session['admin_id'].id
+            return redirect('/')
+        else:
+            flash('No such user')
+
+    return render_template('login.html',
+        title = 'Sign in',
+        form = form)
 
 
 @app.route('/search', methods=['POST'])
@@ -463,6 +496,7 @@ def search_results(query):
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
     return render_template('index.html')
 

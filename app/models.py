@@ -173,6 +173,12 @@ class Software(db.Model, BaseClass):
     def get_type_image(self):
         return '/static/img/software.png'
 
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), index = True, unique = True)
+    password = db.Column(db.String(32))
+
 whooshalchemy.whoosh_index(app, User)
 whooshalchemy.whoosh_index(app, Department)
 whooshalchemy.whoosh_index(app, Hardware)

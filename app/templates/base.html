@@ -32,7 +32,9 @@
     {% block e %}
     <div id="contentliquid">    
       <div id="leftcolumn">
+        {% block vert_menu %}
         {% include 'vert_menu.html' %}
+        {% endblock %}
       </div> 
       <div id="content">
          {#{% block search %}

@@ -1,6 +1,6 @@
 #-*-coding: utf-8 -*-
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NoneOf
 from app.models import Department, User, Hardware
 
@@ -80,13 +80,14 @@ class HardwareForm(Form):
             NoneOf([''], 'cannot be empty', None)])
     hardware_type = SelectField('hardware_type',
             coerce=int,
-            choices=[(0, '--Choose--'),
-                        (HARDWARE_TYPES['HARDWARE_DESKTOP'], 'Desktop'),
-                        (HARDWARE_TYPES['HARDWARE_NOTEBOOK'], 'Notebook'),
-                        (HARDWARE_TYPES['HARDWARE_MONITOR'], 'Monitor'),
-                        (HARDWARE_TYPES['HARDWARE_UPS'], 'UPS'),
-                        (HARDWARE_TYPES['HARDWARE_PRINTER'], 'Printer'),
-                        (HARDWARE_TYPES['HARDWARE_SCANNER'], 'Scaner'),
+            choices=[
+                (0, '--Choose--'),
+                (HARDWARE_TYPES['HARDWARE_DESKTOP'], 'Desktop'),
+                (HARDWARE_TYPES['HARDWARE_NOTEBOOK'], 'Notebook'),
+                (HARDWARE_TYPES['HARDWARE_MONITOR'], 'Monitor'),
+                (HARDWARE_TYPES['HARDWARE_UPS'], 'UPS'),
+                (HARDWARE_TYPES['HARDWARE_PRINTER'], 'Printer'),
+                (HARDWARE_TYPES['HARDWARE_SCANNER'], 'Scaner'),
             ], validators=[DataRequired(),
             NoneOf([''], 'cannot be empty', None)])
 
@@ -98,7 +99,8 @@ class HardwareForm(Form):
         for i in User.query.order_by('surname').all()])
         # не, ну а шо робить, якщо мені потрібне третє значення
         # в кожному туполі, а фласк, розраховує що їх там тільки два ?!
-        self.user_id.choices2 = ([(0, '--Choose--', -1)] + [(i.id, i, i.department_id)
+        self.user_id.choices2 = ([(0, '--Choose--', -1)] + 
+            + [(i.id, i, i.department_id)
         for i in User.query.order_by('surname').all()])
 
 
@@ -127,3 +129,12 @@ class SoftwareForm(Form):
 
 class SearchForm(Form):
     search = StringField('search', validators=[DataRequired()])
+
+
+class LoginForm(Form):
+    name = StringField('name', validators = [DataRequired(),
+        NoneOf([''], 'Can not be empty', None)
+        ])
+    password = PasswordField('password', validators = [DataRequired(),
+        NoneOf([''], 'Can not be empty', None)
+        ])
