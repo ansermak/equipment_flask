@@ -467,6 +467,12 @@ def login():
         title = 'Sign in',
         form = form)
 
+@app.route('/logout/')
+@login_required
+def logout():
+    g.user = None
+    session['admin_id'] = None
+    return redirect(url_for('index'))
 
 @app.route('/search', methods=['POST'])
 def search():

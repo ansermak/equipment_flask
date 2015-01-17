@@ -36,6 +36,9 @@
               <input type="submit" value="Search"></form>
               {% endblock %}
             </div>
+            {% if g.user %}
+            <a href="{{url_for('logout')}}">logout</a>
+            {% endif %}
           </div>
         </div>
       </div>
