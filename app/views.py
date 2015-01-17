@@ -7,6 +7,7 @@ from config import MAX_SEARCH_RESULTS
 from models import User, Department, Hardware, Software, Admin
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm, 
     SoftwareForm, LoginForm, STATUSES, HARDWARE_TYPES)
+from functools import wraps
 import re, md5
 
 
@@ -425,9 +426,10 @@ class SoftwareEntity(BaseEntity):
 
 
 def login_required(f):
-    def wrapper():
+    @wraps(f)
+    def wrapper(*args, **kwargs):
         if hasattr(g, 'user') and g.user:
-            return f()
+            return f(*args, **kwargs)
         else:
             return redirect(url_for('login'))
 
@@ -457,7 +459,7 @@ def login():
             password=md5.new(form.password.data).hexdigest()).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
-            return redirect('/')
+            return redirect(url_for('index'))
         else:
             flash('No such user')
 
@@ -502,18 +504,21 @@ def index():
 
 
 @app.route('/departments/')
+@login_required
 def departments():
     depart = BaseEntity('department', template_edit='base_edit.html')
     return depart.base_list()
 
 
 @app.route('/departments/new/', methods=['GET', 'POST'])
+@login_required
 def department_new():
     depart = DepartmentEntity('department')
     return depart.base_new()
 
 
 @app.route('/departments/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
 def department_edit(url_parameter):
     depart = DepartmentEntity('department',
                               template_edit='base_edit.html',
@@ -525,12 +530,14 @@ def department_edit(url_parameter):
 
 
 @app.route('/users/')
+@login_required
 def users():
     users = UserEntity('user', template_view='base_view.html')
     return users.base_list('surname', 'self.model.did == None')
 
 
 @app.route('/users/<url_parameter>/view', methods=['GET', 'POST'])
+@login_required
 def user_view(url_parameter):
     users = UserEntity('user',
                        template_view='base_view.html',
@@ -542,6 +549,7 @@ def user_view(url_parameter):
 
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
 def user_edit(url_parameter):
     users = UserEntity('user',
                        template_edit='base_edit.html',
@@ -553,18 +561,21 @@ def user_edit(url_parameter):
 
 
 @app.route('/users/new/', methods=['GET', 'POST'])
+@login_required
 def user_new():
     users = UserEntity('user')
     return users.base_new()
 
 
 @app.route('/hardware/')
+@login_required
 def hardware_items():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
     return hard.base_list('view_name', 'self.model.did == None')
 
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
 def hardware_edit(url_parameter):
     hard = HardwareEntity('hardware',
                           template_edit='base_edit.html',
@@ -576,18 +587,21 @@ def hardware_edit(url_parameter):
 
 
 @app.route('/hardware/new/', methods=['GET', 'POST'])
+@login_required
 def hardware_new():
     hard = HardwareEntity('hardware')
     return hard.base_new()
 
 
 @app.route('/software/')
+@login_required
 def software_items():
     soft = SoftwareEntity('software')
     return soft.base_list('name')
 
 
 @app.route('/software/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
 def software_edit(url_parameter):
     soft = SoftwareEntity('software', url_param=url_parameter)
     try:
@@ -597,6 +611,7 @@ def software_edit(url_parameter):
 
 
 @app.route('/software/new/', methods=['GET', 'POST'])
+@login_required
 def software_new():
     soft = SoftwareEntity('software')
     return soft.base_new()

@@ -99,8 +99,7 @@ class HardwareForm(Form):
         for i in User.query.order_by('surname').all()])
         # не, ну а шо робить, якщо мені потрібне третє значення
         # в кожному туполі, а фласк, розраховує що їх там тільки два ?!
-        self.user_id.choices2 = ([(0, '--Choose--', -1)] + 
-            + [(i.id, i, i.department_id)
+        self.user_id.choices2 = ([(0, '--Choose--', -1)]  + [(i.id, i, i.department_id)
         for i in User.query.order_by('surname').all()])
 
 
