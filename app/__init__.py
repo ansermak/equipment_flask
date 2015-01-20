@@ -1,9 +1,23 @@
-from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
+# --*-- coding: utf-8 --*-- 
 import os
+# import ldap
+
+from flask import Flask
+from flask.ext.ldap import LDAP, login_required
+from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
 
+# LDAP config
+Server = 'ldap://10.109.0.60'
+base = 'OU=Users,OU=GfK Ukraine,DC=gfk,DC=com'
+Filter = "(&(objectClass=user)(mail={}))"
+Attrs = ["displayName"]
+# Scope = ldap.SCOPE_SUBTREE
+
+
 app = Flask(__name__)
+
+
 app.config['SECRET_KEY'] = os.urandom(24)
 app.permanent_session_lifetime = timedelta(seconds=600)
 app.config.from_object('config')

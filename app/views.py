@@ -2,13 +2,14 @@
 
 from flask import (render_template, flash, redirect, url_for, 
     request, g, session, jsonify)
-from app import app, db
+from app import app, db, Server, base, Filter, Attrs
 from config import MAX_SEARCH_RESULTS
 from models import User, Department, Hardware, Software, Admin
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm, 
     SoftwareForm, LoginForm, STATUSES, HARDWARE_TYPES)
 from functools import wraps
 import re, md5
+import ldap
 
 
 PLURALS = {
@@ -24,6 +25,9 @@ BUTTONS = {'department':{'user':'/users/new/',
         'user': {'hardware':'/hardware/new/'},
         'hardware': {'software':'/software/new/'},
                     }
+Scope = ldap.SCOPE_SUBTREE
+l = ldap.initialize(Server)
+
 
 
 def replace_other_chars(string):
@@ -439,6 +443,7 @@ def login_required(f):
 def before_request():
     if 'admin_id' in session:
         g.user = Admin.query.filter_by(id=session['admin_id']).first()
+        # g.user = session['admin_id']
     else:
         g.user = None
 
@@ -455,17 +460,55 @@ def login():
         return redirect('/')
     form = LoginForm()
     if form.validate_on_submit():
-        session['admin_id'] = Admin.query.filter_by(name=form.name.data,
-            password=md5.new(form.password.data).hexdigest()).first()
+        name = form.name.data.lower()
+        password = md5.new(form.password.data).hexdigest()
+        session['admin_id'] = Admin.query.filter_by(name=name,
+            password=password).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
             return redirect(url_for('index'))
-        else:
-            flash('No such user')
 
+        try:
+            l.simple_bind_s(name, form.password.data)
+            l.set_option(ldap.OPT_REFERRALS, 0)
+
+            r = l.search(base, Scope, Filter.format(name), ["displayName"])
+            Type,user = l.result(r,60)
+            Name,Attrs = user[0]
+            if hasattr(Attrs, 'has_key') and Attrs.has_key('displayName'):
+                displayName = Attrs['displayName'][0]
+                admin = Admin()
+                admin.name = form.name.data
+                admin.password = password
+                db.session.add(admin)
+                db.session.commit()
+                
+                session['admin_id'] = admin.id
+                return redirect(url_for('index'))
+
+        except ldap.INVALID_CREDENTIALS:
+            flash('Login or password error')
+        except ldap.LDAPError, e:
+            flash('LDAP-server error')
     return render_template('login.html',
-        title = 'Sign in',
-        form = form)
+            title = 'Sign in',
+            form = form)
+# def login():
+#     if g.user is not None:
+#         return redirect('/')
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         session['admin_id'] = Admin.query.filter_by(name=form.name.data,
+#             password=md5.new(form.password.data).hexdigest()).first()
+#         if session['admin_id']:
+#             session['admin_id'] = session['admin_id'].id
+#             return redirect(url_for('index'))
+#         else:
+#             flash('No such user')
+
+#     return render_template('login.html',
+#         title = 'Sign in',
+#         form = form)
 
 @app.route('/logout/')
 @login_required
