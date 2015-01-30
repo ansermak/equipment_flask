@@ -4,7 +4,7 @@ from flask import (render_template, flash, redirect, url_for,
     request, g, session, jsonify)
 from app import app, db, Server, base, Filter, Attrs
 from config import MAX_SEARCH_RESULTS
-from models import User, Department, Hardware, Software, Admin
+from models import User, Department, Hardware, Software, Admin, History
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm, 
     SoftwareForm, LoginForm, STATUSES, HARDWARE_TYPES)
 from functools import wraps
@@ -107,6 +107,7 @@ class BaseEntity(object):
         for a, b in form.data.items():
             setattr(base_data, a, b)
         base_data.view_name = self.create_name(base_data, self.model)
+
         db.session.add(base_data)
         db.session.commit()
 
@@ -366,9 +367,20 @@ class HardwareEntity(BaseEntity):
         return super(HardwareEntity, self).base_new()
 
     def _save_data(self, base_data, form):
+        h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
         user = User.query.filter(User.id == form.user_id.data).first()
         form.department_id.data = user.department_id
         super(HardwareEntity, self)._save_data(base_data, form)
+
+        if h_id:
+            h_id = h_id.user_id
+        else: 
+            h_id =  Hardware.query.order_by('id desc').first().id
+        if h_id != form.user_id.data:
+            record = History(form.user_id.data, h_id)
+   
+            db.session.add(record)
+            db.session.commit()
 
     def _prepare_base_edit(self):
         rzlt = super(HardwareEntity, self)._prepare_base_edit()
@@ -493,22 +505,6 @@ def login():
     return render_template('login.html',
             title = 'Sign in',
             form = form)
-# def login():
-#     if g.user is not None:
-#         return redirect('/')
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         session['admin_id'] = Admin.query.filter_by(name=form.name.data,
-#             password=md5.new(form.password.data).hexdigest()).first()
-#         if session['admin_id']:
-#             session['admin_id'] = session['admin_id'].id
-#             return redirect(url_for('index'))
-#         else:
-#             flash('No such user')
-
-#     return render_template('login.html',
-#         title = 'Sign in',
-#         form = form)
 
 @app.route('/logout/')
 @login_required

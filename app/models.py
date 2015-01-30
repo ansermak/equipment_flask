@@ -1,5 +1,6 @@
 from app import app, db
 import flask.ext.whooshalchemy as whooshalchemy
+from datetime import datetime
 
 TEMPLATE_ANCHOR = 1
 TEMPLATE_IMG = 2
@@ -178,6 +179,24 @@ class Admin(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), index = True, unique = True)
     password = db.Column(db.String(32))
+
+# History = db.Table('history',
+#     db.Column('hardware_id', db.Integer, db.ForeignKey('hardware.id')),
+#     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+#     )
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    hardware_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
+    change_date = db.Column(db.DateTime)
+
+    def __init__(self, user_id, hardware_id, change_date = None):
+        self.user_id = user_id
+        self.hardware_id = hardware_id
+        if change_date is None:
+            change_date = datetime.utcnow()
+        self.change_date = change_date
+
 
 whooshalchemy.whoosh_index(app, User)
 whooshalchemy.whoosh_index(app, Department)
