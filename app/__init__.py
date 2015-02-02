@@ -1,9 +1,9 @@
 # --*-- coding: utf-8 --*-- 
 import os
-# import ldap
+import ldap
 
 from flask import Flask
-from flask.ext.ldap import LDAP, login_required
+#from flask.ext.ldap import LDAP, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
 
