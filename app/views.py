@@ -444,6 +444,11 @@ class SoftwareEntity(BaseEntity):
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
+        if request.path != '/logout/':
+            session['next_url'] = str(request.path)
+        else: 
+            session['next_url'] = '/index/'
+
         if hasattr(g, 'user') and g.user:
             return f(*args, **kwargs)
         else:
@@ -478,7 +483,7 @@ def login():
             password=password).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
-            return redirect(url_for('index'))
+            return redirect(session['next_url'])
 
         try:
             l.simple_bind_s(name, form.password.data)
@@ -511,7 +516,7 @@ def login():
 def logout():
     g.user = None
     session['admin_id'] = None
-    return redirect(url_for('index'))
+    return redirect(session['next_url'])
 
 @app.route('/search', methods=['POST'])
 def search():
