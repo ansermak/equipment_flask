@@ -146,6 +146,12 @@ font-size:20pt;
 width: 400px;
 float: left;
 }
+.base_form_edit input[type="text"] {
+  width: 200px;
+}
+.base_form_edit select {
+  width: 200px;
+}
 /* helpers of edit form */
 
 .edit_helper{

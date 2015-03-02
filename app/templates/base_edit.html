@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block js_include %} 
+    <script type="text/javascript" src="/static/js/selector_ext.js"></script>
+{% endblock %}
 {% block content %}
     <div id="div_page_name">
        {{data.page_name|default('base_list')}}
