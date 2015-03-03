@@ -14,12 +14,14 @@
                 {% if data.blocks[elem] %}
                     <div class="sub_edit_helper">
                         <h2 onclick="expand(this.id);" id="{{elem.lower()}}"><b>{{elem.upper()}}</b></h2>
-                        <p class = "displayed"> 
+                        <div class = "displayed"> 
                             {% for item in data.blocks[elem] %}
-                                <img style="vertical-align:middle"src="{{item.get_type_image()}}"/>
-                                <a class ="div_a" href="{{item.get_path()}}">{{item}}</a></br>
+                                <div class="div_item">
+                                    <div><img style="vertical-align:middle"src="{{item.get_type_image()}}"/></div>
+                                    <a href="{{item.get_path()}}">{{item}}</a></br>
+                                </div>
                             {% endfor %}
-                        </p>
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}

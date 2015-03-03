@@ -15,6 +15,12 @@ a{
   padding: 5px;
   font-weight: 600;
 }
+.div_item {
+  width:150px;
+  border:1px solid #cceecc;
+  float:left;
+  margin:5px;
+}
 
 .div_a:hover{
   background-color:#fc5755;
@@ -165,7 +171,7 @@ float: left;
   min-width: 200px;
 }
 .sub_edit_helper{
-  width: 230px;
+  width: 500px;
   margin : 10px 5px; 
   border-radius: 5px;
   padding: 5px;

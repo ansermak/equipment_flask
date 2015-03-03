@@ -70,8 +70,10 @@ $(document).ready(function() {
     // обмежуємо користувачів по відділу відразу після завантаження сторінки
     
     var user_select = document.getElementById('user_id');
-    ext_select(user_select);
-    user_select.showByAttr('data-department-id', $('#department_id').val());   
+    if (user_select) {
+        ext_select(user_select);
+        user_select.showByAttr('data-department-id', $('#department_id').val());   
+    }
 })
 
 
