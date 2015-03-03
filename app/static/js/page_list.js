@@ -23,8 +23,11 @@ $(document).ready(function() {
         $('#user_id option').each(function() {
             if (dep_id == this.getAttribute('data-department-id')){
                 $(this).show()
+                this.removeAttribute('disabled');
+
             } else {
                 $(this).hide()
+                this.setAttribute('disabled', 'disabled');
             }
         });
         // при зміні департаменту - якщо поточний користувач не 

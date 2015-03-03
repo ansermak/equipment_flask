@@ -57,12 +57,9 @@ class HardwareForm(Form):
         'user_id',
         'state']
 
-    serial = StringField('serial', validators=[DataRequired(),
-        NoneOf([''], 'cannot be empty', None)])
-    inum = StringField('inum', validators=[DataRequired(),
-        NoneOf([''], 'cannot be empty', None)])
-    model = StringField('model', validators=[DataRequired(),
-        NoneOf([''], 'cannot be empty', None)])
+    serial = StringField('serial')
+    inum = StringField('inum')
+    model = StringField('model')
     name = StringField('name', validators=[DataRequired(),
         NoneOf([''], 'cannot be empty', None)])
     department_id = SelectField('department', coerce=int,

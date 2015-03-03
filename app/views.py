@@ -447,7 +447,7 @@ def login_required(f):
         if request.path != '/logout/':
             session['next_url'] = str(request.path)
         else: 
-            session['next_url'] = '/index/'
+            session['next_url'] = '/index'
 
         if hasattr(g, 'user') and g.user:
             return f(*args, **kwargs)
@@ -483,6 +483,7 @@ def login():
             password=password).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
+            session['next_url'] = '/index'
             return redirect(session['next_url'])
 
         try:
@@ -571,7 +572,8 @@ def department_new():
 @login_required
 def department_edit(url_parameter):
     depart = DepartmentEntity('department',
-                              template_edit='base_edit.html',
+                              # template_edit='department.html',
+                              template_edit = 'base_edit.html',
                               url_param=url_parameter)
     try:
         return depart.base_edit()
