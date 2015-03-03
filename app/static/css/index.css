@@ -17,6 +17,7 @@ a{
 }
 .div_item {
   width:150px;
+  height:80px;
   border:1px solid #cceecc;
   float:left;
   margin:5px;

@@ -17,8 +17,8 @@
                         <div class = "displayed"> 
                             {% for item in data.blocks[elem] %}
                                 <div class="div_item">
-                                    <div><img style="vertical-align:middle"src="{{item.get_type_image()}}"/></div>
-                                    <a href="{{item.get_path()}}">{{item}}</a></br>
+                                    
+                                    <a href="{{item.get_path()}}"><div class='div_a' style="height:100%;"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/><div>{{item}}</div></div></a></br>
                                 </div>
                             {% endfor %}
                         </div>
