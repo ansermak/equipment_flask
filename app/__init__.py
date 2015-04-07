@@ -22,5 +22,6 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.permanent_session_lifetime = timedelta(seconds=3600)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+app.jinja_env.add_extension('jinja2.ext.do')
 
 from app import models, views
