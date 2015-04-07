@@ -1,5 +1,5 @@
-<table >
-    {% for d in menu_items %}
-        <tr><td class="div_a"><a  href="/departments/{{d.view_name}}" id=""><div>{{d}}</div></a></td></tr>
-    {% endfor %}
-</table>
+<ul class="nav nav-pills nav-stacked">
+	{% for item in menu_items %}
+		<li><a href="/departments/{{item.view_name}}">{{item}}</a></li>
+	{% endfor %}
+</ul>

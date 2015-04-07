@@ -197,3 +197,8 @@ float: left;
 #mytable th {
     cursor: pointer;
 }
+
+
+.navbar-nav > li{
+  padding:0;
+}

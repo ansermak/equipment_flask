@@ -3,37 +3,11 @@
 {% block menu %}
 {% endblock %}
 {% block e %}
-    <div id="img_main_index_page">
-      <h1 style="padding-top:180px"><a href="/index" style="color:white"><h1>Инвентаризационная база</h1></a></h1>
+    {% include 'menu_header_page.html' %}
+    <div class="panel panel-default">
+      <h1 class="text-right">Добро пожаловать, {{g.user.name}}.</h1>
     </div>
-      <div id="div_buttons_index_page">
-        <div style="text-align:center;">
-          <div class="div_button">
-            <a href="/users">
-              <div class="div_inner_button">Users</div>
-            </a>
-          </div>
-
-          <div class="div_button">
-            <a href="/departments">
-              <div class="div_inner_button">Departments</div>
-            </a>
-          </div>
-
-          <div class="div_button">
-            <a href="/hardware">
-              <div class="div_inner_button">Hardware</div>
-            </a>
-          </div>
-
-          <div class="div_button">
-            <a href="/software">
-              <div class="div_inner_button">Software</div>
-            </a>
-          </div>
-        </div>
-        <h1>Добро пожаловать, {{g.user.name}}.</h1>
-      </div>
+    
 {% endblock %}
 {% block content %}
 

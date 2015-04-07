@@ -1,63 +1,54 @@
-<div class="base_form_edit">
-<form  action = "" method="post" name="data" enctype="multipart/form-data">
+<form class="form-horizontal" action="" method="post" name="data" enctype="multipart/from-data">
+  <div class="form-group">
     {{data.form.hidden_tag()}}
-    <table>
-      {% for item in data.form.fields_order %}
-      {% if data.form[item].name == 'user_id' %}
-          <tr><td><b>{{data.form[item].label}}</b></td>
-              <td>
-                  <select id = "user_id" name = "user_id">
-                      {% for elem in data.form[item].choices2 %}
-                         <option {% if data.form[item].data == elem[0] %} 
-                                    selected="selected" 
-                                 {% endif %}
-                            value = "{{ elem[0] }}"
-                            data-department-id="{{ elem[2] }}">{{ elem[1] }}</option>
-                       {% endfor %}
-                  </select></td>
-              <td>
-              {% for i in data.form.errors[item] %}
-                 <span style="color: red;">[{{i}}]</span>
-              {% endfor %}</td>
-          </tr>
-
-      {% else %}
-          <tr><td><b>{{data.form[item].label}}</b></td><td>{{data.form[item]}}</td><td>
-              {% for i in data.form.errors[item] %}
-                 <span style="color: red;">[{{i}}]</span>
-              {% endfor %}</td>
-          </tr>
-      {% endif %}
+  </div>
+  {% for item in data.form.fields_order %}
+  {% for i in data.form.errors[item] %}
+                 <span class="col-xs-offset-2" style="color: red;">[{{i}}]</span>
+              {% endfor %}
+  <div class="form-group">
+    <label class="control-label col-xs-2">{{data.form[item].label}}</label>
+    {% if data.form[item].name == 'user_id' %}
+      <select class=" input-lg" id = "user_id" name = "user_id">
+      {% for elem in data.form[item].choices2 %}
+         <option {% if data.form[item].data == elem[0] %} 
+            selected="selected" 
+         {% endif %}
+         value = "{{ elem[0] }}"
+         data-department-id="{{ elem[2] }}">{{ elem[1] }}</option>
       {% endfor %}
-    </table><br/>
-    <div>
-    
-    <input class="div_a" type="submit" name="submitted" value="Save & list"/>
-    <input class="div_a" type="submit" name="submitted" value="Save & new"/>
-    <input class="div_a" type="reset" name="submitted" onclick="javascript:window.history.back()" value="Back"/>
-    <input class="div_a" name="submitted"  id="Delete" type="submit" value="Delete">
-
-    </div>
-    </form>
-    <br/>
-    <div>
-      {% for button in data.buttons %}
-      <!--<a href="{{data.buttons[button]}}" class="div_add_item div_a">+ {{button}}</a>-->
-      <form action="{{data.buttons[button]}}" method="post">
+      </select>
+    {% else %}
+      {{data.form[item](class="col-xs-5 input-lg")}}
+    {% endif %}
+  </div>
+  {% endfor %}
+</br></br>
+  <div class="form-group">
+    <input class="btn btn-primary " type="submit" name="submitted" value="Save & list"/>
+      <input class="btn btn-primary" type="submit" name="submitted" value="Save & new"/>
+      <input class="btn btn-primary" type="reset" name="submitted" onclick="javascript:window.history.back()" value="Back"/>
+      <input class="btn btn-primary" name="submitted"  id="Delete" type="submit" value="Delete">
+  </div>
+</form>
+  {% for button in data.buttons %}
+  <div class="row">
+  <form action="{{data.buttons[button]}}" method="post">
         <input type="hidden" name="location" class="current_url"/>
-        <input type="submit" name="{{button}}" value="{{button}}" class="div_a"/>
+        <input class="btn btn-primary" type="submit" name="{{button}}" value="Add {{button}}"/>
         
       </form>
-      {% endfor %}
-      <script type="text/javascript">
+  </div>
+  {% endfor %}
+  <script type="text/javascript">
         $('.current_url').each(function(){
             $(this).val(window.location);
         });      
       </script>
-    </div>
-    </div>
 
-  <script>
+</form>
+
+<script>
     var a = document.getElementById('Delete')
     a.onclick = function() {
       return confirm('Are you sure to delete?')

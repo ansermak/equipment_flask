@@ -2,13 +2,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Search results for "{{query}}":</h1>
+<h1>Search results for "<text class="text-info">{{query}}</text>":</h1>
+
 {% for result in results %}
     {% if result[1] | length > 0 %}
         <b>{{result[0].upper()}}:</b></br></br>
         {% for item in result[1] %}
-            <a href='{{item.get_path()}}'>{{item}}</a><br>
-        {% endfor %}<br>
+            <p class="text-success"><a href='{{item.get_path()}}'>{{item}}</a></p>
+        {% endfor %}
     {% endif %}
 {% endfor %}
+
 {% endblock %}
