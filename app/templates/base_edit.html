@@ -9,22 +9,42 @@
 {% include '_entity_edit.html' %} 
 {% block edit_sub_content %}
     {% if data.blocks %}
-        <div class="row">   
-            {% for elem in data['_base_data'].order %}
+        <div class="row">
+            {% set check_var = 0 %}
+            <ul class="nav nav-tabs">
+                {% for elem in data['_base_data'].order %}
                 {% if data.blocks[elem] %}
-                    <div class="col-xs-2">
-                        <h2 onclick="expand(this.id);" id="{{elem.lower()}}"><b>{{elem.upper()}}</b></h2>
-                        <div class = "row displayed"> 
-                            {% for item in data.blocks[elem] %}
+                {% if check_var == 0 %}
+                <li class=active>
+                {% set check_var = 1 %}
+                {% else %}
+                <li>
+                {% endif %}
+                <a data-toggle="tab" href="#{{elem.upper()}}">{{elem.upper()}}</a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            <div class="tab-content">
+                {% set check_var = 0 %}
+                {% for elem in data['_base_data'].order %}
+                {% if data.blocks[elem] %}
+                {% if check_var == 0 %}
+                <div id="{{elem.upper()}}" class="tab-pane fade in active">
+                    {% set check_var = 1 %}
+                {% else %}
+                <div id="{{elem.upper()}}" class="tab-pane fade">
+
+                {% endif %}
+                <h3>{{elem.upper()}}</h3>
+                    {% for item in data.blocks[elem] %}
                                 <div class="row">
-                                    
                                     <a href="{{item.get_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
                                 </div>
                             {% endfor %}
-                        </div>
-                    </div>
+                </div>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
 {% endblock %}
