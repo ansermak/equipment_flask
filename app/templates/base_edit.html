@@ -9,6 +9,7 @@
 {% include '_entity_edit.html' %} 
 {% block edit_sub_content %}
     {% if data.blocks %}
+    {% if data.page_name == 'Department' %}
         <div class="row">
             {% set check_var = 0 %}
             <ul class="nav nav-tabs">
@@ -36,16 +37,44 @@
 
                 {% endif %}
                 <h3>{{elem.upper()}}</h3>
+                {% set num_counter = 0 %}
+                <div class="row">
+
                     {% for item in data.blocks[elem] %}
-                                <div class="row">
-                                    <a href="{{item.get_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
-                                </div>
-                            {% endfor %}
-                </div>
+                    
+                    
+                    {% if num_counter % 4 == 0 %}
+
+                    
+                </div><div class="row">
+                    {% endif %}
+                    {% set num_counter = num_counter + 1 %}
+                        <div class="col-xs-3">
+                        <a href="{{item.get_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
+                        </div>
+                    {% endfor %}
+                </div></div>
                 {% endif %}
                 {% endfor %}
             </div>
         </div>
+        {% else %}
+            <div class="row">
+                {% for elem in data['_base_data'].order %}
+                {% if data.blocks[elem] %}
+                    <div class="col-xs-3">
+                        <h1>{{elem.upper()}}</h1>
+                        {% for item in data.blocks[elem] %}
+                            <div class="row">
+                            <a href="{{item.get_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+    {% endif %}
+
     {% endif %}
 {% endblock %}
 {% endblock %}
