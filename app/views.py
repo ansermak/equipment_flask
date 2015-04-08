@@ -104,12 +104,19 @@ class BaseEntity(object):
                                            url_parameter=self.url_param)
 
     def _save_data(self, base_data, form):
+        changed = False
+        if not hasattr(base_data, 'view_name') or self.check_changes(base_data, form):
+            changed = True
         for a, b in form.data.items():
             setattr(base_data, a, b)
-        base_data.view_name = self.create_name(base_data, self.model)
+        if changed :
+            base_data.view_name = self.create_name(base_data, self.model)
 
         db.session.add(base_data)
         db.session.commit()
+
+    def check_changes(self, basedata, form):
+        return basedata.name != form.name.data
 
     def _delete_data(self, base_data):
         db.session.delete(base_data)
@@ -247,6 +254,10 @@ class UserEntity(BaseEntity):
     def create_name(self, base_data, model):
         return entity_uniq_name('{} {}'.format(base_data.surname,
                                                base_data.name), model)
+
+    def check_changes(self, basedata, form):
+        return basedata.name != form.name.data or basedata.surname != form.surname.data
+
 
     def _delete_data(self, base_data):
         for item in base_data.hardware_items.all():
