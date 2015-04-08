@@ -102,11 +102,14 @@ class HardwareForm(Form):
 
 
 class SoftwareForm(Form):
-    fields_order = ['name', 'serial', 'comp_id', 'state']
+    fields_order = ['name', 'serial', 'department_id', 'comp_id', 'state']
 
     name = StringField('name', validators=[DataRequired(),
     NoneOf([''], 'cannot be empty', None)])
     serial = StringField('serial')
+    department_id = SelectField('department', coerce=int,
+        choices=[], validators=[DataRequired(),
+            NoneOf([''], 'cannot be empty', None)])
     comp_id = SelectField('comp', choices=[], coerce=int,
         validators=[DataRequired(),
         NoneOf([''], 'cannot be empty', None)])
@@ -121,6 +124,8 @@ class SoftwareForm(Form):
         self.comp_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
         for i in Hardware.query.order_by('name').filter(
             Hardware.hardware_type == 1 or Hardware.did is not None).all()])
+        self.department_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
+            for i in Department.query.order_by('name').all()])
 
 
 class SearchForm(Form):
