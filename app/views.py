@@ -381,15 +381,17 @@ class HardwareEntity(BaseEntity):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
         user = User.query.filter(User.id == form.user_id.data).first()
         form.department_id.data = user.department_id
-        super(HardwareEntity, self)._save_data(base_data, form)
 
         if h_id:
-            h_id = h_id.user_id
-        else: 
-            h_id =  Hardware.query.order_by('id desc').first().id
-        if h_id != form.user_id.data:
-            record = History(form.user_id.data, h_id)
-   
+            if h_id.user_id != form.user_id.data:
+                record = History(form.user_id.data, h_id.id)
+                db.session.add(record)
+                db.session.commit()
+            super(HardwareEntity, self)._save_data(base_data, form)
+        else:
+            super(HardwareEntity, self)._save_data(base_data, form) 
+            hardware_id = Hardware.query.order_by('id desc').first().id
+            record = History(form.user_id.data, hardware_id)
             db.session.add(record)
             db.session.commit()
 
