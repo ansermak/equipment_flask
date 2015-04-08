@@ -7,9 +7,9 @@
                  <span class="col-xs-offset-2" style="color: red;">[{{i}}]</span>
               {% endfor %}
   <div class="form-group">
-    <label class="control-label col-xs-2">{{data.form[item].label}}</label>
+    <label class="control-label col-xs-1">{{data.form[item].label}}</label>
     {% if data.form[item].name == 'user_id' %}
-      <select class=" input-lg" id = "user_id" name = "user_id">
+      <select class="input-lg col-xs-3" id = "user_id" name = "user_id">
       {% for elem in data.form[item].choices2 %}
          <option {% if data.form[item].data == elem[0] %} 
             selected="selected" 
@@ -19,7 +19,7 @@
       {% endfor %}
       </select>
     {% else %}
-      {{data.form[item](class="col-xs-5 input-lg")}}
+      {{data.form[item](class="col-xs-3 input-lg")}}
     {% endif %}
   </div>
   {% endfor %}
