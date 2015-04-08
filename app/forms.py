@@ -124,6 +124,8 @@ class SoftwareForm(Form):
         self.comp_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
         for i in Hardware.query.order_by('name').filter(
             Hardware.hardware_type == 1 or Hardware.did is not None).all()])
+        self.comp_id.choices2 = ([(0, '--Choose--', -1)]  + [(i.id, i, i.department_id)
+            for i in Hardware.query.order_by('name').all()])
         self.department_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
             for i in Department.query.order_by('name').all()])
 

@@ -8,7 +8,7 @@
               {% endfor %}
   <div class="form-group">
     <label class="control-label col-xs-1">{{data.form[item].label}}</label>
-    {% if data.form[item].name == 'user_id' %}
+    {% if data.form[item].name == 'user_id' or data.form[item].name == 'comp_id' %}
       <select class="input-lg col-xs-3" id = "user_id" name = "user_id">
       {% for elem in data.form[item].choices2 %}
          <option {% if data.form[item].data == elem[0] %} 
