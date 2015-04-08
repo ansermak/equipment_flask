@@ -46,6 +46,8 @@ class User(db.Model, BaseClass):
     upses = db.relationship('Hardware', primaryjoin="and_(\
         User.id==Hardware.user_id, Hardware.hardware_type==4)",
         backref="upses_owner", lazy='dynamic')
+    history_hardware = db.relationship('History', backref='hist_users',
+        lazy='dynamic')
 
 
     def __repr__(self):
@@ -129,6 +131,8 @@ class Hardware(db.Model, BaseClass):
         lazy='dynamic')
     hardware_type = db.Column(db.Integer, index = True)
     did = db.Column(db.Integer)
+    history_users = db.relationship('History', backref='hist_hardware',
+        lazy='dynamic')
 
     def repr_list(self):
         if self.user.did is not None:

@@ -74,9 +74,40 @@
                 {% endfor %}
             </div>
     {% endif %}
+    <div class="row">
+    <div class="col-xs-7">
+    <table class="table table-stripped table-hover">
+    <caption><h1 class="text-center">History table<h1></caption>
+    <thead>
+    <tr>
+      <th>List item</th>
+      <th>Date</th>
+    </tr>
+    </thead>
 
+    {% if data.page_name == 'Hardware' %}
+    {% for record in data['_base_data'].history_users %}
+    <tr><td>{% if record.hist_user is not none %}
+        <a href="{{record.hist_users.get_path()}}">
+            {{record.hist_users}}</a>
+            {% else %}DELETED
+            {% endif %}
+        </td><td>{{record.change_date.strftime('%d-%m-%Y')}}</td></tr>
+    {% endfor %}
+    {% elif data.page_name == 'User' %}
+    {% for record in data['_base_data'].history_hardware %}
+    <tr><td>{% if record.hist_hardware is not none %}
+        <a href="{{record.hist_hardware.get_path()}}">
+            {{record.hist_hardware}}</a>
+            {% else %}DELETED
+            {% endif %}</td><td>
+            {{record.change_date.strftime('%d-%m-%Y')}}</td></tr>
+    {% endfor %}
     {% endif %}
+    </table>
+    </div>
+    </div>
+    {% endif %}
+
 {% endblock %}
 {% endblock %}
-
-
