@@ -24,7 +24,7 @@ BUTTONS = {'department':{'user':'/users/new/',
                         'software':'/software/new/'},
         'user': {'hardware':'/hardware/new/'},
         'hardware': {'software':'/software/new/'},
-                    }
+        'software':{}}
 Scope = ldap.SCOPE_SUBTREE
 l = ldap.initialize(Server)
 
