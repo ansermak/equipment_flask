@@ -184,10 +184,6 @@ class Admin(db.Model):
     name = db.Column(db.String(20), index = True, unique = True)
     password = db.Column(db.String(32))
 
-# History = db.Table('history',
-#     db.Column('hardware_id', db.Integer, db.ForeignKey('hardware.id')),
-#     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
-#     )
 class History(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

@@ -141,3 +141,15 @@ class LoginForm(Form):
     password = PasswordField('password', validators = [DataRequired(),
         NoneOf([''], 'Can not be empty', None)
         ])
+
+
+class ReportForm(Form):
+    department = SelectField('department', coerce=int,
+        choices=[], validators=[DataRequired(),
+            NoneOf([''], 'cannot be empty', None)])
+    
+
+    def __init__(self, *args, **kwargs):
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.department.choices = ([(0, '--Choose--')] + [(i.id, i.name)
+            for i in Department.query.order_by('name').all()] + [(100, 'ALL DEPARTMENTS')])
