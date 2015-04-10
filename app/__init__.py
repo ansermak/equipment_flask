@@ -1,9 +1,7 @@
-# --*-- coding: utf-8 --*-- 
+# --*-- coding: utf-8 --*--
 import os
-import ldap
 
 from flask import Flask
-#from flask.ext.ldap import LDAP, login_required
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
 
@@ -12,7 +10,6 @@ Server = 'ldap://10.109.0.60'
 base = 'OU=IT,OU=Users,OU=GfK Ukraine,DC=gfk,DC=com'
 Filter = "(&(objectClass=user)(mail={}))"
 Attrs = ["displayName"]
-# Scope = ldap.SCOPE_SUBTREE
 
 
 app = Flask(__name__)
