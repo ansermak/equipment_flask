@@ -41,7 +41,7 @@ l = ldap.initialize(Server)
 def create_csv(department):
     result = {}
     lines = []
-    lines.append('{}\n'.format(department))
+    lines.append('{}\nName,Type,Model, Serial, INum\n'.format(department))
     for user in department.all_users:
         result[str(user)] = ['{}, {}, {}, {}'.format(str(TYPE_HARDWARE[item.hardware_type]), str(item.model), str(item.serial), str(item.inum)) for item in user.hardware_items] 
     users = sorted(result.keys())
