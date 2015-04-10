@@ -514,9 +514,10 @@ def login():
         return redirect('/')
     form = LoginForm()
     if form.validate_on_submit():
-        name = form.name.data.lower()
+        email = form.email.data.lower()
+
         password = md5.new(form.password.data).hexdigest()
-        session['admin_id'] = Admin.query.filter_by(name=name,
+        session['admin_id'] = Admin.query.filter_by(email=email,
             password=password).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
@@ -524,17 +525,19 @@ def login():
             return redirect(session['next_url'])
 
         try:
-            l.simple_bind_s(name, form.password.data)
+            l.simple_bind_s(email, form.password.data)
             l.set_option(ldap.OPT_REFERRALS, 0)
 
-            r = l.search(base, Scope, Filter.format(name), ["displayName"])
+            r = l.search(base, Scope, Filter.format(email), ["displayName"])
             Type,user = l.result(r,60)
             Name,Attrs = user[0]
             if hasattr(Attrs, 'has_key') and Attrs.has_key('displayName'):
                 displayName = Attrs['displayName'][0]
                 admin = Admin()
-                admin.name = form.name.data
+                admin.email = form.email.data
                 admin.password = password
+                admin.name = admin.email.split('.')[0].capitalize()
+                admin.surname = admin.email.split('.')[1].capitalize().split('@')[0]
                 db.session.add(admin)
                 db.session.commit()
                 

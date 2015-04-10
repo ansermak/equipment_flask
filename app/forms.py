@@ -135,7 +135,7 @@ class SearchForm(Form):
 
 
 class LoginForm(Form):
-    name = StringField('name', validators = [DataRequired(),
+    email = StringField('name', validators = [DataRequired(),
         NoneOf([''], 'Can not be empty', None)
         ])
     password = PasswordField('password', validators = [DataRequired(),

@@ -26,10 +26,10 @@ class User(db.Model, BaseClass):
     __searchable__ = ['login', 'name', 'surname', 'view_name']
 
     id = db.Column(db.Integer, primary_key = True)
-    login = db.Column(db.String(7), index = True, unique = True)
-    name = db.Column(db.String(20), index = True)
-    view_name = db.Column(db.String(41), index = True, unique=True)   
-    surname = db.Column(db.String(20), index = True)
+    login = db.Column(db.String(30), index = True, unique = True)
+    name = db.Column(db.String(30), index = True)
+    view_name = db.Column(db.String(50), index = True, unique=True)   
+    surname = db.Column(db.String(30), index = True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     did = db.Column(db.Integer)
     hardware_items = db.relationship('Hardware', backref='user', 
@@ -70,8 +70,8 @@ class Department(db.Model, BaseClass):
     __searchable__ = ['name']
 
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20), index = True)   
-    view_name = db.Column(db.String(20), index = True, unique=True)   
+    name = db.Column(db.String(50), index = True)   
+    view_name = db.Column(db.String(50), index = True, unique=True)   
     users = db.relationship('User', primaryjoin="and_(\
         Department.id==User.department_id, User.did == None)", 
         backref='department', lazy='dynamic')
@@ -119,8 +119,8 @@ class Hardware(db.Model, BaseClass):
     }
 
     id = db.Column(db.Integer, primary_key = True)
-    serial = db.Column(db.String, index = True)
-    inum = db.Column(db.String, index = True)
+    serial = db.Column(db.String(100), index = True)
+    inum = db.Column(db.String(100), index = True)
     name = db.Column(db.String(100), index = True)
     view_name = db.Column(db.String(100), index = True, unique=True)   
     model = db.Column(db.String(100), index = True)
@@ -157,7 +157,7 @@ class Software(db.Model, BaseClass):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), index = True)
     view_name = db.Column(db.String(100), index = True, unique=True)   
-    serial = db.Column(db.String, index = True)
+    serial = db.Column(db.String(100), index = True)
     comp_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
     state = db.Column(db.Integer)
 
@@ -181,7 +181,9 @@ class Software(db.Model, BaseClass):
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(50), index = True, unique = True)
+    email = db.Column(db.String(100), index = True, unique = True)
+    name = db.Column(db.String(50), index = True)
+    surname = db.Column(db.String(50), index = True)
     password = db.Column(db.String(32))
 
 class History(db.Model):

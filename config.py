@@ -7,7 +7,8 @@ SECRET_KEY = 'you-will-never-guess'
 
 #db path
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
-SQLALCHEMY_DATABASE_URI = 'mysql://equipman:Qaz12345@10.109.0.76/app'
+#QLALCHEMY_DATABASE_URI = 'mysql://equipman:Qaz12345@10.109.0.76/app'
+SQLALCHEMY_DATABASE_URI = 'mysql://equipman:Qaz12345@localhost/app'
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 
 STATIC_FOLDER = 'static'
