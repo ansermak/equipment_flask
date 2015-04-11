@@ -190,14 +190,15 @@ class History(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     hardware_id = db.Column(db.Integer, db.ForeignKey('hardware.id'))
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
     change_date = db.Column(db.DateTime)
+    
 
-    def __init__(self, user_id, hardware_id, change_date = None):
+    def __init__(self, user_id, hardware_id, admin_id):
         self.user_id = user_id
         self.hardware_id = hardware_id
-        if change_date is None:
-            change_date = datetime.utcnow()
-        self.change_date = change_date
+        self.admin_id = admin_id
+        self.change_date = datetime.utcnow()
 
 
 whooshalchemy.whoosh_index(app, User)

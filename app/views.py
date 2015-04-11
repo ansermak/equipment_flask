@@ -404,18 +404,29 @@ class HardwareEntity(BaseEntity):
     def _save_data(self, base_data, form):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
         user = User.query.filter(User.id == form.user_id.data).first()
+        admin = Admin.query.filter(Admin.id == session['admin_id']).first()
+        print "admin", admin
+        print "admin_id", admin.id
         form.department_id.data = user.department_id
 
         if h_id:
             if h_id.user_id != form.user_id.data:
-                record = History(form.user_id.data, h_id.id)
+                admin_id = session['admin_id']
+                print "admin_id", session['admin_id']
+                print admin_id
+                record = History(form.user_id.data, h_id.id, admin_id)
+                print record
+                print record.user_id
+                print record.hardware_id
+                print record.admin_id
+                
                 db.session.add(record)
                 db.session.commit()
             super(HardwareEntity, self)._save_data(base_data, form)
         else:
             super(HardwareEntity, self)._save_data(base_data, form) 
             hardware_id = Hardware.query.order_by('id desc').first().id
-            record = History(form.user_id.data, hardware_id)
+            record = History(form.user_id.data, hardware_id, session['admin_id'])
             db.session.add(record)
             db.session.commit()
 
@@ -496,8 +507,8 @@ def login_required(f):
 @app.before_request
 def before_request():
     if 'admin_id' in session:
+
         g.user = Admin.query.filter_by(id=session['admin_id']).first()
-        # g.user = session['admin_id']
     else:
         g.user = None
 
