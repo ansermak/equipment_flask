@@ -7,3 +7,12 @@ app.db
 *.pyc
 versions
 mail_settings.py
+db_create.py
+db_migrate.py
+equipment.py
+config.py
+rebuild_search.py
+run.py
+run_debug.py
+runp.py
+uwsgi_params
