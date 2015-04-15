@@ -412,13 +412,7 @@ class HardwareEntity(BaseEntity):
         if h_id:
             if h_id.user_id != form.user_id.data:
                 admin_id = session['admin_id']
-                print "admin_id", session['admin_id']
-                print admin_id
                 record = History(form.user_id.data, h_id.id, admin_id)
-                print record
-                print record.user_id
-                print record.hardware_id
-                print record.admin_id
                 
                 db.session.add(record)
                 db.session.commit()

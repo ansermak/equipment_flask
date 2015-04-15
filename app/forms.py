@@ -52,6 +52,10 @@ class HardwareForm(Form):
         'serial',
         'inum',
         'model',
+        'cpu',
+        'memory',
+        'resolution',
+        'hdd',
         'name',
         'department_id',
         'user_id',
@@ -60,6 +64,10 @@ class HardwareForm(Form):
     serial = StringField('serial')
     inum = StringField('inum')
     model = StringField('model')
+    cpu = StringField('cpu')
+    memory = StringField('memory')
+    resolution = StringField('resolution')
+    hdd = StringField('hdd')
     name = StringField('name', validators=[DataRequired(),
         NoneOf([''], 'cannot be empty', None)])
     department_id = SelectField('department', coerce=int,

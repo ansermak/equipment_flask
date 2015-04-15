@@ -6,7 +6,7 @@
   {% for i in data.form.errors[item] %}
                  <span class="col-xs-offset-2" style="color: red;">[{{i}}]</span>
               {% endfor %}
-  <div class="form-group">
+  <div class="form-group" id="{{data.form[item].label.text}}-group">
     <label class="control-label col-xs-1">{{data.form[item].label}}</label>
     {% if data.form[item].name == 'user_id' or data.form[item].name == 'comp_id' %}
       <select class="input-lg col-xs-3" id = "user_id" name = "user_id">
@@ -19,7 +19,11 @@
       {% endfor %}
       </select>
     {% else %}
-      {{data.form[item](class="col-xs-3 input-lg")}}
+    {% if data.form[item].label.text=="hardware_type" %}
+    {{data.form[item](class="col-xs-3 input-lg", onchange="myFunc()")}}
+    {% else %}
+    {{data.form[item](class="col-xs-3 input-lg")}}
+    {% endif %}
     {% endif %}
   </div>
   {% endfor %}
@@ -48,9 +52,43 @@
 
 </form>
 
-<script>
-    var a = document.getElementById('Delete')
-    a.onclick = function() {
+<script type="text/javascript">
+
+    $('#Delete').click(function() {
       return confirm('Are you sure to delete?')
+    })
+
+    $('#hardware_type').change(function() {
+      feature_changer()
+    })
+
+    function feature_changer() {
+      var choice = $('#hardware_type').find(":selected").val();
+
+      if ( choice == 1) {
+        $('#resolution-group').addClass('hide');
+        $('#cpu-group').removeClass('hide');
+        $('#hdd-group').removeClass('hide');
+        $('#memory-group').removeClass('hide');
+      }
+      else if (choice == 2){
+        $('#resolution-group').removeClass('hide')
+        $('#cpu-group').removeClass('hide')
+        $('#hdd-group').removeClass('hide')
+        $('#memory-group').removeClass('hide') 
+      }
+      else if (choice == 3){
+        $('#cpu-group').addClass('hide')
+        $('#hdd-group').addClass('hide')
+        $('#memory-group').addClass('hide')
+        $('#resolution-group').removeClass('hide')
+      }
+      else {
+        $('#resolution-group').addClass('hide')
+        $('#cpu-group').addClass('hide')
+        $('#hdd-group').addClass('hide')
+        $('#memory-group').addClass('hide')
+      }
     }
+    feature_changer()
   </script>

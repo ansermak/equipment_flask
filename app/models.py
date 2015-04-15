@@ -127,6 +127,10 @@ class Hardware(db.Model, BaseClass):
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer)
+    hdd = db.Column(db.String(50))
+    memory = db.Column(db.String(50))
+    resolution = db.Column(db.String(50))
+    cpu = db.Column(db.String(50))
     software_items = db.relationship('Software', backref='hardware', 
         lazy='dynamic')
     hardware_type = db.Column(db.Integer, index = True)
