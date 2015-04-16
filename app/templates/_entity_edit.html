@@ -4,12 +4,12 @@
   </div>
   {% for item in data.form.fields_order %}
   {% for i in data.form.errors[item] %}
-                 <span class="col-xs-offset-2" style="color: red;">[{{i}}]</span>
+                 <span class="col-md-offset-2" style="color: red;">[{{i}}]</span>
               {% endfor %}
   <div class="form-group" id="{{data.form[item].label.text}}-group">
-    <label class="control-label col-xs-1">{{data.form[item].label}}</label>
+    <label class="control-label col-md-1">{{data.form[item].label}}</label>
     {% if data.form[item].name == 'user_id' or data.form[item].name == 'comp_id' %}
-      <select class="input-lg col-xs-3" id = "user_id" name = "user_id">
+      <select class="input-lg col-md-3" id = "user_id" name = "user_id">
       {% for elem in data.form[item].choices2 %}
          <option {% if data.form[item].data == elem[0] %} 
             selected="selected" 
@@ -20,9 +20,9 @@
       </select>
     {% else %}
     {% if data.form[item].label.text=="hardware_type" %}
-    {{data.form[item](class="col-xs-3 input-lg", onchange="myFunc()")}}
+    {{data.form[item](class="col-md-3 input-lg", onchange="myFunc()")}}
     {% else %}
-    {{data.form[item](class="col-xs-3 input-lg")}}
+    {{data.form[item](class="col-md-3 input-lg")}}
     {% endif %}
     {% endif %}
   </div>

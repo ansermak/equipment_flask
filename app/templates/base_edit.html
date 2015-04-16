@@ -49,7 +49,7 @@
                 </div><div class="row">
                     {% endif %}
                     {% set num_counter = num_counter + 1 %}
-                        <div class="col-xs-3">
+                        <div class="col-md-3">
                         <a href="{{item.get_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
                         </div>
                     {% endfor %}
@@ -60,7 +60,7 @@
         </div>
         {% else %}
             <div class="row">
-                <div class="col-xs-7">
+                <div class="col-md-7">
                     <table class="table table-hover">
                     <caption><h1 class="">Current<h1></caption>
                     <thead>
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="row">
-            <div class="col-xs-7">
+            <div class="col-md-7">
             <table class="table table-stripped table-hover">
             <caption><h1 class="">History table<h1></caption>
             <thead>
