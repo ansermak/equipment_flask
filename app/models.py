@@ -51,6 +51,8 @@ class User(db.Model, BaseClass):
 
 
     def __repr__(self):
+        if hasattr(self, 'did') and self.did is not None:
+            return 'Not specified'
         return '{} {}'.format(self.surname, self.name)
 
     def repr_list(self):
@@ -117,6 +119,8 @@ class Hardware(db.Model, BaseClass):
         5 : 'Printer',
         6 : 'Scanner',
     }
+    view_order = ('name', 'serial', 'inum', 'model', 'cpu',
+        'memory', 'resolution', 'hdd', 'name', 'department', 'user')
 
     id = db.Column(db.Integer, primary_key = True)
     serial = db.Column(db.String(100), index = True)

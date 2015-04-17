@@ -682,6 +682,16 @@ def hardware_edit(url_parameter):
     except NoEntityFoundException:
         return render_template('404.html')
 
+@app.route('/hardware/view/<url_parameter>/', methods=['GET', 'POST'])
+def hardware_view(url_parameter):
+    hard = HardwareEntity('hardware',
+                          template_edit='base_view.html',
+                          url_param=url_parameter)
+    try:
+        return hard.base_edit()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
 
 @app.route('/hardware/new/', methods=['GET', 'POST'])
 @login_required

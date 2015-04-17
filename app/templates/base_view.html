@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="page_header">
+        <h1>{{data['_base_data']}}</h1>
+    </div>
+    <div class="col-md-4">
+    <table class="table">
+    {% for item in data['_base_data'].view_order %}
+    {% if data['_base_data'][item] %}
+    <tr>
+    <td><b class="text-uppercase">{{item}}:</b></td><td>{{data['_base_data'][item]}}</td>
+    </tr>
+    {% endif %}
+    {{data['_base_data'][department]}}
+    {% endfor %}
+    </table>
+    </table>
+{% endblock %}
