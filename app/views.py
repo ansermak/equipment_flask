@@ -165,7 +165,7 @@ class BaseEntity(object):
     def _save_validated_form(self, form):
         base_data = self._get_base_data()
         self._save_data(base_data, form)
-        if request.values.get('submitted') == 'Save & new':
+        if request.values.get('submitted') == 'Save & New':
             return self.entity_url_new
         elif request.values.get('submitted') == 'Delete':
             self._delete_data(base_data)
