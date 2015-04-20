@@ -3,7 +3,6 @@ from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NoneOf
 from app.models import Department, User, Hardware
-from sqlalchemy import or_
 
 
 STATUSES = {
@@ -80,7 +79,7 @@ class HardwareForm(Form):
     state = SelectField('state',
             coerce=int,
             choices=[(STATUSES['STATUS_INUSE'], 'In use'),
-                        (STATUSES['STATUS_REPAIR'], 'Under repair'),
+                        (STATUSES['STATUS_REPAIR'], 'Being repaired'),
                         (STATUSES['STATUS_FREE'], 'Free'),
             ], validators=[DataRequired(),
             NoneOf([''], 'cannot be empty', None)])
