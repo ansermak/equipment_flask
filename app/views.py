@@ -43,7 +43,11 @@ def create_csv(department):
     lines = []
     lines.append('{}\nName,Type,Model, Serial, INum\n'.format(department))
     for user in department.all_users:
-        result[str(user)] = ['{}, {}, {}, {}'.format(str(TYPE_HARDWARE[item.hardware_type]), str(item.model), str(item.serial), str(item.inum)) for item in user.hardware_items] 
+        result[str(user)] = ['{}, {}, {}, {}'.format(
+            str(TYPE_HARDWARE[item.hardware_type]),
+            str(item.model), str(item.serial),
+            str(item.inum)) 
+        for item in user.hardware_items] 
     users = sorted(result.keys())
     users.append(users.pop(0))
     
@@ -113,6 +117,7 @@ class BaseEntity(object):
         self.entity_url = url_for(PLURALS[self.name])
         self.entity_url_new = url_for(self.name + '_new')
         self.entity_url_edit = self.name + '_edit'
+        self.entity_url_view = self.name +'_view'
         self.template_list = template_list
         self.template_edit = template_edit
         self.template_view = template_view
@@ -125,6 +130,8 @@ class BaseEntity(object):
 
         if self.url_param:
             self.entity_url_edit = url_for(self.entity_url_edit,
+                                           url_parameter=self.url_param)
+            self.entity_url_view = url_for(self.entity_url_view,
                                            url_parameter=self.url_param)
 
     def _save_data(self, base_data, form):
@@ -164,13 +171,13 @@ class BaseEntity(object):
 
     def _save_validated_form(self, form):
         base_data = self._get_base_data()
-        self._save_data(base_data, form)
+        if not request.values.get('submitted') == 'Cancel':
+            self._save_data(base_data, form)
         if request.values.get('submitted') == 'Save & New':
             return self.entity_url_new
         elif request.values.get('submitted') == 'Delete':
             self._delete_data(base_data)
-
-        return self.entity_url
+        return base_data.get_view_path()
 
     def _prepare_base_edit(self):
         form = self.form()
@@ -184,8 +191,7 @@ class BaseEntity(object):
                 'page_name': self.name_display,
                 'add_item_url': self.entity_url_new,
                 'form': form,
-                '_base_data': base_data,
-                'buttons': self.buttons
+                '_base_data': base_data
                 })
 
     def _prepare_base_view(self, order=None):
@@ -194,6 +200,7 @@ class BaseEntity(object):
             'page_name': self.name_display,
             '_base_data': base_data,
             'order': order,
+            'buttons': self.buttons
         })
 
     def base_list(self, sort_field='name', model_filter='""'):
@@ -246,17 +253,14 @@ class UserEntity(BaseEntity):
         else: 
             return super(UserEntity, self).base_new()
 
-    def _prepare_base_edit(self):
-        rzlt = super(UserEntity, self)._prepare_base_edit()
-        if rzlt[0] == 'template':
-            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
 
-        return rzlt
 
     def _prepare_base_view(self, order=None):
         order = (('name',), ('surname',), ('login',), ('department', 1))
-        self.buttons = {'computer':'/hardware/new/'}
-        return super(UserEntity, self)._prepare_base_view(order)
+        rzlt = super(UserEntity, self)._prepare_base_view(order)
+        if rzlt[0] == 'template':
+            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
+        return rzlt
 
     def get_blocks(self, result):
         user_software = []
@@ -322,17 +326,15 @@ class DepartmentEntity(BaseEntity):
         db.session.add(h)
         db.session.add(u)
         db.session.commit()
+        
 
-    def _prepare_base_edit(self):
-        rzlt = super(DepartmentEntity, self)._prepare_base_edit()
+    def _prepare_base_view(self, order=None):
+        order = (('name', ),)
+        rzlt = super(DepartmentEntity, self)._prepare_base_view(order)
         if rzlt[0] == 'template':
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
 
         return rzlt
-
-    def _prepare_base_view(self, order=None):
-        order = (('name', ),)
-        return super(DepartmentEntity, self)._prepare_base_view(order)
 
     def get_blocks(self, result):
         user_software = []
@@ -405,8 +407,6 @@ class HardwareEntity(BaseEntity):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
         user = User.query.filter(User.id == form.user_id.data).first()
         admin = Admin.query.filter(Admin.id == session['admin_id']).first()
-        print "admin", admin
-        print "admin_id", admin.id
         form.department_id.data = user.department_id
 
         if h_id:
@@ -424,17 +424,15 @@ class HardwareEntity(BaseEntity):
             db.session.add(record)
             db.session.commit()
 
-    def _prepare_base_edit(self):
-        rzlt = super(HardwareEntity, self)._prepare_base_edit()
-        if rzlt[0] == 'template':
-            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
-
-        return rzlt
 
     def _prepare_base_view(self, order=None):
         order = (('hardware_type',), ('model',), ('name',), ('inum',),
                  ('department', 1))
-        return super(HardwareEntity, self)._prepare_base_view(order)
+        rzlt = super(HardwareEntity, self)._prepare_base_view(order)
+        if rzlt[0] == 'template':
+            rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
+
+        return rzlt 
 
     def get_blocks(self, result):
         return {'Software': result['_base_data'].software_items.order_by(
@@ -475,6 +473,12 @@ class SoftwareEntity(BaseEntity):
     def _prepare_base_view(self, order=None):
         order = (('name',), ('hardware', 1))
         return super(SoftwareEntity, self)._prepare_base_view(order)
+
+    def _prepare_base_edit(self):
+        rzlt = super(SoftwareEntity, self)._prepare_base_edit()
+        if rzlt[0] == 'template' and hasattr(rzlt[2]['_base_data'], 'hardware'):
+            rzlt[2]['form'].department_id.data = rzlt[2]['_base_data'].hardware.department_id
+        return rzlt
 
     def create_name(self, base_data, model):
         softCounter = db.session.query(db.func.max(model.id)).scalar()
@@ -617,8 +621,7 @@ def department_new():
 @login_required
 def department_edit(url_parameter):
     depart = DepartmentEntity('department',
-                              # template_edit='department.html',
-                              template_edit = 'base_edit.html',
+                              template_edit='base_edit.html',
                               url_param=url_parameter)
     try:
         return depart.base_edit()
@@ -626,23 +629,22 @@ def department_edit(url_parameter):
         return render_template('404.html')
 
 
+@app.route('/departments/view/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
+def department_view(url_parameter):
+    depart = DepartmentEntity('department',
+                              url_param=url_parameter)
+    try:
+        return depart.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
+
 @app.route('/users/')
 @login_required
 def users():
-    users = UserEntity('user', template_view='base_view.html')
+    users = UserEntity('user')
     return users.base_list('surname', 'self.model.did == None')
-
-
-@app.route('/users/<url_parameter>/view', methods=['GET', 'POST'])
-@login_required
-def user_view(url_parameter):
-    users = UserEntity('user',
-                       template_view='base_view.html',
-                       url_param=url_parameter)
-    try:
-        return users.base_view()
-    except NoEntityFoundException:
-        return render_template('404.html')
 
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
@@ -653,6 +655,17 @@ def user_edit(url_parameter):
                        url_param=url_parameter)
     try:
         return users.base_edit()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
+
+@app.route('/users/view/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
+def user_view(url_parameter):
+    users = UserEntity('user',
+                       url_param=url_parameter)
+    try:
+        return users.base_view()
     except NoEntityFoundException:
         return render_template('404.html')
 
@@ -683,12 +696,11 @@ def hardware_edit(url_parameter):
         return render_template('404.html')
 
 @app.route('/hardware/view/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
 def hardware_view(url_parameter):
-    hard = HardwareEntity('hardware',
-                          template_edit='base_view.html',
-                          url_param=url_parameter)
+    hard = HardwareEntity('hardware', url_param=url_parameter)
     try:
-        return hard.base_edit()
+        return hard.base_view()
     except NoEntityFoundException:
         return render_template('404.html')
 
@@ -715,6 +727,16 @@ def software_edit(url_parameter):
         return soft.base_edit()
     except NoEntityFoundException:
         return render_template('404.html')
+
+@app.route('/software/view/<url_parameter>/', methods=['GET', 'POST'])
+@login_required
+def software_view(url_parameter):
+    soft = SoftwareEntity('software', url_param=url_parameter)
+    try:
+        return soft.base_view()
+    except NoEntityFoundException:
+        return render_template('404.html')
+
 
 
 @app.route('/software/new/', methods=['GET', 'POST'])

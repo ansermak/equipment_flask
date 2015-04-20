@@ -1,0 +1,25 @@
+<div class="row">
+<div class="col-md-7">
+<table class="table">
+{% for item in data['_base_data'].view_order %}
+{% if data['_base_data'][item] %}
+<tr>
+<td><b class="text-uppercase">{{item}}:</b></td><td>{{data['_base_data'][item]}}</td>
+</tr>
+{% endif %}
+{{data['_base_data'][department]}}
+{% endfor %}
+<tr><td></td><td class="text-right"><a class="btn btn-primary" href="{{data['_base_data'].get_edit_path()}}">Edit</a></td></tr>
+</table>
+
+</div>
+</div>
+{% for button in data.buttons %}
+<div class="row">
+<form action="{{data.buttons[button]}}" method="post">
+    <input type="hidden" name="location" class="current_url"/>
+    <input class="btn btn-primary" type="submit" name="{{button}}" value="Add {{button}}"/>
+    
+  </form>
+</div>
+{% endfor %}

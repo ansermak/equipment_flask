@@ -9,7 +9,7 @@
     {% do count.append(1) %}
         <b>{{result[0].upper()}}:</b></br></br>
         {% for item in result[1] %}
-            <p class="text-success"><a href='{{item.get_path()}}'>{{item}}</a></p>
+            <p class="text-success"><a href='{{item.get_view_path()}}'>{{item}}</a></p>
         {% endfor %}
     {% endif %}
 {% endfor %}

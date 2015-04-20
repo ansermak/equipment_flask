@@ -18,7 +18,7 @@
 		            {% if field[1] == 1 %}
                                 <a class="div_a main_list_item" 
                                     href="{% if field[0] is not none %}
-                                    {{field[0].get_path()}}
+                                    {{field[0].get_view_path()}}
                                     {% else %}
                                     {% endif %}
                                     ">{{field[0]}}</a>
