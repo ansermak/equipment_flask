@@ -64,15 +64,26 @@ $(document).ready(function() {
     
 
     $('#department_id').change(function(){
-        user_select.showByAttr('data-department-id', this.value);
+        if (user_select) {
+            user_select.showByAttr('data-department-id', this.value);
+        }
+        if (hardware_select) {
+            hardware_select.showByAttr('data-department-id', this.value);
+        }
     });
 
     // обмежуємо користувачів по відділу відразу після завантаження сторінки
     
     var user_select = document.getElementById('user_id');
+    var hardware_select = document.getElementById('comp_id');
+
     if (user_select) {
         ext_select(user_select);
         user_select.showByAttr('data-department-id', $('#department_id').val());   
+    }
+    if (hardware_select) {
+        ext_select(hardware_select);
+        hardware_select.showByAttr('data-department-id', $('#department_id').val());
     }
 })
 

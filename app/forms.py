@@ -3,6 +3,7 @@ from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NoneOf
 from app.models import Department, User, Hardware
+from sqlalchemy import or_
 
 
 STATUSES = {
@@ -131,9 +132,14 @@ class SoftwareForm(Form):
         super(SoftwareForm, self).__init__(*args, **kwargs)
         self.comp_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
         for i in Hardware.query.order_by('name').filter(
-            Hardware.hardware_type == 1 or Hardware.did is not None).all()])
-        self.comp_id.choices2 = ([(0, '--Choose--', -1)]  + [(i.id, i, i.department_id)
-            for i in Hardware.query.order_by('name').all()])
+            (Hardware.hardware_type==None)|
+            (Hardware.hardware_type==1)|
+            (Hardware.hardware_type==2)).all()])
+        self.comp_id.choices2 = ([(0, '--Choose--', -1)] + [(i.id, i, i.department_id)
+            for i in Hardware.query.order_by('name').filter(
+                (Hardware.hardware_type==None)|
+                (Hardware.hardware_type==1)|
+                (Hardware.hardware_type==2)).all()])
         self.department_id.choices = ([(0, '--Choose--')] + [(i.id, i.name)
             for i in Department.query.order_by('name').all()])
 
