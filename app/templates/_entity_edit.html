@@ -35,16 +35,7 @@
     <input class="btn btn-primary" type="submit" name="submitted" value="Cancel"/>
     <input class="btn btn-primary" name="submitted"  id="Delete" type="submit" value="Delete">
   </div>
-</form>
-  {% for button in data.buttons %}
-  <div class="row">
-  <form action="{{data.buttons[button]}}" method="post">
-        <input type="hidden" name="location" class="current_url"/>
-        <input class="btn btn-primary" type="submit" name="{{button}}" value="Add {{button}}"/>
-        
-      </form>
-  </div>
-  {% endfor %}
+</form> 
   <script type="text/javascript">
         $('.current_url').each(function(){
             $(this).val(window.location);
