@@ -1,5 +1,5 @@
 <ul class="nav nav-pills nav-stacked visible-md visible-lg">
 	{% for item in menu_items %}
-		<li class="text-uppercase"><a href="/departments/{{item.view_name}}">{{item}}</a></li>
+		<li class="text-uppercase"><a href="{{item.get_view_path()}}">{{item}}</a></li>
 	{% endfor %}
 </ul>
