@@ -14,12 +14,11 @@
 
 </div>
 </div>
-{% for button in data.buttons %}
 <div class="row">
-<form action="{{data.buttons[button]}}" method="post">
-    <input type="hidden" name="location" class="current_url"/>
-    <input class="btn btn-primary" type="submit" name="{{button}}" value="Add {{button}}"/>
-    
-  </form>
-</div>
+{% for button in data.buttons %}
+    <form action="{{data.buttons[button]}}" method="post" class="col-xs-5 col-sm-3 col-md-2">
+        <input type="hidden" name="location" class="current_url"/>
+        <input class="btn btn-primary btn-block" type="submit" name="{{button}}" value="Add {{button}}"/>
+    </form>
 {% endfor %}
+</div>

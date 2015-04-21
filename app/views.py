@@ -136,7 +136,8 @@ class BaseEntity(object):
 
     def _save_data(self, base_data, form):
         changed = False
-        if not hasattr(base_data, 'view_name') or self.check_changes(base_data, form):
+        if not hasattr(base_data, 'view_name') or self.check_changes(base_data,
+                                                                     form):
             changed = True
         for a, b in form.data.items():
             setattr(base_data, a, b)
@@ -424,14 +425,15 @@ class HardwareEntity(BaseEntity):
             db.session.add(record)
             db.session.commit()
 
-
     def _prepare_base_view(self, order=None):
         order = (('hardware_type',), ('model',), ('name',), ('inum',),
                  ('department', 1))
         rzlt = super(HardwareEntity, self)._prepare_base_view(order)
         if rzlt[0] == 'template':
             rzlt[2]['blocks'] = self.get_blocks(rzlt[2])
-
+            h_type = rzlt[2]['_base_data'].hardware_type
+            if h_type not in (1, 2):
+                rzlt[2]['buttons'] = {}
         return rzlt 
 
     def get_blocks(self, result):
