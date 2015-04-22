@@ -34,18 +34,12 @@
                     {% set check_var = 1 %}
                 {% else %}
                 <div id="{{elem.upper()}}" class="tab-pane fade">
-
                 {% endif %}
                 <h3>{{elem.upper()}}</h3>
                 {% set num_counter = 0 %}
                 <div class="row">
-
                     {% for item in data.blocks[elem] %}
-                    
-                    
                     {% if num_counter % 4 == 0 %}
-
-                    
                 </div><div class="row">
                     {% endif %}
                     {% set num_counter = num_counter + 1 %}

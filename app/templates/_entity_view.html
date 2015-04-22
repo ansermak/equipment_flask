@@ -14,7 +14,8 @@
 
 </div>
 </div>
-<div class="row">
+<div class="panel panel-default">
+    <div class="panel-body">
 {% for button in data.buttons %}
     <form action="{{data.buttons[button]}}" method="post" class="col-xs-5 col-sm-3 col-md-2">
         <input type="hidden" name="location" class="current_url"/>
@@ -22,3 +23,10 @@
     </form>
 {% endfor %}
 </div>
+</div>
+
+<script type="text/javascript">
+        $('.current_url').each(function(){
+            $(this).val(window.location);
+        });      
+      </script>
