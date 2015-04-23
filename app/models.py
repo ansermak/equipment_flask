@@ -25,7 +25,7 @@ class BaseClass(object):
 
 class User(db.Model, BaseClass):
     __searchable__ = ['login', 'name', 'surname', 'view_name']
-    view_order = ('name', 'surname', 'login', 'department')
+    view_order = (('name',), ('surname',), ('login', ), ('department', 1))
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(30), index=True, unique=True)
@@ -132,8 +132,8 @@ class Hardware(db.Model, BaseClass):
         5: 'Printer',
         6: 'Scanner',
     }
-    view_order = ('name', 'serial', 'inum', 'model', 'cpu', 'memory',
-                  'resolution', 'hdd', 'name', 'department', 'user')
+    view_order = (('name',), ('serial',), ('inum',), ('model',), ('cpu',), 
+        ('memory',), ('resolution',), ('hdd',), ('name',), ('department', 1), ('user', 1))
 
     id = db.Column(db.Integer, primary_key=True)
     serial = db.Column(db.String(100), index=True)
@@ -182,7 +182,7 @@ class Hardware(db.Model, BaseClass):
 
 class Software(db.Model, BaseClass):
     __searchable__ = ['name', 'serial']
-    view_order = ('name', 'hardware')
+    view_order = (('name',), ('hardware', 1))
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
     view_name = db.Column(db.String(100), index=True, unique=True)
