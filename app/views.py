@@ -1,15 +1,17 @@
-#-*-coding: utf-8-*-
+# -*-coding: utf-8-*-
 
-from flask import (render_template, flash, redirect, url_for, 
-    request, g, session, jsonify, make_response)
+from flask import (render_template, flash, redirect, url_for, request, g,
+                   session, make_response)
 from app import app, db, Server, base, Filter, Attrs
 from config import MAX_SEARCH_RESULTS
 from models import User, Department, Hardware, Software, Admin, History
-from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm, 
-    SoftwareForm, LoginForm, ReportForm, STATUSES, HARDWARE_TYPES)
+from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm,
+                   SoftwareForm, LoginForm, ReportForm, STATUSES,
+                   HARDWARE_TYPES)
 from functools import wraps
-import re, md5
 import ldap
+import md5
+import re
 
 
 PLURALS = {
@@ -19,24 +21,25 @@ PLURALS = {
     'hardware': 'hardware_items'
 }
 
-BUTTONS = {'department':{'user':'/users/new/',
-                        'hardware':'/hardware/new/',
-                        'software':'/software/new/'},
-        'user': {'hardware':'/hardware/new/'},
-        'hardware': {'software':'/software/new/'},
-        'software':{}}
+BUTTONS = {'department': {'Add user': '/users/new/',
+                          'Add hardware': '/hardware/new/',
+                          'Add software': '/software/new/'},
+           'user': {'Add hardware': '/hardware/new/'},
+           'hardware': {'Add software': '/software/new/'},
+           'software': {}}
 
 TYPE_HARDWARE = {
-    1 : 'Desktop',
-    2 : 'Notebook',
-    3 : 'Monitor',
-    4 : 'UPS',
-    5 : 'Printer',
-    6 : 'Scanner'
+    1: 'Desktop',
+    2: 'Notebook',
+    3: 'Monitor',
+    4: 'UPS',
+    5: 'Printer',
+    6: 'Scanner'
 }
 
 Scope = ldap.SCOPE_SUBTREE
 l = ldap.initialize(Server)
+
 
 def create_csv(department):
     result = {}
@@ -46,17 +49,18 @@ def create_csv(department):
         result[str(user)] = ['{}, {}, {}, {}'.format(
             str(TYPE_HARDWARE[item.hardware_type]),
             str(item.model), str(item.serial),
-            str(item.inum)) 
-        for item in user.hardware_items] 
+            str(item.inum))
+            for item in user.hardware_items]
     users = sorted(result.keys())
     users.append(users.pop(0))
-    
+
     for user in users:
         line = '{}\n,{}\n'.format(user, '\n,'.join(result[user]))
         lines.append(line)
-        csv =  ''.join(lines)
-    
+        csv = ''.join(lines)
+
     return csv
+
 
 def replace_other_chars(string):
     """replace all not latin and not numeric chars with hyphen
@@ -71,7 +75,7 @@ def replace_other_chars(string):
 
 
 def entity_uniq_name(name, model):
-    """Creates uniq view_name for entity (model of entity should have fields 
+    """Creates uniq view_name for entity (model of entity should have fields
     name and view_name):
     transliterates name and if such view_name exists in database
     adds underline and first free number
@@ -101,32 +105,33 @@ class NoEntityFoundException(Exception):
 
 class BaseEntity(object):
 
-    """ Entity model should have fields name and view_name. 
+    """ Entity model should have fields name and view_name.
     Second one is used for generating url"""
 
-    def __init__(self, entity_name, url_param=None, 
-                template_list='base_list.html', template_edit='base_edit.html',
-                template_view='base_view.html', entity_form=None):
+    def __init__(self, entity_name, url_param=None,
+                 template_list='base_list.html',
+                 template_edit='base_edit.html',
+                 template_view='base_view.html', entity_form=None):
 
         self.name = entity_name.lower()
         self.name_display = entity_name.capitalize()
         self.model = globals()[self.name_display]
         self.form = (entity_form if entity_form is not None
-            else self.name_display + 'Form')
+                     else self.name_display + 'Form')
         self.form = globals()[self.form]
         self.entity_url = url_for(PLURALS[self.name])
         self.entity_url_new = url_for(self.name + '_new')
         self.entity_url_edit = self.name + '_edit'
-        self.entity_url_view = self.name +'_view'
+        self.entity_url_view = self.name + '_view'
         self.template_list = template_list
         self.template_edit = template_edit
         self.template_view = template_view
         self.url_param = url_param
-        
+
         if self.name in BUTTONS:
             self.buttons = BUTTONS[self.name]
         else:
-            buttons = {}
+            self.buttons = {}
 
         if self.url_param:
             self.entity_url_edit = url_for(self.entity_url_edit,
@@ -141,7 +146,7 @@ class BaseEntity(object):
             changed = True
         for a, b in form.data.items():
             setattr(base_data, a, b)
-        if changed :
+        if changed:
             base_data.view_name = self.create_name(base_data, self.model)
 
         db.session.add(base_data)
@@ -156,7 +161,6 @@ class BaseEntity(object):
 
     def create_name(self, base_data, model):
         return entity_uniq_name(base_data.name, model)
-
 
     def _get_base_data(self):
         if self.url_param is not None:
@@ -242,19 +246,18 @@ class BaseEntity(object):
 class UserEntity(BaseEntity):
 
     def base_new(self):
-        if 'location' in request.values:
+        if ('location' in request.values and
+                len(request.values['location']) > 0):
             form = UserForm()
             view_name = request.values['location'].split('/')[-2]
             form.department_id.data = Department.query.filter(
-                Department.view_name==view_name).first().id
+                Department.view_name == view_name).first().id
             return render_template(self.template_edit,
                                    data={'page_name': self.name_display,
                                          'add_item_url': self.entity_url_new,
                                          'form': form})
-        else: 
+        else:
             return super(UserEntity, self).base_new()
-
-
 
     def _prepare_base_view(self, order=None):
         order = (('name',), ('surname',), ('login',), ('department', 1))
@@ -267,7 +270,7 @@ class UserEntity(BaseEntity):
         user_software = []
         for item in result['_base_data'].hardware_items.all():
             user_software += item.software_items.all()
-        
+
         return {
             'Computers': result['_base_data'].computers.order_by(
                 'view_name').all(),
@@ -285,8 +288,8 @@ class UserEntity(BaseEntity):
                                                base_data.name), model)
 
     def check_changes(self, basedata, form):
-        return basedata.name != form.name.data or basedata.surname != form.surname.data
-
+        return (basedata.name != form.name.data or
+                basedata.surname != form.surname.data)
 
     def _delete_data(self, base_data):
         for item in base_data.hardware_items.all():
@@ -327,7 +330,6 @@ class DepartmentEntity(BaseEntity):
         db.session.add(h)
         db.session.add(u)
         db.session.commit()
-        
 
     def _prepare_base_view(self, order=None):
         order = (('name', ),)
@@ -383,20 +385,20 @@ class DepartmentEntity(BaseEntity):
 class HardwareEntity(BaseEntity):
     def base_new(self):
         if 'location' in request.values:
-            location =  request.values['location'].split('/')
+            location = request.values['location'].split('/')
             form = HardwareForm()
             view_name = request.values['location'].split('/')[-2]
             if location[-3] == 'departments':
                 form.department_id.data = Department.query.filter(
-                    Department.view_name==view_name).first().id
+                    Department.view_name == view_name).first().id
                 form.user_id.data = User.query.filter(
-                    User.did==form.department_id.data).first().id
+                    User.did == form.department_id.data).first().id
             elif location[-3] == 'users':
                 form.user_id.data = User.query.filter(
-                    User.view_name==view_name).first().id
+                    User.view_name == view_name).first().id
                 form.department_id.data = User.query.filter(
-                    User.view_name==view_name).first().department_id
-                 
+                    User.view_name == view_name).first().department_id
+
             return render_template(self.template_edit,
                                    data={'page_name': self.name_display,
                                          'add_item_url': self.entity_url_new,
@@ -414,14 +416,15 @@ class HardwareEntity(BaseEntity):
             if h_id.user_id != form.user_id.data:
                 admin_id = session['admin_id']
                 record = History(form.user_id.data, h_id.id, admin_id)
-                
+
                 db.session.add(record)
                 db.session.commit()
             super(HardwareEntity, self)._save_data(base_data, form)
         else:
-            super(HardwareEntity, self)._save_data(base_data, form) 
+            super(HardwareEntity, self)._save_data(base_data, form)
             hardware_id = Hardware.query.order_by('id desc').first().id
-            record = History(form.user_id.data, hardware_id, session['admin_id'])
+            record = History(form.user_id.data, hardware_id,
+                             session['admin_id'])
             db.session.add(record)
             db.session.commit()
 
@@ -434,7 +437,7 @@ class HardwareEntity(BaseEntity):
             h_type = rzlt[2]['_base_data'].hardware_type
             if h_type not in (1, 2):
                 rzlt[2]['buttons'] = {}
-        return rzlt 
+        return rzlt
 
     def get_blocks(self, result):
         return {'Software': result['_base_data'].software_items.order_by(
@@ -452,19 +455,19 @@ class HardwareEntity(BaseEntity):
 class SoftwareEntity(BaseEntity):
     def base_new(self):
         if 'location' in request.values:
-            location =  request.values['location'].split('/')
+            location = request.values['location'].split('/')
             form = SoftwareForm()
             view_name = request.values['location'].split('/')[-2]
             if location[-3] == 'departments':
-                
+
                 form.comp_id.data = Hardware.query.filter(
-                    Hardware.did==Department.query.filter(
-                        Department.view_name==view_name).first().id).first().id
+                    Hardware.did == Department.query.filter(
+                        Department.view_name == view_name).first().id).first().id
             elif location[-3] == 'hardware':
                 pass
                 form.comp_id.data = Hardware.query.filter(
-                    Hardware.view_name==view_name).first().id
-                 
+                    Hardware.view_name == view_name).first().id
+
             return render_template(self.template_edit,
                                    data={'page_name': self.name_display,
                                          'add_item_url': self.entity_url_new,
@@ -483,10 +486,10 @@ class SoftwareEntity(BaseEntity):
         return rzlt
 
     def create_name(self, base_data, model):
-        softCounter = db.session.query(db.func.max(model.id)).scalar()
-        softCounter = softCounter + 1 if softCounter else 1
+        soft_counter = db.session.query(db.func.max(model.id)).scalar()
+        soft_counter = soft_counter + 1 if soft_counter else 1
 
-        return entity_uniq_name('software_item_{}'.format(softCounter), model)
+        return entity_uniq_name('software_item_{}'.format(soft_counter), model)
 
 
 def login_required(f):
@@ -494,7 +497,7 @@ def login_required(f):
     def wrapper(*args, **kwargs):
         if request.path != '/logout/':
             session['next_url'] = str(request.path)
-        else: 
+        else:
             session['next_url'] = '/index'
 
         if hasattr(g, 'user') and g.user:
@@ -503,6 +506,7 @@ def login_required(f):
             return redirect(url_for('login'))
 
     return wrapper
+
 
 @app.before_request
 def before_request():
@@ -513,6 +517,7 @@ def before_request():
         g.user = None
 
     g.search_form = SearchForm()
+
 
 @app.context_processor
 def menu_items():
@@ -529,7 +534,7 @@ def login():
 
         password = md5.new(form.password.data).hexdigest()
         session['admin_id'] = Admin.query.filter_by(email=email,
-            password=password).first()
+                                                    password=password).first()
         if session['admin_id']:
             session['admin_id'] = session['admin_id'].id
             session['next_url'] = '/index'
@@ -540,9 +545,9 @@ def login():
             l.set_option(ldap.OPT_REFERRALS, 0)
 
             r = l.search(base, Scope, Filter.format(email), ["displayName"])
-            Type,user = l.result(r,60)
-            Name,Attrs = user[0]
-            if hasattr(Attrs, 'has_key') and Attrs.has_key('displayName'):
+            Type, user = l.result(r,60)
+            Name, Attrs = user[0]
+            if 'displayName' in Attrs:
                 displayName = Attrs['displayName'][0]
                 admin = Admin()
                 admin.email = form.email.data
@@ -551,7 +556,7 @@ def login():
                 admin.surname = admin.email.split('.')[1].capitalize().split('@')[0]
                 db.session.add(admin)
                 db.session.commit()
-                
+
                 session['admin_id'] = admin.id
                 return redirect(url_for('index'))
 
@@ -560,8 +565,9 @@ def login():
         except ldap.LDAPError, e:
             flash('LDAP-server error')
     return render_template('login.html',
-            title = 'Sign in',
-            form = form)
+                           title='Sign in',
+                           form=form)
+
 
 @app.route('/logout/')
 @login_required
@@ -569,6 +575,7 @@ def logout():
     g.user = None
     session['admin_id'] = None
     return redirect(session['next_url'])
+
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -730,6 +737,7 @@ def software_edit(url_parameter):
     except NoEntityFoundException:
         return render_template('404.html')
 
+
 @app.route('/software/view/<url_parameter>/', methods=['GET', 'POST'])
 @login_required
 def software_view(url_parameter):
@@ -740,12 +748,12 @@ def software_view(url_parameter):
         return render_template('404.html')
 
 
-
 @app.route('/software/new/', methods=['GET', 'POST'])
 @login_required
 def software_new():
     soft = SoftwareEntity('software')
     return soft.base_new()
+
 
 @app.route('/reports/', methods=['GET', 'POST'])
 @login_required
@@ -753,17 +761,18 @@ def reports():
     form = ReportForm()
     if form.validate_on_submit():
         if form.department.data != 100:
-            department = Department.query.filter(Department.id==form.department.data).first()
+            department = Department.query.filter(Department.id ==
+                                                 form.department.data).first()
             csv = create_csv(department)
-            
         else:
-            csv = '\n'.join(sorted([create_csv(department) for department in Department.query.all()]))
+            csv = '\n'.join(sorted([create_csv(department)
+                            for department in Department.query.all()]))
         response = make_response(csv)
         response.headers['Content-Disposition'] = "attachment; filename=report.csv"
         return response
-        
+
     return render_template('reports.html', form = form)
-    
+
 
 @app.errorhandler(404)
 def not_found_error(error):
