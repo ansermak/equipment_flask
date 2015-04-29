@@ -388,12 +388,13 @@ class HardwareEntity(BaseEntity):
             location = request.values['location'].split('/')
             form = HardwareForm()
             view_name = request.values['location'].split('/')[-2]
-            if location[-3] == 'departments':
+
+            if location[-4] == 'departments':
                 form.department_id.data = Department.query.filter(
                     Department.view_name == view_name).first().id
                 form.user_id.data = User.query.filter(
                     User.did == form.department_id.data).first().id
-            elif location[-3] == 'users':
+            elif location[-4] == 'users':
                 form.user_id.data = User.query.filter(
                     User.view_name == view_name).first().id
                 form.department_id.data = User.query.filter(
@@ -458,13 +459,16 @@ class SoftwareEntity(BaseEntity):
             location = request.values['location'].split('/')
             form = SoftwareForm()
             view_name = request.values['location'].split('/')[-2]
-            if location[-3] == 'departments':
-
+            if location[-4] == 'departments':
                 form.comp_id.data = Hardware.query.filter(
                     Hardware.did == Department.query.filter(
                         Department.view_name == view_name).first().id).first().id
-            elif location[-3] == 'hardware':
-                pass
+                form.department_id.data = Department.query.filter(
+                    Department.view_name == view_name).first().id
+
+            elif location[-4] == 'hardware':
+                form.department_id.data = Hardware.query.filter(
+                    Hardware.view_name == view_name).first().department_id
                 form.comp_id.data = Hardware.query.filter(
                     Hardware.view_name == view_name).first().id
 
