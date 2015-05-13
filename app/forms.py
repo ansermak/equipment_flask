@@ -6,9 +6,15 @@ from app.models import Department, User, Hardware
 
 
 STATUSES = {
+    'STATUS_INACTIVE': 0,
     'STATUS_INUSE': 1,
     'STATUS_REPAIR': 2,
     'STATUS_FREE': 3
+}
+
+IS_ACTIVE = {
+    'True': 1,
+    'False': 0
 }
 
 HARDWARE_TYPES = {
@@ -22,7 +28,7 @@ HARDWARE_TYPES = {
 
 
 class UserForm(Form):
-    fields_order = ['name', 'surname', 'login', 'department_id']
+    fields_order = ['name', 'surname', 'login', 'department_id', 'is_active']
 
     login = StringField('login', validators=[DataRequired(),
                         NoneOf([''], 'cannot be empty', None)])
@@ -34,6 +40,11 @@ class UserForm(Form):
     department_id = SelectField('department', coerce=int, choices=[],
                                 validators=[DataRequired(),
                                 NoneOf([''], 'cannot be empty', None)])
+    is_active = SelectField('Enabled',
+                          coerce=int,
+                          choices=[(IS_ACTIVE['True'], 'Yes'),
+                                   (IS_ACTIVE['False'], 'No'),
+                          ])
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -80,9 +91,8 @@ class HardwareForm(Form):
     state = SelectField('state', coerce=int,
                         choices=[(STATUSES['STATUS_INUSE'], 'In use'),
                                  (STATUSES['STATUS_REPAIR'], 'Being repaired'),
-                                 (STATUSES['STATUS_FREE'], 'Free')],
-                        validators=[DataRequired(), NoneOf([''],
-                                    'cannot be empty', None)])
+                                 (STATUSES['STATUS_FREE'], 'Free'),
+                                 (STATUSES['STATUS_INACTIVE'], 'Not active')])
     hardware_type = SelectField('hardware_type', coerce=int,
                                 choices=[(0, '--Choose--'),
                                          (HARDWARE_TYPES['HARDWARE_DESKTOP'],
@@ -131,7 +141,8 @@ class SoftwareForm(Form):
                                       'cannot be empty', None)])
     state = SelectField('state', coerce=int,
                         choices=[(STATUSES['STATUS_INUSE'], 'In use'),
-                                 (STATUSES['STATUS_FREE'], 'Free')])
+                                 (STATUSES['STATUS_FREE'], 'Free'),
+                                 (STATUSES['STATUS_INACTIVE'], 'Not active')])
 
     def __init__(self, *args, **kwargs):
         super(SoftwareForm, self).__init__(*args, **kwargs)

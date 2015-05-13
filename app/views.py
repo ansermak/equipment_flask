@@ -244,7 +244,6 @@ class BaseEntity(object):
 
 
 class UserEntity(BaseEntity):
-
     def base_new(self):
         if ('location' in request.values and
                 len(request.values['location']) > 0):
@@ -298,7 +297,9 @@ class UserEntity(BaseEntity):
             item.user_id = new_user_id
             db.session.add(item)
             db.session.commit()
-        super(UserEntity, self)._delete_data(base_data)
+        base_data.is_active = False
+        db.session.add(base_data)
+        db.session.commit()
 
 
 class DepartmentEntity(BaseEntity):
@@ -450,7 +451,9 @@ class HardwareEntity(BaseEntity):
                 Hardware.did == base_data.user.department_id).first().id
             db.session.add(item)
             db.session.commit()
-        super(HardwareEntity, self)._delete_data(base_data)
+        base_data.state = 0
+        db.session.add(base_data)
+        db.session.commit()
 
 
 class SoftwareEntity(BaseEntity):
@@ -485,7 +488,8 @@ class SoftwareEntity(BaseEntity):
 
     def _prepare_base_edit(self):
         rzlt = super(SoftwareEntity, self)._prepare_base_edit()
-        if rzlt[0] == 'template' and hasattr(rzlt[2]['_base_data'], 'hardware'):
+        if rzlt[0] == 'template' and hasattr(rzlt[2]['_base_data'],
+                                             'hardware'):
             rzlt[2]['form'].department_id.data = rzlt[2]['_base_data'].hardware.department_id
         return rzlt
 
@@ -494,6 +498,11 @@ class SoftwareEntity(BaseEntity):
         soft_counter = soft_counter + 1 if soft_counter else 1
 
         return entity_uniq_name('software_item_{}'.format(soft_counter), model)
+
+    def _delete_data(self, base_data):
+        base_data.is_active = False
+        db.session.add(base_data)
+        db.session.commit()
 
 
 def login_required(f):
@@ -549,7 +558,7 @@ def login():
             l.set_option(ldap.OPT_REFERRALS, 0)
 
             r = l.search(base, Scope, Filter.format(email), ["displayName"])
-            Type, user = l.result(r,60)
+            Type, user = l.result(r, 60)
             Name, Attrs = user[0]
             if 'displayName' in Attrs:
                 displayName = Attrs['displayName'][0]
@@ -708,6 +717,7 @@ def hardware_edit(url_parameter):
     except NoEntityFoundException:
         return render_template('404.html')
 
+
 @app.route('/hardware/view/<url_parameter>/', methods=['GET', 'POST'])
 @login_required
 def hardware_view(url_parameter):
@@ -775,7 +785,7 @@ def reports():
         response.headers['Content-Disposition'] = "attachment; filename=report.csv"
         return response
 
-    return render_template('reports.html', form = form)
+    return render_template('reports.html', form=form)
 
 
 @app.errorhandler(404)
