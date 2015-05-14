@@ -1,6 +1,11 @@
 <div class="row">
 <div class="col-md-7">
 <table class="table">
+{% if data['_base_data'].did is not none and
+(data['_base_data'].__class__.__name__=='User' or
+data['_base_data'].__class__.__name__=='Hardware')%}
+
+{% else %}
 {% for item in data['_base_data'].view_order %}
 {% if data['_base_data'][item[0]] %}
 {% if item|length > 1 %}
@@ -17,12 +22,10 @@
 {% endfor %}
 
 <tr><td></td><td class="text-right">
-    {% if not (data['_base_data'].did is not none and
-    (data['_base_data'].__class__.__name__=='User' or
-    data['_base_data'].__class__.__name__=='Hardware')) %}
     <a class="btn btn-primary" href="{{data['_base_data'].get_edit_path()}}">Edit</a>
-    {% endif %}
 </td></tr>
+{% endif %}
+
 </table>
 
 </div>

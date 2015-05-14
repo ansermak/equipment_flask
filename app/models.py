@@ -17,6 +17,8 @@ class BaseClass(object):
              'Software']
 
     def __repr__(self):
+        if hasattr(self, 'did') and self.did is not None:
+            return self.view_name[2:-2] + ' Department'
         return self.name
 
     def get_type_image(self):
@@ -34,6 +36,7 @@ class User(db.Model, BaseClass):
     surname = db.Column(db.String(30), index=True)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     did = db.Column(db.Integer)
+    is_active = db.Column(db.Boolean)
     hardware_items = db.relationship('Hardware', backref='user',
                                      lazy='dynamic')
     computers = db.relationship('Hardware', primaryjoin="and_(\
@@ -50,12 +53,12 @@ class User(db.Model, BaseClass):
     upses = db.relationship('Hardware', primaryjoin="and_(\
         User.id==Hardware.user_id, Hardware.hardware_type==4)",
                             backref="upses_owner", lazy='dynamic')
-    history_hardware = db.relationship('History', backref='hist_users',
+    history_hardware = db.relationship('History', backref='hist_user',
                                        lazy='dynamic')
 
     def __repr__(self):
         if hasattr(self, 'did') and self.did is not None:
-            return '--Not specified--'
+            return self.view_name[2:-2] + ' Department'
         return '{} {}'.format(self.surname, self.name)
 
     def repr_list(self):
@@ -132,8 +135,9 @@ class Hardware(db.Model, BaseClass):
         5: 'Printer',
         6: 'Scanner',
     }
-    view_order = (('name',), ('serial',), ('inum',), ('model',), ('cpu',), 
-        ('memory',), ('resolution',), ('hdd',), ('name',), ('department', 1), ('user', 1))
+    view_order = (('name',), ('serial',), ('inum',), ('model',), ('cpu',),
+                  ('memory',), ('resolution',), ('hdd',), ('name',),
+                  ('department', 1), ('user', 1))
 
     id = db.Column(db.Integer, primary_key=True)
     serial = db.Column(db.String(100), index=True)

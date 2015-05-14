@@ -87,7 +87,7 @@
             {% if data.page_name == 'Hardware' %}
             {% for record in data['_base_data'].history_users %}
             <tr><td>{% if record.hist_user is not none %}
-                <a href="{{record.hist_users.get_view_path()}}">
+                <a href="{{record.hist_user.get_view_path()}}"> 
                     {{record.hist_users}}</a>
                     {% else %}DELETED
                     {% endif %}
