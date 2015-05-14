@@ -237,6 +237,17 @@ class History(db.Model):
         self.change_date = datetime.utcnow()
 
 
+class HType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), index=True)
+
+
+class HFeature(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), index=True)
+    hardware_type = db.Column(db.Integer, db.ForeignKey('h_type.id'))
+
+
 whooshalchemy.whoosh_index(app, User)
 whooshalchemy.whoosh_index(app, Department)
 whooshalchemy.whoosh_index(app, Hardware)
