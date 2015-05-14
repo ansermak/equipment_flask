@@ -15,7 +15,14 @@
 {% endif %}
 {{data['_base_data'][department]}}
 {% endfor %}
-<tr><td></td><td class="text-right"><a class="btn btn-primary" href="{{data['_base_data'].get_edit_path()}}">Edit</a></td></tr>
+
+<tr><td></td><td class="text-right">
+    {% if not (data['_base_data'].did is not none and
+    (data['_base_data'].__class__.__name__=='User' or
+    data['_base_data'].__class__.__name__=='Hardware')) %}
+    <a class="btn btn-primary" href="{{data['_base_data'].get_edit_path()}}">Edit</a>
+    {% endif %}
+</td></tr>
 </table>
 
 </div>
