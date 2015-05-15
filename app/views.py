@@ -2,12 +2,11 @@
 
 from flask import (render_template, flash, redirect, url_for, request, g,
                    session, make_response)
-from app import app, db, Server, base, Filter, Attrs
+from app import app, db, Server, base, Filter
 from config import MAX_SEARCH_RESULTS
-from models import User, Department, Hardware, Software, Admin, History
+from models import User, Department, Hardware, Software, Admin, History, HType
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm,
-                   SoftwareForm, LoginForm, ReportForm, STATUSES,
-                   HARDWARE_TYPES)
+                   SoftwareForm, LoginForm, ReportForm, STATUSES)
 from functools import wraps
 import ldap
 import md5
@@ -28,15 +27,6 @@ BUTTONS = {'department': {'Add user': '/users/new/',
            'hardware': {'Add software': '/software/new/'},
            'software': {}}
 
-TYPE_HARDWARE = {
-    1: 'Desktop',
-    2: 'Notebook',
-    3: 'Monitor',
-    4: 'UPS',
-    5: 'Printer',
-    6: 'Scanner'
-}
-
 Scope = ldap.SCOPE_SUBTREE
 l = ldap.initialize(Server)
 
@@ -45,9 +35,12 @@ def create_csv(department):
     result = {}
     lines = []
     lines.append('{}\nName,Type,Model, Serial, INum\n'.format(department))
+    h_query = HType.query.all()
+    h_types = {h_type.id: h_type.name for h_type in h_query}
+
     for user in department.all_users:
         result[str(user)] = ['{}, {}, {}, {}'.format(
-            str(TYPE_HARDWARE[item.hardware_type]),
+            str(h_types[item.hardware_type]),
             str(item.model), str(item.serial),
             str(item.inum))
             for item in user.hardware_items]

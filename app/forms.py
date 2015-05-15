@@ -2,7 +2,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NoneOf
-from app.models import Department, User, Hardware
+from app.models import Department, User, Hardware, HType
 
 
 STATUSES = {
@@ -15,15 +15,6 @@ STATUSES = {
 IS_ACTIVE = {
     'True': 1,
     'False': 0
-}
-
-HARDWARE_TYPES = {
-    'HARDWARE_DESKTOP': 1,
-    'HARDWARE_NOTEBOOK': 2,
-    'HARDWARE_MONITOR': 3,
-    'HARDWARE_UPS': 4,
-    'HARDWARE_PRINTER': 5,
-    'HARDWARE_SCANNER': 6
 }
 
 
@@ -41,10 +32,9 @@ class UserForm(Form):
                                 validators=[DataRequired(),
                                 NoneOf([''], 'cannot be empty', None)])
     is_active = SelectField('Enabled',
-                          coerce=int,
-                          choices=[(IS_ACTIVE['True'], 'Yes'),
-                                   (IS_ACTIVE['False'], 'No'),
-                          ])
+                            coerce=int,
+                            choices=[(IS_ACTIVE['True'], 'Yes'),
+                                     (IS_ACTIVE['False'], 'No'), ])
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -93,22 +83,9 @@ class HardwareForm(Form):
                                  (STATUSES['STATUS_REPAIR'], 'Being repaired'),
                                  (STATUSES['STATUS_FREE'], 'Free'),
                                  (STATUSES['STATUS_INACTIVE'], 'Not active')])
-    hardware_type = SelectField('hardware_type', coerce=int,
-                                choices=[(0, '--Choose--'),
-                                         (HARDWARE_TYPES['HARDWARE_DESKTOP'],
-                                         'Desktop'),
-                                         (HARDWARE_TYPES['HARDWARE_NOTEBOOK'],
-                                         'Notebook'),
-                                         (HARDWARE_TYPES['HARDWARE_MONITOR'],
-                                         'Monitor'),
-                                         (HARDWARE_TYPES['HARDWARE_UPS'],
-                                         'UPS'),
-                                         (HARDWARE_TYPES['HARDWARE_PRINTER'],
-                                         'Printer'),
-                                         (HARDWARE_TYPES['HARDWARE_SCANNER'],
-                                         'Scaner')],
-                                validators=[DataRequired(), NoneOf([''],
-                                            'cannot be empty', None)])
+    hardware_type = SelectField('hardware_type', coerce=int, choices=[],
+                                validators=[DataRequired(),
+                                NoneOf([''], 'cannot be empty', None)])
 
     def __init__(self, *args, **kwargs):
         super(HardwareForm, self).__init__(*args, **kwargs)
@@ -124,6 +101,8 @@ class HardwareForm(Form):
                                  + [(i.id, i, i.department_id)
                                  for i in User.query.order_by(
                                     'surname').all()])
+        self.hardware_type.choices = ([(0, '--Choose--')] + [(ht.id, ht.name)
+        for ht in HType.query.order_by('id').all()])
 
 
 class SoftwareForm(Form):

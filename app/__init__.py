@@ -9,7 +9,7 @@ from datetime import timedelta
 Server = 'ldap://10.109.0.60'
 base = 'OU=IT,OU=Users,OU=GfK Ukraine,DC=gfk,DC=com'
 Filter = "(&(objectClass=user)(mail={}))"
-Attrs = ["displayName"]
+# Attrs = ["displayName"]
 
 
 app = Flask(__name__)
