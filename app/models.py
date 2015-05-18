@@ -58,7 +58,7 @@ class User(db.Model, BaseClass):
 
     def __repr__(self):
         if hasattr(self, 'did') and self.did is not None:
-            return self.view_name[2:-2] + ' Department'
+            return "--{} {}--".format(self.view_name[2:-2], 'Department')
         return '{} {}'.format(self.surname, self.name)
 
     def repr_list(self):
