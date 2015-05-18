@@ -284,15 +284,23 @@ class UserEntity(BaseEntity):
                 basedata.surname != form.surname.data)
 
     def _delete_data(self, base_data):
-        for item in base_data.hardware_items.all():
-            new_user_id = User.query.filter(
-                User.did == base_data.department_id).first().id
-            item.user_id = new_user_id
-            db.session.add(item)
-            db.session.commit()
+        self.from_user_to_department(base_data)
         base_data.is_active = False
         db.session.add(base_data)
         db.session.commit()
+
+    def from_user_to_department(self, base_data):
+        new_user_id = User.query.filter(
+            User.did == base_data.department_id).first().id
+        for item in base_data.hardware_items.all():
+            item.user_id = new_user_id
+            db.session.add(item)
+        db.session.commit()
+
+    def _save_data(self, base_data, form):
+        if form.department_id.data != base_data.department_id:
+            self.from_user_to_department(base_data)
+        super(UserEntity, self)._save_data(base_data, form)
 
 
 class DepartmentEntity(BaseEntity):
