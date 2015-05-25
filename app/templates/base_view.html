@@ -88,7 +88,7 @@
             {% for record in data['_base_data'].history_users %}
             <tr><td>{% if record.hist_user is not none %}
                 <a href="{{record.hist_user.get_view_path()}}"> 
-                    {{record.hist_users}}</a>
+                    {{record.hist_user}}</a>
                     {% else %}DELETED
                     {% endif %}
                 </td><td>{{record.change_date.strftime('%d-%m-%Y')}}</td></tr>
