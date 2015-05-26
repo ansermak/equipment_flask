@@ -8,9 +8,18 @@
     <script src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery.tablesorter.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <script>
+    function toggle_visibility() {
+        var e = document.getElementById("history_table");
+        if (e.style.display=="none")
+            e.style.display="block";
+        else
+          e.style.display = 'none';
+    }
+  </script>
    {% block js_include %} {% endblock %}
   </head>
-  <body>
+  <body style="overflow:visible">
   	{% block menu %}
     {% include 'menu_header_page.html' %}
     {% endblock %}

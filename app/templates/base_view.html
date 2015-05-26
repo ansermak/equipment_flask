@@ -74,17 +74,17 @@
             </div>
             <div class="row">
             <div class="col-md-7">
-            <table class="table table-stripped table-hover">
+            <table id="history_table" class="table table-stripped table-hover" style="display:none">
             <caption><h1 class="">History table<h1></caption>
+            
+            {% if data.page_name == 'Hardware' %}
             <thead>
             <tr>
-              <th>List item</th>
+              <th>User</th>
               <th>Date</th>
             </tr>
             </thead>
             <tbody>
-
-            {% if data.page_name == 'Hardware' %}
             {% for record in data['_base_data'].history_users %}
             <tr><td>{% if record.hist_user is not none %}
                 <a href="{{record.hist_user.get_view_path()}}"> 
@@ -94,6 +94,13 @@
                 </td><td>{{record.change_date.strftime('%d-%m-%Y')}}</td></tr>
             {% endfor %}
             {% elif data.page_name == 'User' %}
+            <thead>
+            <tr>
+              <th>Hardware</th>
+              <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for record in data['_base_data'].history_hardware %}
             <tr><td>{% if record.hist_hardware is not none %}
                 <a href="{{record.hist_hardware.get_view_path()}}">

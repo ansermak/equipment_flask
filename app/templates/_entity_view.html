@@ -35,11 +35,7 @@ data['_base_data'].__class__.__name__=='Hardware')%}
 </div>
 <div class="row">
 
-{% if data.page_name == 'Hardware'%}
-{% do data.buttons.update({'History':'/hardware/history/'+data['_base_data']['view_name']}) %}
-{% elif data.page_name == 'User' %}
-{% do data.buttons.update({'History':'/hardware/history/'+data['_base_data']['view_name']}) %}
-{% endif %}
+
 
 {% for button in data.buttons %}
 <div class="row">
@@ -51,6 +47,13 @@ data['_base_data'].__class__.__name__=='Hardware')%}
     </form>
 </div>
 {% endfor %}
+{% if data.page_name == 'Hardware' or data.page_name == "User" %}
+<div class="row">
+    <div class="col-md-2">
+        <button id="history" onclick="toggle_visibility()" class="btn btn-primary btn-block">History</button>
+    </div>
+</div>
+{% endif %}
 </div>
 <div class="panel panel-default">
 </div>
