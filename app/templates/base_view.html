@@ -36,18 +36,20 @@
                 <div id="{{elem.upper()}}" class="tab-pane fade">
                 {% endif %}
                 <h3>{{elem.upper()}}</h3>
-                {% set num_counter = 0 %}
-                <div class="row">
-                    {% for item in data.blocks[elem] %}
-                    {% if num_counter % 4 == 0 %}
-                </div><div class="row">
-                    {% endif %}
-                    {% set num_counter = num_counter + 1 %}
-                        <div class="col-md-3">
-                        <a href="{{item.get_view_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></br>
-                        </div>
-                    {% endfor %}
-                </div></div>
+                <div class="col-md-6">
+
+                    <table class="table table-stripped table-hover">
+                        {% for item in data.blocks[elem] %}
+                            <tr class="mytable_row">
+                                <td><a href="{{item.get_view_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></td>
+                                {% if item.user %}
+                                <td><a href="{{item.user.get_view_path()}}">{{item.user}}</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
                 {% endif %}
                 {% endfor %}
             </div>
