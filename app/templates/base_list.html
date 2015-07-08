@@ -5,7 +5,9 @@
 {% block content %}
 <div class="page-header" id="div_page_name">
    <h1>{{page_name|default('base_list')}}</h1>
+   {% if page_name != 'Disabled' %}
    <a href="{{add_item_url}}" class="div_add_item div_a">Add {{page_name}}</a>
+   {% endif %}
 </div>
 <div class="form-group col-md-5">
 	<input type="text" class="form-control" id="filter" placeholder="Filter">
