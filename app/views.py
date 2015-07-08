@@ -24,7 +24,8 @@ BUTTONS = {'department': {'Add user': '/users/new/',
                           'Add hardware': '/hardware/new/',
                           'Add software': '/software/new/'},
            'user': {'Add hardware': '/hardware/new/'},
-           'hardware': {'Add software': '/software/new/'},
+           'hardware': {'Add software': '/software/new/',
+                        'Add note': '#'},
            'software': {}}
 
 Scope = ldap.SCOPE_SUBTREE
@@ -537,6 +538,10 @@ def before_request():
 def menu_items():
     return dict(menu_items=Department.query.order_by('name').all())
 
+@app.context_processor
+def disabled_items():
+    return dict(disabled_items=Hardware.query.filter(Hardware.state != 1).order_by('name').all())
+
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -602,7 +607,7 @@ def search():
 def search_results(query):
     users = User.query.whoosh_search(query,
                                      MAX_SEARCH_RESULTS).filter(
-                                     User.did == None).all()
+        User.did == None).all()
     departments = Department.query.whoosh_search(query,
         MAX_SEARCH_RESULTS).all()
     software = Software.query.whoosh_search(query,
@@ -624,6 +629,15 @@ def search_results(query):
 @login_required
 def index():
     return render_template('index.html')
+
+
+@app.route('/disabled/')
+@login_required
+def disabled():
+    base_data = Hardware.query.filter(Hardware.state != 1).order_by('name').all()
+    return render_template("base_list.html",
+                           base_data=base_data,
+                           page_name="Disabled")
 
 
 @app.route('/departments/')
@@ -783,7 +797,8 @@ def reports():
             csv = '\n'.join(sorted([create_csv(department)
                             for department in Department.query.all()]))
         response = make_response(csv)
-        response.headers['Content-Disposition'] = "attachment; filename=report.csv"
+        response.headers[
+            'Content-Disposition'] = "attachment; filename=report.csv"
         return response
 
     return render_template('reports.html', form=form)
