@@ -187,6 +187,9 @@ class Hardware(db.Model, BaseClass):
 class Software(db.Model, BaseClass):
     __searchable__ = ['name', 'serial']
     view_order = (('name',), ('hardware', 1))
+    states = {1: 'In use',
+              3: 'Free',
+              0: 'Not active'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
     view_name = db.Column(db.String(100), index=True, unique=True)
@@ -197,10 +200,12 @@ class Software(db.Model, BaseClass):
     def repr_list(self):
         if self.hardware.did is not None:
             return ((self, TEMPLATE_ANCHOR), ('not specified',),
-                    (self.hardware.department, TEMPLATE_ANCHOR))
+                    (self.hardware.department, TEMPLATE_ANCHOR),
+                    (self.__class__.states[self.state], ))
 
         return ((self, TEMPLATE_ANCHOR), (self.hardware, TEMPLATE_ANCHOR),
-                (self.hardware.department, TEMPLATE_ANCHOR))
+                (self.hardware.department, TEMPLATE_ANCHOR),
+                (self.__class__.states[self.state], ))
 
     def get_edit_path(self):
         return '/software/{}'.format(self.view_name)
@@ -209,7 +214,7 @@ class Software(db.Model, BaseClass):
         return '/software/view/{}'.format(self.view_name)
 
     def column_names(self):
-        return(['Name', 'Computer', 'Department'])
+        return(['Name', 'Computer', 'Department', 'State'])
 
     def get_type_image(self):
         return '/static/img/software.png'
