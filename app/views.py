@@ -360,9 +360,9 @@ class DepartmentEntity(BaseEntity):
                 'view_name').all(),
             'Printers': result['_base_data'].printers.order_by(
                 'view_name').all(),
-            'Servers':result['_base_data'].servers.order_by(
+            'Servers': result['_base_data'].servers.order_by(
                 'view_name').all(),
-            'VOIP':result['_base_data'].voip.order_by(
+            'VOIP': result['_base_data'].voip.order_by(
                 'view_name').all(),
             'Software': user_software
         }
@@ -471,7 +471,8 @@ class SoftwareEntity(BaseEntity):
             if location[-4] == 'departments':
                 form.comp_id.data = Hardware.query.filter(
                     Hardware.did == Department.query.filter(
-                        Department.view_name == view_name).first().id).first().id
+                        Department.view_name == view_name
+                    ).first().id).first().id
                 form.department_id.data = Department.query.filter(
                     Department.view_name == view_name).first().id
 
@@ -572,7 +573,8 @@ def login():
                 admin.email = form.email.data
                 admin.password = password
                 admin.name = admin.email.split('.')[0].capitalize()
-                admin.surname = admin.email.split('.')[1].capitalize().split('@')[0]
+                admin.surname = admin.email.split(
+                    '.')[1].capitalize().split('@')[0]
                 db.session.add(admin)
                 db.session.commit()
 
@@ -605,14 +607,18 @@ def search():
 
 @app.route('/search_results/<query>')
 def search_results(query):
-    users = User.query.whoosh_search(query,
-                                     MAX_SEARCH_RESULTS).filter(
+    users = User.query.whoosh_search(
+        query,
+        MAX_SEARCH_RESULTS).filter(
         User.did == None).all()
-    departments = Department.query.whoosh_search(query,
+    departments = Department.query.whoosh_search(
+        query,
         MAX_SEARCH_RESULTS).all()
-    software = Software.query.whoosh_search(query,
+    software = Software.query.whoosh_search(
+        query,
         MAX_SEARCH_RESULTS).all()
-    hardware = Hardware.query.whoosh_search(query,
+    hardware = Hardware.query.whoosh_search(
+        query,
         MAX_SEARCH_RESULTS).filter(Hardware.did == None).all()
     results = [('Users', users),
                ('Departments', departments),
@@ -718,7 +724,9 @@ def department_view(url_parameter):
 @login_required
 def users():
     users = UserEntity('user')
-    return users.base_list('surname', '(self.model.did == None) & (self.model.is_active == 1)')
+    return users.base_list(
+        'surname',
+        '(self.model.did == None) & (self.model.is_active == 1)')
 
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
@@ -755,7 +763,9 @@ def user_new():
 @login_required
 def hardware_items():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
-    return hard.base_list('view_name', '(self.model.did == None) & (self.model.state == 1)')
+    return hard.base_list(
+        'view_name',
+        '(self.model.did == None) & (self.model.state == 1)')
 
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])
