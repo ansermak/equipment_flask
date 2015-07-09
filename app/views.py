@@ -360,6 +360,10 @@ class DepartmentEntity(BaseEntity):
                 'view_name').all(),
             'Printers': result['_base_data'].printers.order_by(
                 'view_name').all(),
+            'Servers':result['_base_data'].servers.order_by(
+                'view_name').all(),
+            'VOIP':result['_base_data'].voip.order_by(
+                'view_name').all(),
             'Software': user_software
         }
 
@@ -413,7 +417,7 @@ class HardwareEntity(BaseEntity):
     def _save_data(self, base_data, form):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
         user = User.query.filter(User.id == form.user_id.data).first()
-        admin = Admin.query.filter(Admin.id == session['admin_id']).first()
+        # admin = Admin.query.filter(Admin.id == session['admin_id']).first()
         form.department_id.data = user.department_id
 
         if h_id:
@@ -538,10 +542,6 @@ def before_request():
 def menu_items():
     return dict(menu_items=Department.query.order_by('name').all())
 
-@app.context_processor
-def disabled_items():
-    return dict(disabled_items=Hardware.query.filter(Hardware.state != 1).order_by('name').all())
-
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -631,13 +631,50 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/disabled/')
+@app.route('/users/disabled/')
 @login_required
-def disabled():
-    base_data = Hardware.query.filter(Hardware.state != 1).order_by('name').all()
+def disabled_users():
+    base_data = User.query.filter(User.is_active != 1).order_by(
+        User.view_name).all()
+    return render_template("base_list.html",
+                           base_data=base_data,
+                           page_name="Disabled users")
+
+
+@app.route('/hardware/disabled/')
+@login_required
+def disabled_hardware():
+    base_data = Hardware.query.filter(Hardware.state != 1
+                                      ).order_by('name').all()
     return render_template("base_list.html",
                            base_data=base_data,
                            page_name="Disabled")
+
+
+@app.route('/hardware/disabled/computers/')
+@login_required
+def disabled_computers():
+    type_comp = HType.query.filter(HType.name == 'Desktop').first().id
+    type_nbk = HType.query.filter(HType.name == 'Notebook').first().id
+    base_data = Hardware.query.filter((Hardware.state != 1) & (
+        (Hardware.hardware_type == type_comp) |
+        (Hardware.hardware_type == type_nbk))
+    ).order_by('name').all()
+    return render_template("base_list.html",
+                           base_data=base_data,
+                           page_name="Disabled computers")
+
+
+@app.route('/hardware/disabled/monitors/')
+@login_required
+def disabled_monitors():
+    type_mon = HType.query.filter(HType.name == 'Monitor').first().id
+    base_data = Hardware.query.filter(
+        (Hardware.state != 1) & (Hardware.hardware_type == type_mon)
+    ).order_by('name').all()
+    return render_template("base_list.html",
+                           base_data=base_data,
+                           page_name="Disabled computers")
 
 
 @app.route('/departments/')
@@ -681,7 +718,7 @@ def department_view(url_parameter):
 @login_required
 def users():
     users = UserEntity('user')
-    return users.base_list('surname', 'self.model.did == None')
+    return users.base_list('surname', '(self.model.did == None) & (self.model.is_active == 1)')
 
 
 @app.route('/users/<url_parameter>/', methods=['GET', 'POST'])
@@ -718,7 +755,7 @@ def user_new():
 @login_required
 def hardware_items():
     hard = HardwareEntity('hardware', template_edit='base_edit.html')
-    return hard.base_list('view_name', 'self.model.did == None')
+    return hard.base_list('view_name', '(self.model.did == None) & (self.model.state == 1)')
 
 
 @app.route('/hardware/<url_parameter>/', methods=['GET', 'POST'])

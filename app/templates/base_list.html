@@ -5,7 +5,7 @@
 {% block content %}
 <div class="page-header" id="div_page_name">
    <h1>{{page_name|default('base_list')}}</h1>
-   {% if page_name != 'Disabled' %}
+   {% if page_name.split(' ')[0] != 'Disabled' %}
    <a href="{{add_item_url}}" class="div_add_item div_a">Add {{page_name}}</a>
    {% endif %}
 </div>
