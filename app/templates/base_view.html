@@ -45,6 +45,9 @@
                                 {% if item.user %}
                                 <td><a href="{{item.user.get_view_path()}}">{{item.user}}</a></td>
                                 {% endif %}
+                                {% if item.hardware %}
+                                <td><a href="{{item.hardware.get_view_path()}}">{{item.hardware}}</a></td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </table>
