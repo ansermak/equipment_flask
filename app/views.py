@@ -163,7 +163,7 @@ class BaseEntity(object):
             if base_data is None:
                 raise NoEntityFoundException(
                     'no instanse of {} with view_name=="{}" found'.format(
-                        self.model.__name__, self.url_param))
+                        self.model.__name__, self.url_param.encode('utf-8')))
         else:
             base_data = self.model()
         return base_data
@@ -515,8 +515,10 @@ class SoftwareEntity(BaseEntity):
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
+        # request.path = request.path.encode('utf-8')
         if request.path != '/logout/':
-            session['next_url'] = str(request.path)
+            
+            session['next_url'] = str(request.path.encode('utf-8'))
         else:
             session['next_url'] = '/index'
 
