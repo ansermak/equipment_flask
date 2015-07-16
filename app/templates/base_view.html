@@ -42,6 +42,9 @@
                         {% for item in data.blocks[elem] %}
                             <tr class="mytable_row">
                                 <td><a href="{{item.get_view_path()}}"><img style="vertical-align:middle"src="{{item.get_type_image()}}"/>{{item}}</a></td>
+                                {% if item.model %}
+                                <td>{{item.model}}</td>
+                                {% endif %}
                                 {% if item.user %}
                                 <td><a href="{{item.user.get_view_path()}}">{{item.user}}</a></td>
                                 {% endif %}
