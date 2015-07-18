@@ -14,6 +14,8 @@ class BaseClass(object):
              'Upses',
              'Printers',
              'Scanners',
+             'Servers',
+             'VOIP',
              'Software']
 
     def __repr__(self):
@@ -62,7 +64,8 @@ class User(db.Model, BaseClass):
         return '{} {}'.format(self.surname, self.name)
 
     def repr_list(self):
-        # '1 'means that we want link for element to display; could be anything
+        # '1 'means that we want link for element to display;
+        # '2' means that we want pic-image to display;
         return ((self, TEMPLATE_ANCHOR), (self.login, ),
                 (self.department, TEMPLATE_ANCHOR))
 
@@ -111,6 +114,12 @@ class Department(db.Model, BaseClass):
     printers = db.relationship('Hardware', primaryjoin="and_(\
         Department.id==Hardware.department_id, Hardware.hardware_type==5)",
                                backref="printers_department", lazy='dynamic')
+    servers = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==7)",
+                              backref="servers_department", lazy='dynamic')
+    voip = db.relationship('Hardware', primaryjoin="and_(\
+        Department.id==Hardware.department_id, Hardware.hardware_type==8)",
+                           backref="voip_department", lazy='dynamic')
 
     def repr_list(self):
         return ((self, TEMPLATE_ANCHOR),)
@@ -134,6 +143,8 @@ class Hardware(db.Model, BaseClass):
         4: 'Ups',
         5: 'Printer',
         6: 'Scanner',
+        7: 'Server',
+        8: 'VOIP-gateway',
     }
     view_order = (('name',), ('serial',), ('inum',), ('model',), ('cpu',),
                   ('memory',), ('resolution',), ('hdd',), ('name',),
