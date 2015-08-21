@@ -54,6 +54,7 @@ class HardwareForm(Form):
                     'serial',
                     'inum',
                     'model',
+                    'motherboard',
                     'cpu',
                     'memory',
                     'resolution',
@@ -66,6 +67,7 @@ class HardwareForm(Form):
     serial = StringField('serial')
     inum = StringField('inum')
     model = StringField('model')
+    motherboard = StringField('motherboard')
     cpu = StringField('cpu')
     memory = StringField('memory')
     resolution = StringField('resolution')

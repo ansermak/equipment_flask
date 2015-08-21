@@ -59,17 +59,20 @@
 
       if ( choice == 1) {
         $('#resolution-group').addClass('hide');
+        $('#motherboard-group').removeClass('hide');
         $('#cpu-group').removeClass('hide');
         $('#hdd-group').removeClass('hide');
         $('#memory-group').removeClass('hide');
       }
       else if (choice == 2){
         $('#resolution-group').removeClass('hide')
+        $('#motherboard-group').removeClass('hide')
         $('#cpu-group').removeClass('hide')
         $('#hdd-group').removeClass('hide')
         $('#memory-group').removeClass('hide') 
       }
       else if (choice == 3){
+        $('#motherboard-group').addClass('hide')
         $('#cpu-group').addClass('hide')
         $('#hdd-group').addClass('hide')
         $('#memory-group').addClass('hide')
@@ -77,6 +80,7 @@
       }
       else {
         $('#resolution-group').addClass('hide')
+        $('#motherboard-group').addClass('hide')
         $('#cpu-group').addClass('hide')
         $('#hdd-group').addClass('hide')
         $('#memory-group').addClass('hide')

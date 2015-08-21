@@ -146,7 +146,8 @@ class Hardware(db.Model, BaseClass):
         7: 'Server',
         8: 'VOIP-gateway',
     }
-    view_order = (('name',), ('serial',), ('inum',), ('model',), ('cpu',),
+    view_order = (('name',), ('serial',), ('inum',), ('model',),
+                  ('motherboard', ), ('cpu',),
                   ('memory',), ('resolution',), ('hdd',), ('name',),
                   ('department', 1), ('user', 1))
 
@@ -163,6 +164,7 @@ class Hardware(db.Model, BaseClass):
     memory = db.Column(db.String(50))
     resolution = db.Column(db.String(50))
     cpu = db.Column(db.String(50))
+    motherboard = db.Column(db.String(50))
     software_items = db.relationship('Software', backref='hardware',
                                      lazy='dynamic')
     hardware_type = db.Column(db.Integer, index=True)
