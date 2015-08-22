@@ -53,37 +53,44 @@
     $('#hardware_type').change(function() {
       feature_changer()
     })
+    all_features = ['resolution', 'motherboard', 'cpu', 'hdd', 'memory']
+    choices_array = {
+      1: ['motherboard', 'cpu', 'hdd', 'memory'], 
+      2: ['resolution', 'motherboard', 'cpu', 'hdd', 'memory'],
+      3: ['resolution']
+    }
+
+    function difference(arr1, arr2) {
+        var output = []
+        for (var index in arr1) {
+            if (arr2.indexOf(arr1[index]) == -1 ) {
+                output.push(arr1[index]);
+            }
+        }
+        return output;
+    }
 
     function feature_changer() {
       var choice = $('#hardware_type').find(":selected").val();
+      if (choice in choices_array) {
+          for (index in choices_array[choice]) {
+            console.log("#%s-group enable", choices_array[choice][index]);
+            feature = "#" + choices_array[choice][index] + "-group" 
+            $(feature).removeClass('hide');
+          }
+          var disabled_features = difference(all_features, choices_array[choice])
+          for (index in disabled_features){
+            console.log("#%s-group disable", disabled_features[index]); 
+            feature = "#" + disabled_features[index] + "-group" 
+            $(feature).addClass('hide');
+          }
+      } else {
+        for (index in all_features) {
+            console.log("#%s-group disable", all_features[index]);
+            feature = "#" + all_features[index] + "-group" 
+            $(feature).addClass('hide');
+          }
 
-      if ( choice == 1) {
-        $('#resolution-group').addClass('hide');
-        $('#motherboard-group').removeClass('hide');
-        $('#cpu-group').removeClass('hide');
-        $('#hdd-group').removeClass('hide');
-        $('#memory-group').removeClass('hide');
-      }
-      else if (choice == 2){
-        $('#resolution-group').removeClass('hide')
-        $('#motherboard-group').removeClass('hide')
-        $('#cpu-group').removeClass('hide')
-        $('#hdd-group').removeClass('hide')
-        $('#memory-group').removeClass('hide') 
-      }
-      else if (choice == 3){
-        $('#motherboard-group').addClass('hide')
-        $('#cpu-group').addClass('hide')
-        $('#hdd-group').addClass('hide')
-        $('#memory-group').addClass('hide')
-        $('#resolution-group').removeClass('hide')
-      }
-      else {
-        $('#resolution-group').addClass('hide')
-        $('#motherboard-group').addClass('hide')
-        $('#cpu-group').addClass('hide')
-        $('#hdd-group').addClass('hide')
-        $('#memory-group').addClass('hide')
       }
     }
     feature_changer()
