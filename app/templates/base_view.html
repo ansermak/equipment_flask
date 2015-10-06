@@ -50,6 +50,7 @@
                                 {% endif %}
                                 {% if item.hardware %}
                                 <td><a href="{{item.hardware.get_view_path()}}">{{item.hardware}}</a></td>
+                                <td><a href="{{item.hardware.user.get_view_path()}}">{{item.hardware.user}}</a></td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
@@ -83,7 +84,7 @@
             <div class="row">
             <div class="col-md-7">
             <table id="history_table" class="table table-stripped table-hover" style="display:none">
-            <caption><h1 class="">History table<h1></caption>
+            <caption><h1 class="">History<h1></caption>
             
             {% if data.page_name == 'Hardware' %}
             <thead>
@@ -121,6 +122,20 @@
             </tbody>
             </table>
             </div>
+            </div>
+            <div class="row">
+                <div class="col-md7">
+                    <table id="notes" class="table table-stripped table-hover">
+                        <caption><h1 class="">Notes<h1></caption>
+                        {% for record in data['_base_data'].notes %}
+                        <tr>
+                            <td>{{record.note_date}}</td>
+                            <td>{{record.text}}</td>
+                            <td>{{record.admin.name}} {{record.admin.surname}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             </div>
     {% endif %}
     
