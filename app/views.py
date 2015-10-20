@@ -1,10 +1,11 @@
-# -*-coding: utf-8-*-
+# -*- coding: utf-8 -*-
 
 from flask import (render_template, flash, redirect, url_for, request, g,
                    session, make_response)
 from app import app, db, Server, base, Filter
 from config import MAX_SEARCH_RESULTS
-from models import User, Department, Hardware, Software, Admin, History, HType
+from models import (User, Department, Hardware, Software, Admin, History,
+                    HType, Note)
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm,
                    SoftwareForm, LoginForm, ReportForm, STATUSES)
 from functools import wraps
@@ -553,14 +554,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data.lower()
-
         password = md5.new(form.password.data).hexdigest()
-        session['admin_id'] = Admin.query.filter_by(email=email,
-                                                    password=password).first()
-        if session['admin_id']:
-            session['admin_id'] = session['admin_id'].id
-            session['next_url'] = '/index'
-            return redirect(session['next_url'])
+        if email == 'admin':
+            session['admin_id'] = Admin.query.filter_by(email=email,
+                                                        password=password).first()
+            if session['admin_id']:
+                session['admin_id'] = session['admin_id'].id
+                session['next_url'] = '/index'
+                return redirect(session['next_url'])
 
         try:
             l.simple_bind_s(email, form.password.data)
@@ -571,14 +572,16 @@ def login():
             Name, Attrs = user[0]
             if 'displayName' in Attrs:
                 displayName = Attrs['displayName'][0]
-                admin = Admin()
-                admin.email = form.email.data
-                admin.password = password
-                admin.name = admin.email.split('.')[0].capitalize()
-                admin.surname = admin.email.split(
-                    '.')[1].capitalize().split('@')[0]
-                db.session.add(admin)
-                db.session.commit()
+                admin = Admin.query.filter_by(email=form.email.data).first()
+                if not admin:
+                    admin = Admin()
+                    admin.email = form.email.data
+                    admin.password = password
+                    admin.name = admin.email.split('.')[0].capitalize()
+                    admin.surname = admin.email.split(
+                        '.')[1].capitalize().split('@')[0]
+                    db.session.add(admin)
+                    db.session.commit()
 
                 session['admin_id'] = admin.id
                 return redirect(url_for('index'))
