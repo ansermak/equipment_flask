@@ -554,14 +554,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data.lower()
+
         password = md5.new(form.password.data).hexdigest()
-        if email == 'admin':
-            session['admin_id'] = Admin.query.filter_by(email=email,
-                                                        password=password).first()
-            if session['admin_id']:
-                session['admin_id'] = session['admin_id'].id
-                session['next_url'] = '/index'
-                return redirect(session['next_url'])
+        session['admin_id'] = Admin.query.filter_by(email=email,
+                                                    password=password).first()
+        if session['admin_id']:
+            session['admin_id'] = session['admin_id'].id
+            session['next_url'] = '/index'
+            return redirect(session['next_url'])
 
         try:
             l.simple_bind_s(email, form.password.data)
@@ -572,16 +572,16 @@ def login():
             Name, Attrs = user[0]
             if 'displayName' in Attrs:
                 displayName = Attrs['displayName'][0]
-                admin = Admin.query.filter_by(email=form.email.data).first()
+                admin = Admin.query.filter_by(email=email).first()
                 if not admin:
                     admin = Admin()
                     admin.email = form.email.data
-                    admin.password = password
                     admin.name = admin.email.split('.')[0].capitalize()
                     admin.surname = admin.email.split(
                         '.')[1].capitalize().split('@')[0]
-                    db.session.add(admin)
-                    db.session.commit()
+                admin.password = password
+                db.session.add(admin)
+                db.session.commit()
 
                 session['admin_id'] = admin.id
                 return redirect(url_for('index'))
