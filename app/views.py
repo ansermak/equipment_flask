@@ -422,13 +422,6 @@ class HardwareEntity(BaseEntity):
                     User.view_name == view_name).first().id
                 form.department_id.data = User.query.filter(
                     User.view_name == view_name).first().department_id
-            return render_template(
-                self.template_edit,
-                data={'page_name': self.name_display,
-                      'add_item_url': self.entity_url_new,
-                      'form': form,
-                      'hardware_types': self.get_hardware_types()
-                      })
 
         return render_template(
             self.template_edit,
