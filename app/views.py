@@ -400,7 +400,6 @@ class HardwareEntity(BaseEntity):
 
     def _prepare_base_edit(self):
         result = super(HardwareEntity, self)._prepare_base_edit()
-        # print result
         if result[0] != 'redirect':
             result = list(result)
             result[2]['hardware_types'] = self.get_hardware_types()
@@ -408,9 +407,9 @@ class HardwareEntity(BaseEntity):
         return result
 
     def base_new(self):
+        form = HardwareForm()
         if 'location' in request.values:
             location = request.values['location'].split('/')
-            form = HardwareForm()
             view_name = request.values['location'].split('/')[-2]
 
             if location[-4] == 'departments':
@@ -431,7 +430,13 @@ class HardwareEntity(BaseEntity):
                       'hardware_types': self.get_hardware_types()
                       })
 
-        return super(HardwareEntity, self).base_new()
+        return render_template(
+            self.template_edit,
+            data={'page_name': self.name_display,
+                  'add_item_url': self.entity_url_new,
+                  'form': form,
+                  'hardware_types': self.get_hardware_types()
+                  })
 
     def _save_data(self, base_data, form):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
