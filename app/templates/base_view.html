@@ -50,7 +50,11 @@
                                 {% endif %}
                                 {% if item.hardware %}
                                 <td><a href="{{item.hardware.get_view_path()}}">{{item.hardware}}</a></td>
-                                <td><a href="{{item.hardware.user.get_view_path()}}">{{item.hardware.user}}</a></td>
+                                <td>
+                                {% if item.hardware.user is not none %}
+                                <a href="{{item.hardware.user.get_view_path()}}">{{item.hardware.user}}</a></td>
+                                {% endif %}
+                                </td>
                                 {% endif %}
                             </tr>
                         {% endfor %}

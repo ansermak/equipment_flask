@@ -1,3 +1,4 @@
+# -*-coding: utf-8 -*-
 from app import app, db
 import flask.ext.whooshalchemy as whooshalchemy
 from datetime import datetime
@@ -90,7 +91,8 @@ class Department(db.Model, BaseClass):
     name = db.Column(db.String(50), index=True)
     view_name = db.Column(db.String(50), index=True, unique=True)
     users = db.relationship('User', primaryjoin="and_(\
-        Department.id==User.department_id, User.did == None)",
+        Department.id==User.department_id, User.did == None,\
+        User.is_active == '1')",
                             backref='department', lazy='dynamic')
     all_users = db.relationship('User', backref="own_department",
                                 lazy='dynamic')
@@ -239,6 +241,10 @@ class Admin(db.Model):
     name = db.Column(db.String(50), index=True)
     surname = db.Column(db.String(50), index=True)
     password = db.Column(db.String(32))
+    notes = db.relationship('Note', backref='admin', lazy='dynamic')
+
+    def __repr__(self):
+        return "{} {}".format(self.name, self.surname)
 
 
 class History(db.Model):
@@ -255,15 +261,32 @@ class History(db.Model):
         self.change_date = datetime.utcnow()
 
 
+table = db.Table('hfeatures',
+                 db.Column('hfeature_id',
+                           db.Integer,
+                           db.ForeignKey('h_feature.id')),
+                 db.Column('htype_id', db.Integer, db.ForeignKey('h_type.id'))
+                 )
+
+
 class HType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
+    features = db.relationship('HFeature',
+                               secondary='hfeatures',
+                               backref=db.backref('htype', lazy='dynamic')
+                               )
+
+    def __repr__(self):
+        return self.name
 
 
 class HFeature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
-    hardware_type = db.Column(db.Integer, db.ForeignKey('h_type.id'))
+
+    def __repr__(self):
+        return self.name
 
 
 whooshalchemy.whoosh_index(app, User)

@@ -5,7 +5,7 @@ from flask import (render_template, flash, redirect, url_for, request, g,
 from app import app, db, Server, base, Filter
 from config import MAX_SEARCH_RESULTS
 from models import (User, Department, Hardware, Software, Admin, History,
-                    HType, Note)
+                    HType, HFeature, Note)
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm,
                    SoftwareForm, LoginForm, ReportForm, STATUSES)
 from functools import wraps
@@ -30,7 +30,6 @@ BUTTONS = {'department': {'Add user': '/users/new/',
            'software': {}}
 
 Scope = ldap.SCOPE_SUBTREE
-l = ldap.initialize(Server)
 
 
 def create_csv(department):
@@ -391,6 +390,23 @@ class DepartmentEntity(BaseEntity):
 
 
 class HardwareEntity(BaseEntity):
+    def get_hardware_types(self):
+        htypes = HType.query.all()
+        htypes_dict = {}
+        for ht in htypes:
+            htypes_dict[int(ht.id)] = [f.name for f in ht.features]
+
+        return htypes_dict
+
+    def _prepare_base_edit(self):
+        result = super(HardwareEntity, self)._prepare_base_edit()
+        # print result
+        if result[0] != 'redirect':
+            result = list(result)
+            result[2]['hardware_types'] = self.get_hardware_types()
+            result = tuple(result)
+        return result
+
     def base_new(self):
         if 'location' in request.values:
             location = request.values['location'].split('/')
@@ -407,11 +423,13 @@ class HardwareEntity(BaseEntity):
                     User.view_name == view_name).first().id
                 form.department_id.data = User.query.filter(
                     User.view_name == view_name).first().department_id
-
-            return render_template(self.template_edit,
-                                   data={'page_name': self.name_display,
-                                         'add_item_url': self.entity_url_new,
-                                         'form': form})
+            return render_template(
+                self.template_edit,
+                data={'page_name': self.name_display,
+                      'add_item_url': self.entity_url_new,
+                      'form': form,
+                      'hardware_types': self.get_hardware_types()
+                      })
 
         return super(HardwareEntity, self).base_new()
 
@@ -420,6 +438,8 @@ class HardwareEntity(BaseEntity):
         user = User.query.filter(User.id == form.user_id.data).first()
         # admin = Admin.query.filter(Admin.id == session['admin_id']).first()
         form.department_id.data = user.department_id
+        if form.model.data == '':
+            form.model.data = 'Noname'
 
         if h_id:
             if h_id.user_id != form.user_id.data:
@@ -498,7 +518,8 @@ class SoftwareEntity(BaseEntity):
         rzlt = super(SoftwareEntity, self)._prepare_base_edit()
         if rzlt[0] == 'template' and hasattr(rzlt[2]['_base_data'],
                                              'hardware'):
-            rzlt[2]['form'].department_id.data = rzlt[2]['_base_data'].hardware.department_id
+            rzlt[2]['form'].department_id.data = rzlt[2][
+                '_base_data'].hardware.department_id
         return rzlt
 
     def create_name(self, base_data, model):
@@ -516,9 +537,7 @@ class SoftwareEntity(BaseEntity):
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        # request.path = request.path.encode('utf-8')
         if request.path != '/logout/':
-            
             session['next_url'] = str(request.path.encode('utf-8'))
         else:
             session['next_url'] = '/index'
@@ -564,6 +583,7 @@ def login():
             return redirect(session['next_url'])
 
         try:
+            l = ldap.initialize(Server)
             l.simple_bind_s(email, form.password.data)
             l.set_option(ldap.OPT_REFERRALS, 0)
 
@@ -589,7 +609,7 @@ def login():
         except ldap.INVALID_CREDENTIALS:
             flash('Login or password error')
         except ldap.LDAPError, e:
-            flash('LDAP-server error')
+            flash('LDAP-server error', e)
     return render_template('login.html',
                            title='Sign in',
                            form=form)

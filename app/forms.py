@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-s
+# -*-coding: utf-8 -*-
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired, NoneOf

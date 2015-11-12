@@ -21,7 +21,7 @@
       </select>
     {% else %}
     {% if data.form[item].label.text=="hardware_type" %}
-    {{data.form[item](class="col-md-3 input-lg", onchange="myFunc()")}}
+    {{data.form[item](class="col-md-3 input-lg")}}
     {% else %}
     {{data.form[item](class="col-md-3 input-lg")}}
     {% endif %}
@@ -45,7 +45,6 @@
 </form>
 
 <script type="text/javascript">
-
     $('#Delete').click(function() {
       return confirm('Are you sure to delete?')
     })
@@ -53,11 +52,16 @@
     $('#hardware_type').change(function() {
       feature_changer()
     })
-    all_features = ['resolution', 'motherboard', 'cpu', 'hdd', 'memory']
-    choices_array = {
-      1: ['motherboard', 'cpu', 'hdd', 'memory'], 
-      2: ['resolution', 'motherboard', 'cpu', 'hdd', 'memory'],
-      3: ['resolution']
+
+    choices_array = {{data['hardware_types'] | tojson}};
+    all_features = [];
+    for (var value in choices_array) {
+        for (var i = 0; i < choices_array[value].length; i++) {
+          elem = choices_array[value][i];
+          if (all_features.indexOf(elem) == -1) {
+            all_features.push(elem);
+          }
+        }
     }
 
     function difference(arr1, arr2) {
@@ -87,7 +91,6 @@
             feature = "#" + all_features[index] + "-group" 
             $(feature).addClass('hide');
           }
-
       }
     }
     feature_changer()
