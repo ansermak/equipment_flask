@@ -226,15 +226,22 @@ class BaseEntity(object):
         rzlt = self._prepare_base_view()
         return render_template(rzlt[1], data=rzlt[2])
 
-    def base_new(self):
+    def base_new(self, data={}):
         form = self.form()
         if form.validate_on_submit():
             return redirect(self._save_validated_form(form))
         else:
+            data.update({'page_name': self.name_display,
+                         'add_item_url': self.entity_url_new,
+                         'form': form})
+
             return render_template(self.template_edit,
-                                   data={'page_name': self.name_display,
-                                         'add_item_url': self.entity_url_new,
-                                         'form': form})
+                                   data=data)
+
+
+class NoteEntity(BaseEntity):
+    def __init__(self):
+        super(BaseEntity, self).__init__(self, "Note")
 
 
 class UserEntity(BaseEntity):
@@ -422,14 +429,14 @@ class HardwareEntity(BaseEntity):
                     User.view_name == view_name).first().id
                 form.department_id.data = User.query.filter(
                     User.view_name == view_name).first().department_id
-
-        return render_template(
-            self.template_edit,
-            data={'page_name': self.name_display,
-                  'add_item_url': self.entity_url_new,
-                  'form': form,
-                  'hardware_types': self.get_hardware_types()
-                  })
+            return render_template(
+                self.template_edit,
+                data={'page_name': self.name_display,
+                      'add_item_url': self.entity_url_new,
+                      'hardware_types': self.get_hardware_types(),
+                      'form': form})
+        return super(HardwareEntity, self).base_new(
+            data={'hardware_types': self.get_hardware_types()})
 
     def _save_data(self, base_data, form):
         h_id = Hardware.query.filter(Hardware.id == base_data.id).first()
