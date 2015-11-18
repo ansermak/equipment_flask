@@ -53,7 +53,7 @@
       feature_changer()
     })
 
-    choices_array = {{data['hardware_types'] | tojson}};
+    choices_array = {{data.get('hardware_types', {}) | tojson}};
     all_features = [];
     for (var value in choices_array) {
         for (var i = 0; i < choices_array[value].length; i++) {

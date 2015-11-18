@@ -5,7 +5,7 @@ from flask import (render_template, flash, redirect, url_for, request, g,
 from app import app, db, Server, base, Filter
 from config import MAX_SEARCH_RESULTS
 from models import (User, Department, Hardware, Software, Admin, History,
-                    HType, HFeature, Note)
+                    HType, HFeature)
 from forms import (SearchForm, UserForm, DepartmentForm, HardwareForm,
                    SoftwareForm, LoginForm, ReportForm, STATUSES)
 from functools import wraps
@@ -237,11 +237,6 @@ class BaseEntity(object):
 
             return render_template(self.template_edit,
                                    data=data)
-
-
-class NoteEntity(BaseEntity):
-    def __init__(self):
-        super(BaseEntity, self).__init__(self, "Note")
 
 
 class UserEntity(BaseEntity):
