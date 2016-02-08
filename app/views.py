@@ -447,7 +447,6 @@ class HardwareEntity(BaseEntity):
                 record = History(form.user_id.data, h_id.id, admin_id)
 
                 db.session.add(record)
-                db.session.commit()
             super(HardwareEntity, self)._save_data(base_data, form)
         else:
             super(HardwareEntity, self)._save_data(base_data, form)
@@ -455,7 +454,7 @@ class HardwareEntity(BaseEntity):
             record = History(form.user_id.data, hardware_id,
                              session['admin_id'])
             db.session.add(record)
-            db.session.commit()
+        db.session.commit()
 
     def _prepare_base_view(self, order=None):
         order = (('hardware_type',), ('model',), ('name',), ('inum',),
@@ -477,7 +476,6 @@ class HardwareEntity(BaseEntity):
             item.comp_id = Hardware.query.filter(
                 Hardware.did == base_data.user.department_id).first().id
             db.session.add(item)
-            db.session.commit()
         base_data.state = 0
         db.session.add(base_data)
         db.session.commit()
